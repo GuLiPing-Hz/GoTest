@@ -1,3 +1,6 @@
+#学习数据库数据格式日期，还有数据的操作（增删改查）
+
+
 #日期 相关操作
 
 #下面的 utc 当做是取别名
@@ -126,4 +129,94 @@ SELECT TIMEDIFF(NOW(), UTC_TIMESTAMP()); #计算相差多少时间，只是计�
 #数据 增删改查
 
 #插入数据
-# INSERT INTO databaSETest.tabtest1 VALUES ('100001', "Aaa", )
+#自增列可以插入 NULL 或者 0
+INSERT INTO databaSETest.tabtest1 VALUES (0, '100001', 'Aaa', UTC_TIMESTAMP(), 99, '2000-01-01', '13711111111');
+INSERT INTO databaSETest.tabtest1 VALUES (NULL, '100001', 'Aaa', UTC_TIMESTAMP(), 99, '2000-01-01', '13711111111');
+INSERT INTO databaSETest.tabtest1 (uuid, name) values ('100002', 'Bbb');
+
+#删
+DELETE FROM databasetest.tabtest1
+WHERE rowId = 2 AND name = 'Aaa';
+
+#改 改多列的时候，中间需要加上逗号
+UPDATE databasetest.tabtest1
+SET name = 'Ccc', time = UTC_TIMESTAMP()
+WHERE rowId = 6;
+
+#查
+#查所有数据
+SELECT *
+FROM databasetest.tabtest1;
+#查多少条记录
+SELECT COUNT(*)
+FROM databasetest.tabtest1;
+#查名字是Aaa的记录
+SELECT COUNT(*)
+FROM databasetest.tabtest1
+WHERE name = 'Aaa' OR score >= 60;
+SELECT
+  name  as n,
+  score as s
+FROM databasetest.tabtest1;
+#LIMIT 指定获取前面多少行数据
+SELECT *
+FROM databasetest.tabtest1
+WHERE score >= 60
+LIMIT 3;
+#LIMIT 指定获取第2行到第4行的数据，索引从0开始
+SELECT *
+FROM databasetest.tabtest1
+WHERE score >= 60
+LIMIT 2, 4;
+#SELECT TOP 2 * FROM databasetest.tabtest1;  不支持TOP语句，用LIMIT代替
+
+#ORDER BY排序
+SELECT *
+FROM databasetest.tabtest1
+ORDER BY name DESC; #默认升序，可以用DESC指定降序,升序是ASC
+
+#GROUP BY 会把字段值一样的值组合在一起，在GROUP BY中即可使用聚合函数，求个数COUNT,求和SUM
+SELECT
+  name,
+  #数量
+  COUNT(*),
+  COUNT(name),
+  COUNT(DISTINCT name),
+  #求和
+  SUM(score),
+  #求平均数
+  AVG(score),
+  #最小值
+  MIN(score),
+  #最大值
+  MAX(score),
+  #标准差
+  STD(score),
+  #把不同的数据组合成一列中，用逗号分隔
+  GROUP_CONCAT(score)
+FROM databasetest.tabtest1
+GROUP BY name DESC;
+
+#DISTINCT 去重 如果指定多个字段，则表示需要每个字段都一样才会去重
+SELECT DISTINCT
+  name,
+  score
+FROM databasetest.tabtest1;
+SELECT
+  name,
+  score
+FROM databasetest.tabtest1;
+
+# 语法：
+# SELECT
+#   select_expr [,
+#   select_expr...]
+#
+# FROM table_name
+#
+# [WHERE where_condition]   #where子句在分组前对记录进行过滤
+#
+# [GROUP BY {col_name | expr} [ASC | DESC], ... [WITH ROLLUP]]
+#
+# [HAVING where_condition]  #having子句在分组后对记录进行过滤
+
