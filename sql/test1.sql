@@ -78,3 +78,16 @@ RENAME COLUMN uid TO uuid; # uuid to uid
 ALTER TABLE tabtest1
   MODIFY COLUMN name VARCHAR(200);
 
+
+#生成用户表
+use databasetest;
+CREATE TABLE tabUser
+(
+    rowId INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    account TEXT NOT NULL,
+    pwd TEXT NOT NULL
+);
+# CREATE UNIQUE INDEX tabUser_rowId_uindex ON tabUser (rowId);
+CREATE UNIQUE INDEX tabUser_account_uindex ON tabUser (account);
+ALTER TABLE tabUser COMMENT = '用户表';
+

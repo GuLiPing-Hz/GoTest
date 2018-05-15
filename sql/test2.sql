@@ -96,12 +96,12 @@ SELECT WEEKDAY(@dt); # 3
 SELECT YEARWEEK(@dt); # 201818 返回 year(2018) + week 位置(18)。
 
 #名称
-select DAYNAME(@dt); # Friday
-select MONTHNAME(@dt); # August
+SELECT DAYNAME(@dt); # Friday
+SELECT MONTHNAME(@dt); # August
 
 #返回传入日期月份的最后一天的日期
-select LAST_DAY('2018-02-01'); # 2008-02-29
-select LAST_DAY('2018-08-08'); # 2008-08-31
+SELECT LAST_DAY('2018-02-01'); # 2008-02-29
+SELECT LAST_DAY('2018-08-08'); # 2008-08-31
 
 #计算某个日期的月份有多少天
 SELECT DAY(LAST_DAY('2019-02-01'));
@@ -209,8 +209,8 @@ FROM databasetest.tabtest1;
 
 # 语法：
 # SELECT
-#   select_expr [,
-#   select_expr...]
+#   SELECT_expr [,
+#   SELECT_expr...]
 #
 # FROM table_name
 #

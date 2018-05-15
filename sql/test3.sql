@@ -94,7 +94,7 @@ DELIMITER ;
 SET @a_in = 1, @b_in = 2;
 SET @sum_out = 0;
 #调用存储过程
-CALL proc_test_opt(@a_in, @b_in, 4, @sum_out);
+CALL proc_test_opt(@a_in, @b_in, 5, @sum_out);
 SELECT
   @b_in,
   @sum_out;
