@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="yes" name="apple-touch-fullscreen">
+    <meta content="telephone=no,email=no" name="format-detection">
+    <script src="http://g.tbcdn.cn/mtb/lib-flexible/0.3.4/??flexible_css.js,flexible.js"></script>
+    <link rel="apple-touch-icon" href="favicon.png">
+    <link rel="Shortcut Icon" href="favicon.png" type="image/x-icon">
+
+    <title>注册</title>
+
+    <style type="text/css">
+        /*指定标签的样式*/
+        div.bg {
+            /*align: center;*/
+            text-align: center; /*让div内部文字居中*/
+        }
+
+        div.intro {
+            color: blueviolet;
+            font-size: 40px;
+        }
+
+        div.input {
+            margin-top: 20px;
+            font-size: 30px;
+        }
+
+        /*指定全局的样式*/
+        .btn {
+            margin-top: 20px;
+            font-size: 30px;
+        }
+    </style>
+
+    <script src="md5.js"></script>
+    <script type="text/javascript">
+        function checkForm() {
+            console.log("clickLogin");
+
+            var accountInput = document.getElementById("account");
+            var pwdInput = document.getElementById("pwd");
+            var pwdMd5Input = document.getElementById("md5_pwd");
+            var pwdMd5 = md5(pwdInput.value);
+            console.log("account=" + accountInput.value + ",pwd=" + pwdInput.value + ",md5(pwd)=" + pwdMd5);
+
+            pwdMd5Input.value = pwdMd5;
+
+            return false;
+        }
+    </script>
+</head>
+<body>
+<!-- 页面结构写在这里 -->
+
+<div class="bg">
+    <div class="intro">你好,欢迎注册！</div>
+    <div class="input">
+        <form id="formLogin" action='' method="get" onsubmit="return checkForm()">
+            <div>账号:<input type="text" id="account" name="account" value=""/></div>
+            <div>密码:<input type="password" id="pwd" value=""/></div>
+            <input type="hidden" id="md5_pwd" name="pwd" value=""/>
+            <input class="btn" type="submit" value="游客登录"/>
+        </form>
+    </div>
+
+</div>
+
+</body>
+</html>
