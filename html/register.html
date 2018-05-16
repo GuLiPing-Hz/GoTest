@@ -49,7 +49,7 @@
 
             pwdMd5Input.value = pwdMd5;
 
-            return false;
+            return true;
         }
     </script>
 </head>
@@ -59,7 +59,7 @@
 <div class="bg">
     <div class="intro">你好,欢迎注册！</div>
     <div class="input">
-        <form id="formLogin" action='' method="get" onsubmit="return checkForm()">
+        <form id="formLogin" action="http://192.168.0.18:8081/register" method="get" onsubmit="return checkForm()">
             <div>账号:<input type="text" id="account" name="account" value=""/></div>
             <div>密码:<input type="password" id="pwd" value=""/></div>
             <input type="hidden" id="md5_pwd" name="pwd" value=""/>

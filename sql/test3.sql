@@ -12,7 +12,7 @@
 # DELIMITER ;
 
 #创建存储过程或者执行存储过程必须指定某个数据库schemas
-USE databaSETest;
+USE databasetest;
 
 -- ----------------------------
 -- Procedure structure for `proc_add` begin
@@ -26,7 +26,6 @@ DELIMITER //
 # DEFINER指定权限的存储过程
 # CREATE DEFINER =`root`@`localhost` PROCEDURE `proc_adder`(IN a int, IN b int, OUT sum int)
 CREATE PROCEDURE proc_test_opt(IN a INT, INOUT b INT, IN opt INT, OUT sum INT)
-
   BEGIN
 
     #Routine body goes here...
