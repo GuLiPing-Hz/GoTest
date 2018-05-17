@@ -1,6 +1,12 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"strconv"
+	"runtime"
+	"path"
+	"strings"
+)
 
 /*
 
@@ -20,17 +26,52 @@ window用户可以使用msi安装，并且必须在环境变量中指定GOPATH,�
 //import . "fmt"，将fmt启用别名"."，这样就可以直接使用其内容，而不用再添加ｆｍｔ，如fmt.Println可以直接写成Println
 //import  _ "fmt" 表示不使用该包，而是只是使用该包的init函数，并不显示的使用该包的其他内容。注意：这种形式的import，当import时就执行了fmt包中的init函数，而不能够使用该包的其他函数。
 
-
 func main() {
 	//最简单的打印-注释(单行)
 	fmt.Println("Hello 世界") //两个语句写同一行时才需要分号
 
 	//声明常量
 	const ConstA = 1
+	const ( //常量当枚举使用
+		Unknown = 0
+		Female  = 1
+		Male    = 2
+	)
+	// iota 特殊常量，可以认为是一个可以被编译器修改的常量
+	// 在没一个const关键字出现是，被重置为0，
+	// 然后再下一个const出现之前，每出现一次iota，其所代表的数字会自动增加1。
+	const (
+		cA = iota
+		cB = iota
+		cC = iota
+	)
+	print("cA,cB,cC=")
+	println(cA, cB, cC)
+	//上面可以简写为
+	const (
+		cA1 = iota
+		cB1
+		cC1
+	)
+	print("cA1,cB1,cC1=")
+	println(cA1, cB1, cC1)
+
+	const (
+		a2 = iota //0
+		b2        //1
+		c2        //2
+		d2 = "ha" //独立值，iota += 1
+		e2        //"ha"   iota += 1
+		f2 = 100  //iota +=1
+		g2        //100  iota +=1
+		h2 = iota //7,恢复计数
+		i2        //8
+	)
+	fmt.Println(a2, b2, c2, d2, e2, f2, g2, h2, i2)
 
 	//声明变量
 	var a = 10
-	b := 20
+	b := 20 //省略var
 
 	//声明一般类型
 	type newInt int
@@ -83,9 +124,26 @@ func main() {
 	println(a1 || b1)
 	println(! a1)
 
-	// 6.成员运算符:
-	a2 := "a"
-	b2 := "abcdefg"
-	println("a in b =",a2 in b2) //判断a是否在b的里面，可以是字符串，或者是元组，序列，字典
-	println("a not in b =",a2 not in b2)
+	//字符串连接
+	println("123" + "abc")
+
+	//字符串数字转换
+	//字符串转int
+	num, err := strconv.Atoi("123")
+	//字符串转int64
+	var num64 int64
+	num64, err = strconv.ParseInt("1234", 10, 64)
+	if err != nil {
+		println(err)
+	}
+	println("字符串->数字:", num, num64)
+	str := strconv.Itoa(456)
+	println("数字->字符串:", str)
+
+	//读取当前文件名
+	_, file, line, ok := runtime.Caller(0) //使用下划线告诉编译器抛弃返回值
+	println(file, line, ok)
+	base := path.Base(file)
+	ext := path.Ext(file)
+	println(base, ext, strings.TrimSuffix(base, ext))
 }
