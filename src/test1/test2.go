@@ -60,14 +60,79 @@ func main() {
 		println("True")
 	}
 
+	println("if else if")
 	a = 1 //使用全局变量
 	if a == 0 {
 		println("a==0")
 	} else if a == 1 {
 		println("a==1")
 	} else {
-		println("!(a==0&&a==1)")
+		println("!(a==0 || a==1)")
+	}
+
+	println("switch")
+	switch a {
+	case 0: //go中的case不需要写break，从上到下
+		println("a==0")
+	case 1:
+		println("a==1")
+	default:
+		println("!(a==0 || a==1)")
+	}
+
+	var xInterface interface{} //nil
+	xInterface = 10            //int 类型
+	xInterface = 12.5          //float64
+	xInterface = func(int) {}  //func(int) 类型
+	xInterface = true
+
+	println("sizeoof xInterface = ", unsafe.Sizeof(xInterface))
+	switch xInterface.(type) {
+	case nil:
+		println("nil 类型")
+	case int8:
+		println("int16 类型")
+	case int16:
+		println("int16 类型")
+	case int32:
+		println("int32 类型")
+	case int:
+		println("int 类型")
+	case float32:
+		println("float32 类型")
+	case float64:
+		println("float64 类型")
+	case func(int):
+		println("func(int) 类型")
+	case bool, string:
+		println("bool, string 类型")
+	default:
+		println("未知类型")
 	}
 
 	//a == 1 ? println("a==1"):println("a!=1")
+
+	//go 独特的select语句
+	/**
+	select {
+    case communication clause  :
+       statement(s);
+    case communication clause  :
+       statement(s);
+    // 你可以定义任意数量的 case
+	default : //可选
+		statement(s);
+	}
+
+以下描述了 select 语句的语法：
+	每个case都必须是一个通信
+	所有channel表达式都会被求值
+	所有被发送的表达式都会被求值
+	如果任意某个通信可以进行，它就执行；其他被忽略。
+	如果有多个case都可以运行，Select会随机公平地选出一个执行。其他不会执行。
+	否则：
+	如果有default子句，则执行该语句。
+	如果没有default字句，select将阻塞，直到某个通信可以运行；Go不会重新对channel或值进行求值。
+	 */
+
 }

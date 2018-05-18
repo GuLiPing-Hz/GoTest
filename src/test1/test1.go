@@ -92,6 +92,14 @@ func main() {
 	println("a>=b", a >= b)
 	println("a<=b", a <= b)
 
+	println("a =", a)
+	a ++
+	//a11 := a ++ //语法错误
+	println("a ++=", a)
+	a --
+	//a12 := a -- //语法错误
+	println("a --=", a)
+
 	//3.赋值运算符：
 	var c = 1
 	c += a
@@ -123,6 +131,11 @@ func main() {
 	println(a1 && a1)
 	println(a1 || b1)
 	println(! a1)
+
+	//6.其他运算符: &取地址，*取内容 类似c++
+	var aPointer *bool = &a1
+	println("&a1=", aPointer)        //返回变量存储地址
+	println("*aPointer=", *aPointer) //读取地址中的内容
 
 	//字符串连接
 	println("123" + "abc")
