@@ -1,6 +1,10 @@
 package main
 
-import "unsafe"
+import (
+	"unsafe"
+	"strings"
+	"fmt"
+)
 
 /**
 	go支持的类型：
@@ -32,7 +36,7 @@ import "unsafe"
 //多维变量声明
 var a, b, c = 1, 1.5, "123" //全局变量
 
-func joke() {
+func joke(arg int) { //arg是形参
 	c := 2     //局部变量
 	println(c) //未使用的局部变量编译会报错
 }
@@ -40,7 +44,7 @@ func joke() {
 //joke()//这里无法调用
 
 func main() {
-	joke()
+	joke(1)
 
 	//查看大小长度
 	println(a, b, c, len(c))
@@ -55,7 +59,7 @@ func main() {
 	x, y = y, x
 	println("x=", x, ";y=", y)
 
-	//流程控制
+	//go 流程控制
 	if true {
 		println("True")
 	}
@@ -112,6 +116,7 @@ func main() {
 
 	//a == 1 ? println("a==1"):println("a!=1")
 
+	//go select语句
 	//go 独特的select语句
 	/**
 	select {
@@ -133,6 +138,65 @@ func main() {
 	否则：
 	如果有default子句，则执行该语句。
 	如果没有default字句，select将阻塞，直到某个通信可以运行；Go不会重新对channel或值进行求值。
-	 */
 
+	//对于chan的教程，后面再说
+	var c1, c2, c3 chan int
+	var i1, i2 int
+	select {
+	  case i1 = <-c1:
+		 fmt.Printf("received ", i1, " from c1\n")
+	  case c2 <- i2:
+		 fmt.Printf("sent ", i2, " to c2\n")
+	  case i3, ok := (<-c3):  // same as: i3, ok := <-c3
+		 if ok {
+			fmt.Printf("received ", i3, " from c3\n")
+		 } else {
+			fmt.Printf("c3 is closed\n")
+		 }
+	  default:
+		 fmt.Printf("no communication\n")
+	}
+	*/
+	println(strings.Repeat("*", 50))
+
+	//go 循环语句
+	for j := 1; j <= 5; j++ { //c风格循环
+		println("for 2 i=", j)
+	}
+	println(strings.Repeat("*", 50))
+	i := 1
+	for i <= 3 { // 类似while循环
+		println("for 1 i=", i)
+		i++
+	}
+	println(strings.Repeat("*", 50))
+	for { // while(true),必须用break或者return跳出循环
+		println("for 3 ")
+		break //同样具有continue goto语句，用法同c
+	}
+	println(strings.Repeat("*", 50))
+	//定义数组
+	var numbers = [6]int{1, 2, 3, 4, 5, 6}
+	for i, x := range numbers {
+		//println("numbers["+strconv.Itoa(i)+"]=",x)
+		//println("numbers[%d]=%d",i,x)//这个是不行的
+		//fmt.Printf("numbers[%d]=%d;", i, x)
+		println(fmt.Sprintf("numbers[%d]=%d;", i, x))
+	}
+
+	//支持循环嵌套for语句
+
+	//定义自定义结构 类似c
+	type Student struct {
+		id    int //
+		name  string
+		score int
+	}
+
+	var studentA Student //默认值
+	//申明结构实例并赋值
+	studentB := Student{1, "Jack", 100}
+	println(studentA.name, studentB.name)
+	studentCP := &studentB
+	println(studentCP.name) //跟c不同，指针也用 点 访问
 }

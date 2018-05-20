@@ -159,4 +159,8 @@ func main() {
 	base := path.Base(file)
 	ext := path.Ext(file)
 	println(base, ext, strings.TrimSuffix(base, ext))
+
+	//println对小数打印有问题
+	println(3.14)
+	fmt.Println(3.14)
 }
