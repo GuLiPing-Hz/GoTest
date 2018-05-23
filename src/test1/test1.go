@@ -6,6 +6,7 @@ import (
 	"runtime"
 	"path"
 	"strings"
+	"reflect"
 )
 
 /*
@@ -29,6 +30,11 @@ window用户可以使用msi安装，并且必须在环境变量中指定GOPATH,�
 func main() {
 	//最简单的打印-注释(单行)
 	fmt.Println("Hello 世界") //两个语句写同一行时才需要分号
+
+	//查看变量地址
+	//查看变量类型
+	var vGlp int = 1
+	fmt.Printf("vGlp address = %p, type = %s\n", &vGlp, reflect.TypeOf(vGlp))
 
 	//声明常量
 	const ConstA = 1
@@ -163,4 +169,9 @@ func main() {
 	//println对小数打印有问题
 	println(3.14)
 	fmt.Println(3.14)
+
+	var a3 int64 = 100
+	var b3 int = 10
+	//fmt.Println(a3 + b3)//编译不过
+	fmt.Println(a3 + int64(b3)) //必须转成相同类型的数据才能操作
 }
