@@ -7,6 +7,8 @@ import (
 )
 
 /**
+	学习 go语言类型，多重赋值，if/else/switch/select流程控制，for循环
+
 	go支持的类型：
 		布尔类型 true/false
 		数字类型
@@ -185,18 +187,9 @@ func main() {
 	}
 
 	//支持循环嵌套for语句
-
-	//定义自定义结构 类似c
-	type Student struct {
-		id    int //
-		name  string
-		score int
+	for i := 0; i < 5; i++ {
+		for j := 0; j < 5; j++ {
+			println("for for", i, j)
+		}
 	}
-
-	var studentA Student //默认值
-	//申明结构实例并赋值
-	studentB := Student{1, "Jack", 100}
-	println(studentA.name, studentB.name)
-	studentCP := &studentB
-	println(studentCP.name) //跟c不同，指针也用 点 访问
 }

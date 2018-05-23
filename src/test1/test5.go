@@ -5,9 +5,10 @@ import (
 	"reflect"
 	"math"
 	"test1/codeerror"
+	"errors"
 )
 
-//go语言接口
+//学习 go语言接口，实现，异常处理 panic recover
 /**
 定义接口
 type interface_name interface {
@@ -116,28 +117,93 @@ func testError() {
 	fmt.Println("testError in")
 
 	defer func() {
-		if p := recover(); p != nil {
+		fmt.Println("defer func in")
+		p := recover() //recover用于还原现场程序，可继续执行，与panic配对使用
+		if p != nil {
 			if reflect.TypeOf(p) == reflect.TypeOf(&codeerror.CodeError{}) {
-				var er = p.(codeerror.CodeError) //interface转换成指定类型的数据
-				fmt.Println(er.Reserve)
+				//interface转换成指定类型的数据,类型不能弄错，否则生成的时候会报错
+				var er = p.(*codeerror.CodeError)
+				fmt.Println(er)
+				fmt.Println("er.Reserve = ", er.Reserve)
 			}
-			fmt.Println("reflect.TypeOf(p) == reflect.TypeOf(codeerror.CodeError{})",
-				reflect.TypeOf(p) == reflect.TypeOf(codeerror.CodeError{}))
 			fmt.Println(reflect.TypeOf(p), reflect.TypeOf(&codeerror.CodeError{}))
 			fmt.Printf("Fatal error: %s\n", p)
 		}
+
+		fmt.Println("defer func out")
 	}()
 
 	//错误
 	a, err := Sqrt(-1)
 	fmt.Println("a=", a) //
 	if err != nil {
-		//fmt.Println(err)
+		//一般都会传入error类型变量，panic用于终止程序继续执行，但是会运行之前保存的defer
 		panic(err)
+
+		/**
+		对于panic，一般是不得不用的情况下才使用，否则建议不要使用过多的异常机制，
+		小错误还是走小错误的方式，不要乱抛异常
+		 */
 	}
 
+	//由于上面的panic 导致我们这里的代码无法继续执行
 	fmt.Println("testError out")
 }
+
+/**
+伪代码
+//检查错误的方法1
+func checkError(err error) {
+    if err != nil {
+        fmt.Println("Error is ", err)
+        os.Exit(-1)
+    }
+}
+
+func foo() {
+    err := doStuff1()
+    checkError(err)
+
+    err = doStuff2()
+    checkError(err)
+
+    err = doStuff3()
+    checkError(err)
+}
+ */
+
+//检查错误的方法2
+type Something struct {
+	err   error
+	index int
+}
+
+func (thing *Something) do() (int, error) {
+	if thing.err != nil {
+		return thing.index, thing.err
+	}
+
+	//do something
+	thing.index++
+	//操作thing.err
+
+	return thing.index, thing.err
+}
+
+//还可以通过这样的方式定义错误
+var (
+	ErrInvalid    = errors.New("invalid argument")
+	ErrPermission = errors.New("permission denied")
+	ErrExist      = errors.New("file already exists")
+	ErrNotExist   = errors.New("file does not exist")
+)
+/*
+伪代码，处理不同的错误方式
+err := os.XXX
+if err == os.ErrInvalid {
+    //handle invalid
+}
+ */
 
 func main() {
 	fmt.Println("main in")

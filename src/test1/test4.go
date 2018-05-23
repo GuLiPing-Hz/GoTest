@@ -6,8 +6,9 @@ import (
 	"strings"
 )
 
-//字符串操作
+//学习 字符串常用函数，数组，切片(动态数组),字典
 
+//字符串操作
 func testStr() {
 	fmt.Println("字符串拼接:" + strconv.Itoa(123))
 	s := "Hello "
@@ -54,6 +55,7 @@ func testStr() {
 
 }
 
+//数组操作
 func testArra() {
 	//数组测试
 	//静态数组
@@ -94,6 +96,7 @@ func testArra() {
 	fmt.Println("copy后的切片 slice3=", slice3, len(slice3), cap(slice3))
 }
 
+//字典操作
 func testMap() {
 	//Map 是一种无序的键值对的集合.
 	//Map 最重要的一点是通过 key 来快速检索数据，key 类似于索引，指向数据的值。

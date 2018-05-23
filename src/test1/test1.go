@@ -12,6 +12,7 @@ import (
 /*
 
 初学Go
+常量，变量，运算符，读取脚本当前文件名
 
 Go的安装：https://studygolang.com/dl
 
