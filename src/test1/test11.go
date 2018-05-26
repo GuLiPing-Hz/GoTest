@@ -1,6 +1,8 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
 /**
 defer 可以把表达式推入一个栈中，先进后出的方式执行

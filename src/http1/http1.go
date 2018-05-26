@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
-	"log"
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
+	"log"
+	"io/ioutil"
 )
 
 //注意：在使用如下命令的时候，由于没有在window环境变量中添加GOPATH，导致一直下载失败，必须添加GOPATH环境变量才能安装
@@ -103,7 +104,7 @@ func register(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func main() {
+func testServer() {
 	http.HandleFunc("/", sayhelloName)       //设置访问的路径
 	http.HandleFunc("/more", sayMore)        //设置访问的路径
 	http.HandleFunc("/more/", sayMore1)      //设置访问的路径
@@ -112,4 +113,16 @@ func main() {
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}
+}
+
+func testClient() {
+	response, _ := http.Get("http://www.baidu.com")
+	defer response.Body.Close()
+	body, _ := ioutil.ReadAll(response.Body)
+	fmt.Println(string(body))
+}
+
+func main() {
+	testClient()
+	testServer()
 }

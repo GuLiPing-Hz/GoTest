@@ -7,6 +7,7 @@ import (
 	"path"
 	"strings"
 	"reflect"
+	"time"
 )
 
 /*
@@ -31,6 +32,8 @@ window用户可以使用msi安装，并且必须在环境变量中指定GOPATH,�
 func main() {
 	//最简单的打印-注释(单行)
 	fmt.Println("Hello 世界") //两个语句写同一行时才需要分号
+	fmt.Println(`Hello 
+世界2`)
 
 	//查看变量地址
 	//查看变量类型
@@ -158,7 +161,8 @@ func main() {
 	}
 	println("字符串->数字:", num, num64)
 	str := strconv.Itoa(456)
-	println("数字->字符串:", str)
+	tt := time.Now().Unix()
+	println("数字->字符串:", str,tt,strconv.FormatInt(tt,10))
 
 	//读取当前文件名
 	_, file, line, ok := runtime.Caller(0) //使用下划线告诉编译器抛弃返回值
@@ -167,6 +171,7 @@ func main() {
 	ext := path.Ext(file)
 	println(base, ext, strings.TrimSuffix(base, ext))
 
+	//更多其他基础测试
 	//println对小数打印有问题
 	println(3.14)
 	fmt.Println(3.14)
@@ -175,4 +180,38 @@ func main() {
 	var b3 int = 10
 	//fmt.Println(a3 + b3)//编译不过
 	fmt.Println(a3 + int64(b3)) //必须转成相同类型的数据才能操作
+
+	var s1 string
+	println(s1 == "") //没有 s1 == nil
+
+	a4, a5, a6, a7 := 0, 0, 0, 0
+	println("a4&a5&a6&a7 = ", a4&a5&a6&a7)
+
+	type User struct {
+		name  string
+		score int
+	}
+	var users []User
+	users = append(users, User{"a", 8})
+	users = append(users, User{"b", 10})
+	for _, user := range users {
+		println(user.name, user.score)
+	}
+
+	println("切片实验，修改前")
+	var bytes [] byte
+	bytes = append(bytes, 1, 2, 3, 4, 5, 6, 7, 8)
+	for _, b := range bytes {
+		print(b, " ")
+	}
+	println()
+	pos := 2
+	bytes1 := bytes[pos : pos+2] //获取其中的部分切片
+	bytes1[0] = 30               //修改其中的内容
+	bytes1[1] = 40
+	println("切片实验，修改后")
+	for _, b := range bytes {
+		print(b, " ")
+	}
+	println()
 }
