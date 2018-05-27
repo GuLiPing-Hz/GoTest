@@ -5,6 +5,7 @@ import (
 	"time"
 	"sync/atomic"
 	"sync"
+	"strconv"
 )
 
 //学习 go chan信道(读取，写入，阻塞) goroutine多线程封装
@@ -104,7 +105,7 @@ func consume() { //消费goroutine
 	//}
 	defer wg.Done()
 
-	//go允许我们使用range读取信道
+	//go允许我们使用range一次读取信道中的多个数据
 	for v := range ch1 {
 		fmt.Println("read i = ", v)
 		time.Sleep(time.Second)
@@ -140,17 +141,75 @@ func test5() {
 	fmt.Println("主线程wait 结束")
 }
 
-// 测试之间的流程控制select
+// 测试之前的流程控制select
 // Go的select语句让程序线程在多个channel的操作上等待，
 // select语句在goroutine 和channel结合的操作中发挥着关键的作用
 func testSelect() {
+	defer fmt.Println("testSelect end")
+	//一般情况下，我们如果需要同时对多个信道进行读取操作，那么我们需要使用select
+
+	var chanSelect1 = make(chan string)
+	var chanSelect2 = make(chan int)
+	var chanSelect3 = make(chan int32)
+	var chanCnt int32 = 0
+
+	go func() {
+		for i := 0; i < 5; i++ {
+			time.Sleep(2 * time.Second)
+			chanSelect1 <- "str_" + strconv.Itoa(i)
+		}
+
+		cnt := atomic.AddInt32(&chanCnt, 1)
+		chanSelect3 <- cnt
+	}()
+
+	go func() {
+		for i := 0; i < 10; i++ {
+			time.Sleep(time.Second)
+			chanSelect2 <- i * 2
+		}
+
+		cnt := atomic.AddInt32(&chanCnt, 1)
+		chanSelect3 <- cnt
+	}()
+
+	fmt.Println("进入for循环 select")
+	for { //select搭配for循环，可以起到一直运行的效果
+		select { //如果只是select语句，那么其中一个case可以执行就执行下去了
+		case v1 := <-chanSelect1:
+			{
+				fmt.Println("v1=", v1)
+			}
+		case v2 := <-chanSelect2:
+			{
+				fmt.Println("v2=", v2)
+			}
+		case v3 := <-chanSelect3:
+			{
+				fmt.Println("v3=", v3)
+				if v3 == 2 {
+					//break//只能跳出select
+					goto end
+				}
+			}
+		}
+	}
+
+end:
+	fmt.Println("离开for循环 select")
 
 }
 
 func main() {
 	//test1()
-	//test2()
+	//fmt.Println("\n" + strings.Repeat("*", 100))
+	////test2()
+	//fmt.Println("\n" + strings.Repeat("*", 100))
 	//test3()
+	//fmt.Println("\n" + strings.Repeat("*", 100))
 	//test4()
-	test5()
+	//fmt.Println("\n" + strings.Repeat("*", 100))
+	//test5()
+	//fmt.Println("\n" + strings.Repeat("*", 100))
+	testSelect()
 }

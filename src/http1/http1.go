@@ -8,6 +8,8 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"log"
 	"io/ioutil"
+	"net/url"
+	"time"
 )
 
 //注意：在使用如下命令的时候，由于没有在window环境变量中添加GOPATH，导致一直下载失败，必须添加GOPATH环境变量才能安装
@@ -40,7 +42,9 @@ func printRequest(r *http.Request) {
 
 	var arraA = r.Form["a"]
 	//arraA := r.Form["a"]
-	fmt.Println("r.Form['a']=", arraA)
+	fmt.Println("r.Form['a']=", arraA) //获取到的是数组
+	var vA = r.Form.Get("a")           //最好使用Get函数获取一个，
+	fmt.Println(`r.Form.Get("a")=`, vA)
 	if len(arraA) > 0 {
 		fmt.Println("r.Form['a'][0]=", arraA[0])
 	}
@@ -120,9 +124,41 @@ func testClient() {
 	defer response.Body.Close()
 	body, _ := ioutil.ReadAll(response.Body)
 	fmt.Println(string(body))
+
+	//http.PostForm()
+
+	client := &http.Client{}
+
+	param := url.Values{}
+	param.Add("a", "1")
+	param.Add("b", "2")
+	paramEnc := param.Encode()
+	fmt.Println(paramEnc)
+	//request, err := http.NewRequest("POST", "http://127.0.0.1:9090/more?"+paramEnc, nil)
+	request, err := http.NewRequest("POST", "http://127.0.0.1:9090/more", strings.NewReader(param.Encode()))
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	//request.Header.Set("appkey", appKey)
+	//request.Header.Set("nonce", nonce)
+	//request.Header.Set("curtime", curTime)
+	//request.Header.Set("checksum", checksum)
+	request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	response, _ = client.Do(request)
+	defer response.Body.Close()
+	if response.StatusCode == 200 {
+		body, _ := ioutil.ReadAll(response.Body)
+		bodystr := string(body)
+		fmt.Println(bodystr)
+	}
 }
 
 func main() {
+	go testServer()
+	time.Sleep(time.Second * 3)
 	testClient()
-	testServer()
+	time.Sleep(time.Hour)
 }
