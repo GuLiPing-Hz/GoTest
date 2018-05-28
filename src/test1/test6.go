@@ -12,6 +12,16 @@ import (
 
 //关键字 go 为我们开启一个goroutine
 
+/*
+Go中channel可以是只读、只写、同时可读写的。
+//定义只读的channel
+read_only := make (<-chan int)
+//定义只写的channel
+write_only := make (chan<- int)
+//可同时读写
+read_write := make (chan int)
+*/
+
 func do(start int) {
 	var end = start + 5
 	for i := start; i < end; i++ {

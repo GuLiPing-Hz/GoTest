@@ -6,6 +6,7 @@ import (
 	"container/list"
 	"reflect"
 	"strings"
+	"encoding/json"
 )
 
 func test() {
@@ -115,8 +116,52 @@ func testSet() {
 	})
 }
 
+type roomStatus struct {
+	RoomId   string //对于需要Json解析/反解析的数据，我们必须使用大写，否则json.Marshal无法获取数据
+	RealCnt  int
+	RobotCnt int
+	TotalCnt int
+}
+
+func testJson() {
+	room := roomStatus{"100", 2, 2, 4}
+	bytes, err := json.Marshal(room)
+	fmt.Println(bytes, err)
+
+	var room2 roomStatus
+	json.Unmarshal(bytes, &room2)
+	fmt.Println(room2, err)
+
+	rooms := []roomStatus{}
+	rooms = append(rooms, roomStatus{"101", 1, 1, 2})
+	rooms = append(rooms, roomStatus{"102", 1, 1, 2})
+	rooms = append(rooms, roomStatus{"103", 1, 1, 2})
+
+	//go数据序列化成字节
+	bytes, err = json.Marshal(rooms)
+	fmt.Println("json roomStatus=", bytes, err)
+
+	//json通用数据解析
+	var rooms2 interface{}
+	json.Unmarshal(bytes, &rooms2)
+	fmt.Println(rooms2, err)
+	rooms3 := rooms2.([]interface{}) //json通用数据解析成数组
+	for k, v := range rooms3 {
+		fmt.Println(k, v)
+
+		v1 := v.(map[string]interface{}) //jso通用数据解析成map
+		for k1, v1 := range v1 {
+			fmt.Println(k1, v1)
+		}
+	}
+}
+
 func main() {
 	test()
+	//测试go包数据结构List 频繁插入删除较优
 	testList()
+	//测试自定义数据结构Set
 	testSet()
+	//测试json解析
+	testJson()
 }

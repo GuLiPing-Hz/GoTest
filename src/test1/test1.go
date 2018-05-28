@@ -162,7 +162,10 @@ func main() {
 	println("字符串->数字:", num, num64)
 	str := strconv.Itoa(456)
 	tt := time.Now().Unix()
-	println("数字->字符串:", str,tt,strconv.FormatInt(tt,10))
+	println("数字->字符串:", str, tt, strconv.FormatInt(tt, 10))
+	bb := []byte(str)
+	println("字符串->[]byte", bb)
+	println("[]byte->字符串", string(bb))
 
 	//读取当前文件名
 	_, file, line, ok := runtime.Caller(0) //使用下划线告诉编译器抛弃返回值

@@ -9,7 +9,7 @@ import (
 	"log"
 	"io/ioutil"
 	"net/url"
-	"time"
+	"encoding/json"
 )
 
 //注意：在使用如下命令的时候，由于没有在window环境变量中添加GOPATH，导致一直下载失败，必须添加GOPATH环境变量才能安装
@@ -108,11 +108,36 @@ func register(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func httpTestJson(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm() //解析参数，默认是不会解析的
+	printRequest(r)
+
+	//fmt.Println(r.Body)
+
+	ct := r.Header.Get("Content-Type")
+	fmt.Println(ct)
+	if ct != "application/json" {
+		w.WriteHeader(http.StatusBadRequest) //http.StatusOK
+		return
+	}
+
+	body, _ := ioutil.ReadAll(r.Body)
+
+	fmt.Println("httpTestJson body=", string(body))
+
+	var result = map[string]interface{}{}
+	result["code"] = 0
+
+	bs, _ := json.Marshal(result)
+	fmt.Fprintf(w, string(bs))
+}
+
 func testServer() {
-	http.HandleFunc("/", sayhelloName)       //设置访问的路径
-	http.HandleFunc("/more", sayMore)        //设置访问的路径
-	http.HandleFunc("/more/", sayMore1)      //设置访问的路径
-	http.HandleFunc("/register", register)   //设置访问的路径
+	http.HandleFunc("/", sayhelloName)     //设置访问的路径
+	http.HandleFunc("/more", sayMore)      //设置访问的路径
+	http.HandleFunc("/more/", sayMore1)    //设置访问的路径
+	http.HandleFunc("/register", register) //设置访问的路径
+	http.HandleFunc("/testJson", httpTestJson)
 	err := http.ListenAndServe(":9090", nil) //设置监听的端口
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
@@ -157,8 +182,9 @@ func testClient() {
 }
 
 func main() {
-	go testServer()
-	time.Sleep(time.Second * 3)
-	testClient()
-	time.Sleep(time.Hour)
+	//go
+	testServer()
+	//time.Sleep(time.Second * 3)
+	//testClient()
+	//time.Sleep(time.Hour)
 }
