@@ -170,9 +170,10 @@ func main() {
 	//读取当前文件名
 	_, file, line, ok := runtime.Caller(0) //使用下划线告诉编译器抛弃返回值
 	println(file, line, ok)
+	dir := path.Dir(file)
 	base := path.Base(file)
 	ext := path.Ext(file)
-	println(base, ext, strings.TrimSuffix(base, ext))
+	println(dir, base, ext, strings.TrimSuffix(base, ext))
 
 	//更多其他基础测试
 	//println对小数打印有问题
