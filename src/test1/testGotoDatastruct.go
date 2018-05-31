@@ -132,21 +132,39 @@ func testJson() {
 	json.Unmarshal(bytes, &room2)
 	fmt.Println(room2, err)
 
-	rooms := []roomStatus{}
-	rooms = append(rooms, roomStatus{"101", 1, 1, 2})
-	rooms = append(rooms, roomStatus{"102", 1, 1, 2})
-	rooms = append(rooms, roomStatus{"103", 1, 1, 2})
+	var rooms []roomStatus
+	var a1 = roomStatus{"101", 1, 1, 2}
+	var a2 = roomStatus{"102", 1, 1, 2}
+	var a3 = roomStatus{"103", 1, 1, 2}
+	rooms = append(rooms, a1)
+	rooms = append(rooms, a2)
+	rooms = append(rooms, a3)
+
+	var roomPointers []*roomStatus
+	roomPointers = append(roomPointers, &a1)
+	roomPointers = append(roomPointers, &a2)
+	roomPointers = append(roomPointers, &a3)
 
 	//go数据序列化成字节
-	bytes, err = json.Marshal(rooms)
-	fmt.Println("json roomStatus=", bytes, err)
+	bytes1, err := json.Marshal(rooms)
+	fmt.Println("json rooms1=", bytes1, err)
+
+	bytes2, err := json.Marshal(roomPointers)
+	fmt.Println("json rooms2=", bytes2, err)
+	var rooms2 []roomStatus
+	json.Unmarshal(bytes2, &rooms2)
+	fmt.Println("roomPointers2 = ", rooms2)
+
+	var roomPointers2 []*roomStatus
+	json.Unmarshal(bytes2, &roomPointers2)
+	fmt.Println("roomPointers2 = ", roomPointers2)
 
 	//json通用数据解析
-	var rooms2 interface{}
-	json.Unmarshal(bytes, &rooms2)
-	fmt.Println(rooms2, err)
-	rooms3 := rooms2.([]interface{}) //json通用数据解析成数组
-	for k, v := range rooms3 {
+	var rooms3 interface{}
+	json.Unmarshal(bytes1, &rooms3)
+	fmt.Println(rooms3, err)
+	rooms4 := rooms3.([]interface{}) //json通用数据解析成数组
+	for k, v := range rooms4 {
 		fmt.Println(k, v)
 
 		v1 := v.(map[string]interface{}) //jso通用数据解析成map
@@ -154,6 +172,16 @@ func testJson() {
 			fmt.Println(k1, v1)
 		}
 	}
+}
+
+var testMx = sync.Mutex{}
+
+func testMutex() {
+	testMx.Lock()
+	defer testMx.Unlock()
+	fmt.Println("testMutex 1")
+	testMx.Lock()
+	fmt.Println("testMutex 2")
 }
 
 func main() {
@@ -164,4 +192,5 @@ func main() {
 	testSet()
 	//测试json解析
 	testJson()
+	testMutex()
 }
