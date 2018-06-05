@@ -199,7 +199,8 @@ GROUP BY name DESC;
 
 #DISTINCT 去重 如果指定多个字段，则表示需要每个字段都一样才会去重
 SELECT DISTINCT
-  name,
+  #AS 起别名
+  name AS n,
   score
 FROM databasetest.tabtest1;
 SELECT
@@ -219,4 +220,59 @@ FROM databasetest.tabtest1;
 # [GROUP BY {col_name | expr} [ASC | DESC], ... [WITH ROLLUP]]
 #
 # [HAVING where_condition]  #having子句在分组后对记录进行过滤
+
+SELECT *
+FROM user
+WHERE uid IN (SELECT uid
+              FROM score);
+
+#SQL连接查询，全联
+USE databasetest;
+SELECT *
+FROM user;
+SELECT *
+FROM score;
+
+#1 内连接(产生的结果是AB的交集) 通常情况下，使用INNER JOIN需要指定连接条件
+#INNER JOIN 与 JOIN 是相同的
+SELECT *
+FROM user
+  INNER JOIN score ON user.uid = score.uid;
+SELECT *
+FROM user
+  JOIN score ON user.uid = score.uid;
+
+SELECT *
+FROM user, score
+WHERE user.uid = score.uid;
+
+#2 外连接
+#全外连接(产生A和B的并集。对于没有匹配的记录，则会以null做为值) user表和score表
+#FULL JOIN 不存在
+
+#左外连接(产生表A的完全集，而B表中匹配的则有值，没有匹配的则以null值取代) user表，以user表为主
+SELECT *
+FROM user
+  LEFT JOIN score ON user.uid = score.uid; #OUTER
+#右外连接(产生表B的完全集，而A表中匹配的则有值，没有匹配的则以null值取代) user表，以score表为主
+SELECT *
+FROM user
+  RIGHT JOIN score ON user.uid = score.uid; #OUTER
+
+#3 交叉外连接(把表A和表B的数据进行一个N*M的组合，即笛卡尔积。
+# 如本例会产生4*4=16条记录，在开发过程中我们肯定是要过滤数据，所以这种很少用。)
+SELECT *
+FROM user
+  CROSS JOIN score; # ON user.uid = score.uid;
+
+#联合
+SELECT *
+FROM user
+UNION SELECT *
+      FROM score;
+
+#备份数据
+# SELECT *
+# INTO user_bac
+# FROM user;
 
