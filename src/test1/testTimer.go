@@ -1,11 +1,11 @@
 package main
 
 import (
-	"time"
 	"fmt"
+	"time"
 )
 
-func main() {
+func testTimer() {
 	//After的使用
 	fmt.Println("main")
 	//time.NewTimer(time.Second*2).C
@@ -46,4 +46,17 @@ func main() {
 	tick = nil
 	//end:
 	fmt.Println("NewTicker 3", tick)
+}
+
+func testTime() {
+	fmt.Println("time1", time.Now().Format(time.ANSIC))
+	fmt.Println("time2", time.Now().Format(time.UnixDate))
+	fmt.Println("time3", time.Now().Format(time.RFC3339))
+	fmt.Println("time4", time.Now().Format(time.RFC3339Nano))
+	fmt.Println("time5", time.Now().Format("2006-01-02 15:04:05.000"))
+}
+
+func main() {
+	testTime()
+	testTimer()
 }

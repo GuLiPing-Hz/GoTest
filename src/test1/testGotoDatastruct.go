@@ -117,8 +117,8 @@ func testSet() {
 }
 
 type roomStatus struct {
-	RoomId   string //对于需要Json解析/反解析的数据，我们必须使用大写，否则json.Marshal无法获取数据
-	RealCnt  int
+	RoomId   string               //对于需要Json解析/反解析的数据，我们必须使用大写，否则json.Marshal无法获取数据
+	RealCnt  int `json:"realCnt"` //指定json序列化的名字
 	RobotCnt int
 	TotalCnt int
 }

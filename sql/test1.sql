@@ -80,7 +80,7 @@ ALTER TABLE tabtest1
 
 
 #生成用户表
-use databasetest;
+USE databasetest;
 CREATE TABLE tabUser
 (
     rowId INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
