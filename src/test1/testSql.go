@@ -152,6 +152,8 @@ func testReflect(data interface{}) {
 
 				if sfType.Type.Kind() == reflect.Int {
 					sfValue.SetInt(2)
+				} else if sfType.Type.Kind() == reflect.String {
+					sfValue.SetString("reflect 测试")
 				}
 			}
 		}
@@ -211,6 +213,7 @@ func main() {
 	defer dbMgr.DbInst.Close()
 
 	dbTemp := DbUser{1, 10, "Hello 世界"}
+	fmt.Println(dbTemp)
 	testReflect(&dbTemp)
 	fmt.Println(dbTemp)
 
