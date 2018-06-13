@@ -70,17 +70,93 @@ type DbUser struct {
 	Name  string `json:"name"`
 }
 
+func (du DbUser) SayHello(name string) { //如果类型为 *DbUser，那么反射将无法识别是否结构体的函数
+	fmt.Println("Hello", du.Name, ",I'm", name)
+}
+
+func (du DbUser) PrintUID() {
+	fmt.Println("DbUser.Uid=", du.Uid)
+}
+
+func (du DbUser) PrintName() {
+	fmt.Println("DbUser.Name=", du.Name)
+}
+
 //通过反射来了解更多信息
 func testReflect(data interface{}) {
-	dataType := reflect.TypeOf(data)
+	var dataType2 reflect.Type
+	var dataVal2 reflect.Value
+	dataType := reflect.TypeOf(data) //获取数据类型
 	fmt.Println(dataType)
 
-	fmt.Println("dataType.Kind() =", dataType.Kind())
+	dataVal := reflect.ValueOf(data) //获取到数据指针的值
+	fmt.Println("dataVal=", dataVal)
+
+	fmt.Println("dataType.Kind() =", dataType.Kind()) //获取数据种类
+	fmt.Println("dataVal.Kind() =", dataVal.Kind())   //获取数据种类
 	if dataType.Kind() == reflect.Ptr {
 		fmt.Println("is Pointer")
+
+		dataType2 = dataType.Elem() //获取数据指针指向的类型  必须是Kind为：Array, Chan, Map, Ptr, or Slice
+		fmt.Println("dataType2=", dataType2)
+
+		dataVal2 = dataVal.Elem() //获取数据指针指向的值
+		fmt.Println("dataVal2=", dataVal2)
+
+		fmt.Println("dataType2.Kind() =", dataType2.Kind()) //获取数据种类
+		fmt.Println("dataVal2.Kind() =", dataVal2.Kind())   //获取数据种类
+
+		if dataType2.Kind() == reflect.Struct { //判断数据是否是结构体
+			fmt.Println("dataType2 查看结构体字段", dataType2.NumField(), dataVal2.NumField())
+			for i := 0; i < dataType2.NumField(); i++ {
+				var sf reflect.StructField = dataType2.Field(i)
+				fmt.Println(i, "sf=", sf)
+			}
+
+			var args []reflect.Value
+			args = append(args, dataVal2)
+
+			fmt.Println("dataType2 查看结构体函数", dataType2.NumMethod(), dataVal2.NumMethod())
+			for i := 0; i < dataType2.NumMethod(); i++ {
+				var method reflect.Method = dataType2.Method(i)
+				fmt.Println(i, "method=", method)
+				if method.Func.Type().NumIn() == 1 { //需要几个参数
+					//函数调用
+					method.Func.Call(args) //跟Lua一样，调用结构体，第一个参数需要传入自己
+				} else {
+
+				}
+			}
+
+			fmt.Println("调用函数")
+			//如果是通过type找函数的话，调用的时候需要带上本身的value
+			methodSayHello, ok := dataType2.MethodByName("SayHello")
+			if ok {
+				args2 := append(args, reflect.ValueOf("Jack From type"))
+				methodSayHello.Func.Call(args2)
+			}
+
+			//如果是通过value找函数的话，调用的时候不需要带上本身的value
+			methodSayHello2 := dataVal2.MethodByName("SayHello")
+			if methodSayHello2.IsValid() {
+				var args2 []reflect.Value
+				args2 = append(args2, reflect.ValueOf("Jack From value"))
+				methodSayHello2.Call(args2)
+			}
+
+			//修改结构字段的值
+			for i := 0; i < dataType2.NumField(); i++ {
+				var sfType reflect.StructField = dataType2.Field(i)
+				fmt.Println(i, "sfType=", sfType)
+				var sfValue reflect.Value = dataVal2.Field(i)
+
+				if sfType.Type.Kind() == reflect.Int {
+					sfValue.SetInt(2)
+				}
+			}
+		}
 	}
 
-	fmt.Println(dataType.)
 }
 
 func testDbHelp(dbMgr *tool.DBMgr) {
@@ -136,6 +212,8 @@ func main() {
 
 	dbTemp := DbUser{1, 10, "Hello 世界"}
 	testReflect(&dbTemp)
+	fmt.Println(dbTemp)
+
 	//testMySql(&dbMgr)
 	//testDbHelp(&dbMgr)
 }
