@@ -78,6 +78,15 @@ RENAME COLUMN uid TO uuid; # uuid to uid
 ALTER TABLE tabtest1
   MODIFY COLUMN name VARCHAR(200);
 
+#创建临时表
+USE databasetest;
+CREATE TEMPORARY TABLE tabUserTemp
+(
+    rowId INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    account TEXT NOT NULL,
+    pwd TEXT NOT NULL
+);
+#临时表的插入查询删除跟普通表操作一样
 
 #生成用户表
 USE databasetest;
@@ -90,4 +99,5 @@ CREATE TABLE tabUser
 # CREATE UNIQUE INDEX tabUser_rowId_uindex ON tabUser (rowId);
 CREATE UNIQUE INDEX tabUser_account_uindex ON tabUser (account);
 ALTER TABLE tabUser COMMENT = '用户表';
+
 

@@ -17,17 +17,16 @@ USE databasetest;
 -- ----------------------------
 -- Procedure structure for `proc_add` begin
 -- ----------------------------
+# 如果已经存在一个同名存储过程，那么我们移除掉
+DROP PROCEDURE IF EXISTS proc_test_opt;
 # MySQL默认以";"为分隔符，如果没有声明分割符，则编译器会把存储过程当成SQL语句进行处理，
 # 因此编译过程会报错，所以要事先用“DELIMITER //”声明当前段分隔符，
 # 让编译器把两个"//"之间的内容当做存储过程的代码，不会执行这些代码；“DELIMITER ;”的意为把分隔符还原。
 DELIMITER //
-# 如果已经存在一个同名存储过程，那么我们移除掉
-# DROP PROCEDURE IF EXISTS proc_add;
 # DEFINER指定权限的存储过程
 # CREATE DEFINER =`root`@`localhost` PROCEDURE `proc_adder`(IN a int, IN b int, OUT sum int)
 CREATE PROCEDURE proc_test_opt(IN a INT, INOUT b INT, IN opt INT, OUT sum INT)
   BEGIN
-
     #Routine body goes here...
     DECLARE c INT; #声明变量c
 
@@ -44,13 +43,21 @@ CREATE PROCEDURE proc_test_opt(IN a INT, INOUT b INT, IN opt INT, OUT sum INT)
       SET a = 0;
     END IF;
 
-    #IF ELSE语句
+    #IF ELSEIF ELSE语句
     IF b IS NULL
     THEN
       SET b = 0;
+    ELSEIF b = 0
+      THEN
+        SET b = 11;
     ELSE
       SET b = b + 1;
     END IF;
+
+    SELECT
+      a,
+      b,
+      sum;
 
     #CASE语句
     CASE opt
@@ -81,6 +88,31 @@ CREATE PROCEDURE proc_test_opt(IN a INT, INOUT b INT, IN opt INT, OUT sum INT)
       a,
       b,
       sum;
+
+    SET c = 0;
+    SELECT c;
+    #WHILE 循环
+    WHILE c < 3 DO
+      SET c = c + 1;
+    END WHILE;
+    SELECT c;
+
+    #REPEAT 循环
+    REPEAT
+      SET c = c + 1;
+    UNTIL c > 5 END REPEAT;
+    SELECT c;
+
+    #LOOP 循环
+    LOOP_1: LOOP
+      IF c > 10
+      THEN
+        LEAVE LOOP_1;
+      ELSE
+        SET c = c + 1;
+      END IF;
+    END LOOP;
+    SELECT c;
   END
 //
 #分隔符还原
@@ -90,7 +122,7 @@ DELIMITER ;
 -- ----------------------------
 
 #调用
-SET @a_in = 1, @b_in = 2;
+SET @a_in = 1, @b_in = 0;
 SET @sum_out = 0;
 #调用存储过程
 CALL proc_test_opt(@a_in, @b_in, 5, @sum_out);
