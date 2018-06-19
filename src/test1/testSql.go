@@ -187,6 +187,22 @@ func testDbHelp(dbMgr *tool.DBMgr) {
 	fmt.Println(dbUser, dbUser[0].Uid)
 }
 
+//存储过程调用示例
+func testDbRoutines(dbMgr *tool.DBMgr) {
+	_, err := dbMgr.LoadTable(`CALL proc_test_opt(?, ?, ?, @sum_out);`, 1, 0, 5)
+	if err != nil {
+		fmt.Printf("err = %s\n", err.Error())
+		return
+	}
+
+	result2, err := dbMgr.LoadTable(`SELECT @sum_out;`)
+	if err != nil {
+		fmt.Printf("err = %s\n", err.Error())
+		return
+	}
+	fmt.Println("result =", result2)
+}
+
 func main() {
 	var (
 		dbhostsip  = "192.168.0.18:3306" //IP地址
@@ -196,7 +212,7 @@ func main() {
 	)
 
 	pwd := dbpassword //string(sha2.Write)
-	fmt.Println("pwd=", pwd)
+	//fmt.Println("pwd=", pwd)
 
 	//可以通过mysql的命令进入数据库，查询当前的用户信息
 	//select * from mysql.user
@@ -212,11 +228,13 @@ func main() {
 	}
 	defer dbMgr.DbInst.Close()
 
-	dbTemp := DbUser{1, 10, "Hello 世界"}
-	fmt.Println(dbTemp)
-	testReflect(&dbTemp)
-	fmt.Println(dbTemp)
+	//测试反射
+	//dbTemp := DbUser{1, 10, "Hello 世界"}
+	//fmt.Println(dbTemp)
+	//testReflect(&dbTemp)
+	//fmt.Println(dbTemp)
 
 	//testMySql(&dbMgr)
 	//testDbHelp(&dbMgr)
+	testDbRoutines(&dbMgr)
 }

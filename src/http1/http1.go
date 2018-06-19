@@ -10,8 +10,10 @@ import (
 	"io/ioutil"
 	"net/url"
 	"encoding/json"
+	"test1/tool"
 )
 
+var DbMgr = tool.DBMgr{}
 //注意：在使用如下命令的时候，由于没有在window环境变量中添加GOPATH，导致一直下载失败，必须添加GOPATH环境变量才能安装
 //go get -u github.com/go-sql-driver/mysql
 
@@ -82,29 +84,33 @@ func checkErr(err error) {
 
 func register(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm() //解析参数，默认是不会解析的
-	fmt.Println("******************************************sayMore1")
+	fmt.Println("******************************************register")
 	printRequest(r)
 
-	var account = r.Form["account"]
-	var pwd = r.Form["pwd"]
+	var account = r.Form.Get("account")
+	var pwd = r.Form.Get("pwd")
 
 	if len(account) == 0 || len(pwd) == 0 {
 		fmt.Fprintf(w, "<h1>参数提交异常</h1>") //这个写入到w的是输出到客户端的
-	} else if account[0] == "" || pwd[0] == "" || len(pwd[0]) != 32 {
+	} else if account == "" || pwd == "" || len(pwd) != 32 {
 		fmt.Fprintf(w, "<h1>参数格式异常</h1>") //这个写入到w的是输出到客户端的
 	} else {
-		fmt.Fprintf(w, "<h1>欢迎注册,"+account[0]+"</h1>") //这个写入到w的是输出到客户端的
+		//fmt.Fprintf(w, "<h1>登录成功,"+account+"</h1>") //这个写入到w的是输出到客户端的
 
-		var (
-			dbhostsip  = "192.168.0.18:3306" //IP地址
-			dbusername = "root"              //用户名
-			dbpassword = "Glp470312"         //密码
-			dbname     = "databasetest"      //数据库名
-		)
+		//sqlDatas, err := DbMgr.LoadTable(`SELECT account From databasetest.tabuser WHERE account=? AND pwd=?`, account, pwd)
+		sqlDatas, err := DbMgr.LoadTable(`SELECT account From databasetest.tabuser WHERE account=?`, account)
+		if err != nil {
+			fmt.Fprintf(w, "<h1>登录失败,err=%s</h1>", err.Error()) //这个写入到w的是输出到客户端的
+			return
+		}
 
-		_, err := sql.Open("mysql", dbusername + ":"+
-			dbpassword+ "@tcp("+ dbhostsip+ ")/"+ dbname+ "?charset=utf8mb4")
-		checkErr(err)
+		fmt.Println("sqlDatas =", sqlDatas)
+		if len(sqlDatas) <= 0 {
+			fmt.Fprintf(w, "<h1>登录失败! 账号不存在或者密码错误</h1>") //这个写入到w的是输出到客户端的
+			return
+		}
+
+		fmt.Fprintf(w, "<h1>登录成功! 欢迎%s</h1>", account) //这个写入到w的是输出到客户端的
 	}
 }
 
@@ -138,7 +144,9 @@ func testServer() {
 	http.HandleFunc("/more/", sayMore1)    //设置访问的路径
 	http.HandleFunc("/register", register) //设置访问的路径
 	http.HandleFunc("/testJson", httpTestJson)
-	err := http.ListenAndServe(":9090", nil) //设置监听的端口
+
+	server := &http.Server{Addr: ":9090", Handler: nil} //设置监听的端口
+	err := server.ListenAndServe()
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}
@@ -182,6 +190,29 @@ func testClient() {
 }
 
 func main() {
+	var (
+		dbhostsip  = "192.168.0.18:3306" //IP地址
+		dbusername = "glp4703"           //用户名
+		dbpassword = `glp3329`           //密码
+		dbname     = "databasetest"      //数据库名
+	)
+
+	pwd := dbpassword //string(sha2.Write)
+	//fmt.Println("pwd=", pwd)
+
+	//可以通过mysql的命令进入数据库，查询当前的用户信息
+	//select * from mysql.user
+	//host指定了访问来源，
+	//db, err := sql.Open("mysql", dbusername + ":"+
+	//	pwd+ "@tcp("+ dbhostsip+ ")/"+ dbname+ "?charset=utf8mb4")
+	var err error
+	DbMgr.DbInst, err = sql.Open("mysql", dbusername + ":"+
+		pwd+ "@tcp("+ dbhostsip+ ")/"+ dbname+ "?charset=utf8mb4")
+	if err != nil {
+		fmt.Printf("SQL Open Err=%s\n", err)
+	}
+	defer DbMgr.DbInst.Close()
+
 	//go
 	testServer()
 	//time.Sleep(time.Second * 3)
