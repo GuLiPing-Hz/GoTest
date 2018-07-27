@@ -1,5 +1,15 @@
 package main
 
+//golang.org 无法访问，访问github镜像
+/*
+go get github.com/go-sql-driver/mysql
+go get github.com/robfig/cron
+go get github.com/sirupsen/logrus
+
+go get github.com/golang/crypto
+go get github.com/golang/sys
+
+*/
 import (
 	"github.com/sirupsen/logrus"
 	"fmt"

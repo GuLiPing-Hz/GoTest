@@ -10,6 +10,8 @@ import (
 	"reflect"
 )
 
+//mysql -u root -p 打开服务器上的MySQL
+
 func testMySql(dbMgr *tool.DBMgr) {
 	fmt.Printf("SQL Open OK %s\n", dbMgr.DbInst)
 
