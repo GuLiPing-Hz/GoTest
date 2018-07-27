@@ -184,13 +184,43 @@ func testMutex() {
 	fmt.Println("testMutex 2")
 }
 
+type RobotUser struct {
+	UID  int64  `json:"uid"`      //UID
+	Name string `json:"nickname"` // 昵称
+	//小写大头的字段 或者 `json:"-"` 表示不要序列化字段
+}
+
+func testSyncMap() {
+	var m1 sync.Map
+
+	m1.Store(1, &RobotUser{1, "a"})
+	m1.Store(2, &RobotUser{2, "b"})
+	m1.Store(3, &RobotUser{3, "c"})
+
+	v, ok := m1.Load(1)
+	if ok {
+		fmt.Println(v)
+
+		aa := RobotUser{1, "aa"}
+		v = &aa
+		fmt.Println(v)
+		v, _ := m1.Load(1)
+		fmt.Println("使用指针更新map",v)//这个没用
+		m1.Store(1,&aa)
+
+		v, _ = m1.Load(1)
+		fmt.Println("使用store更新map",v)//这个有效更新到map
+	}
+}
+
 func main() {
-	test()
-	//测试go包数据结构List 频繁插入删除较优
-	testList()
-	//测试自定义数据结构Set
-	testSet()
-	//测试json解析
-	testJson()
-	testMutex()
+	//test()
+	////测试go包数据结构List 频繁插入删除较优
+	//testList()
+	////测试自定义数据结构Set
+	//testSet()
+	////测试json解析
+	//testJson()
+	//testMutex()
+	testSyncMap()
 }
