@@ -116,7 +116,7 @@ func testReflect(data interface{}) {
 			}
 
 			var args []reflect.Value
-			args = append(args, dataVal2)
+			args = append(args, dataVal2)//参数传入自己
 
 			fmt.Println("dataType2 查看结构体函数", dataType2.NumMethod(), dataVal2.NumMethod())
 			for i := 0; i < dataType2.NumMethod(); i++ {
@@ -231,12 +231,12 @@ func main() {
 	defer dbMgr.DbInst.Close()
 
 	//测试反射
-	//dbTemp := DbUser{1, 10, "Hello 世界"}
-	//fmt.Println(dbTemp)
-	//testReflect(&dbTemp)
-	//fmt.Println(dbTemp)
+	dbTemp := DbUser{1, 10, "Hello 世界"}
+	fmt.Println(dbTemp)
+	testReflect(&dbTemp)
+	fmt.Println(dbTemp)
 
 	//testMySql(&dbMgr)
 	//testDbHelp(&dbMgr)
-	testDbRoutines(&dbMgr)
+	//testDbRoutines(&dbMgr)
 }

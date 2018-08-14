@@ -199,7 +199,7 @@ func main() {
 	users = append(users, User{"a", 8})
 	users = append(users, User{"b", 10})
 	for _, user := range users {
-		println(user.name, user.score)
+		println("name=",user.name,"score=", user.score)
 	}
 
 	println("切片实验，修改前")
@@ -218,4 +218,6 @@ func main() {
 		print(b, " ")
 	}
 	println()
+
+	//没有三目运算符
 }

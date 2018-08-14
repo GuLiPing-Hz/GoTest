@@ -8,6 +8,7 @@ import (
 
 /**
 	学习 go语言类型，多重赋值，if/else/switch/select流程控制，for循环
+	全局变量，局部变量
 
 	go支持的类型：
 		布尔类型 true/false

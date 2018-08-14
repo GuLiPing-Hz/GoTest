@@ -107,7 +107,8 @@ func produce() { //生产goroutine
 	}
 }
 
-func consume() { //消费goroutine
+func consume() {
+	//消费goroutine
 	//使用for循环读取太麻烦了，，，
 	//for i := 0; i < 10; i++ {
 	//	fmt.Println("read i = ", <-ch1)

@@ -10,29 +10,34 @@ import (
 
 //字符串操作
 func testStr() {
+	fmt.Println("\n\n" + strings.Repeat("*", 15) + "字符串" + strings.Repeat("*", 15))
+	var s = "hello world"
+	var s1 = `hello world` //go语言不能使用单引号表示字符串，单引号只能表示某个字符
+	s2 := `hello
+	world`
+	fmt.Println(s, " ", s1, " ", s2)
 	fmt.Println("字符串拼接:" + strconv.Itoa(123))
-	s := "Hello "
-	//s1 := 'Hello World'//go语言不能使用单引号表示字符串，单引号只能表示某个字符
-	fmt.Println(s)
-	s += "World"
-	fmt.Println(s)
+	fmt.Println(strings.Repeat("*", 30))
 
 	//go对字符串的访问
-	fmt.Println(s[:])
+	s3 := s[:] //字符串拷贝出来的地址 python一样，go不一样
+	fmt.Println(s3, " ", &s, " ", &s3, " ", s == s3, " ", &s == &s3)
 	fmt.Println(s[1:])  //索引起点都是0
 	fmt.Println(s[1:4]) // 前闭后开区间
 	//fmt.Println(s[3:2]) // 前大后小会报错
 	//fmt.Println(s[-5:-2]) // 也不支持负数
 	fmt.Println("一个英文长度为1，utf8中文是3，长度=", len(s), len("中"), len("中文")) // 查看字符串长度
 
-	//fmt.Println("字符串复制","*"*30)
-	// python 3 不同于 python2的%表示法 ，都用大括号表示占位，并且支持索引和关键字，跟c的fmt.Printlnf相比只是多了{:},不用写%了
+	fmt.Println("字符串复制", strings.Repeat("*", 30))
+
 	fmt.Println(fmt.Sprintf("字符串格式化 the first code is %s %d %s", s, 1, "jack son"))
-	s2 := strings.ToUpper(s)
-	fmt.Println("字符串全部转为大写字母", s2)
+	fmt.Println("字符串成员运算符in,Hello 是否存在", strings.Contains(s, "Hello"))
+	fmt.Println("字符串成员运算符in,Hello 是否存在", !strings.Contains(s, "Hello"))
+	fmt.Println("字符串全部转为大写字母", strings.ToUpper(s))
 	fmt.Println("字符串全部转为小写字母", strings.ToLower(s))
-	fmt.Println("Title", strings.Title(s))           // 把每个单词的第一个字母转化为大写，其余小写
-	fmt.Println("ToTitle", strings.ToTitle(s))       //作用同ToUpper
+	fmt.Println("Title", strings.Title(s))     // 把每个单词的第一个字母转化为大写，其余小写
+	fmt.Println("ToTitle", strings.ToTitle(s)) //作用同ToUpper
+
 	fmt.Println("字符串查找Index", strings.Index(s, "l")) // 4指定起始位置 返回在字符串中的开始位置 找不到返回-1
 	fmt.Println("字符串查找IndexAny", strings.IndexAny(s, "l"))
 	fmt.Println("字符串查找IndexAny2", strings.IndexAny(s, "le")) //any的意思就是找到指定字符串中的任意字符
@@ -45,6 +50,8 @@ func testStr() {
 	fmt.Println("Trim=" + strings.TrimSpace(" ss s1  "))
 
 	ss := []string{"a", "b", "c"} //申明字符串数组
+	ss2 := ss[:]                  //数组拷贝出来的地址 python不一样，go不一样,似乎只有字符串的处理是不一样的
+	fmt.Println(ss2, " ", &ss, " ", &ss2, " ", &ss == &ss2)
 	fmt.Println("字符串以指定连接符连接", strings.Join(ss, "_"))
 	fmt.Println("字符串以指定字符串分隔", strings.Split(s, "l"))
 	fmt.Println("字符串检查指定字符串重复出现次数", strings.Count(s, "l"))
@@ -63,18 +70,8 @@ func testArra() {
 	for i, v := range animal {
 		fmt.Println("animal["+strconv.Itoa(i)+"]=", v)
 	}
-
-	//number := [2][2]int{{1, 2}, {2, 3}}
-	number := [][]int{{1, 2, 3}, {2, 3, 4}, {3, 4, 5}}
-	fmt.Println(len(number), len(number[0]))
-	for i, v1 := range number {
-		fmt.Println("number=", i, v1)
-		for j, v2 := range v1 {
-			fmt.Println("number2=", j, v2)
-		}
-	}
-
-	fmt.Println("number[1:2]=", number[1:2]) //跟操作字符串一样，前闭后开区间
+	//go 不支持负索引
+	//fmt.Println(animal[-1])
 
 	//动态数组，使用切片
 	var slice1 []int //申明切片
@@ -94,6 +91,57 @@ func testArra() {
 	fmt.Println("copy后的切片 slice3=", slice3, len(slice3), cap(slice3))
 	slice3 = append(slice3, 10)
 	fmt.Println("copy后的切片 slice3=", slice3, len(slice3), cap(slice3))
+
+	//多维数组
+	//number := [2][2]int{{1, 2}, {2, 3}}
+	number := [][]int{{1, 2, 3}, {2, 3, 4}, {3, 4, 5}}
+	fmt.Println(len(number), len(number[0]))
+	for i, v1 := range number {
+		fmt.Println("number=", i, v1)
+		for j, v2 := range v1 {
+			fmt.Println("number2=", j, v2)
+		}
+	}
+	var arras [][]int
+	var nums = 3
+	for i := 0; i < nums; i++ {
+		var temp []int
+		for j := 0; j < nums; j++ {
+			vi := i + 1
+			vj := j + 1
+			temp = append(temp, vi*vj)
+			//fmt.Println("arras[%d][%d]=%d" % (vi,vj,vi*vj))
+		}
+		//把切边(数组)添加到另一个切片(数组)
+		//arras = append(arras, temp...)
+		arras = append(arras, temp)
+	}
+
+	for i := 0; i < nums; i++ {
+		for j := 0; j < nums; j++ {
+			fmt.Printf("arras[%d][%d]=%d \n", i, j, arras[i][j])
+		}
+	}
+
+	fmt.Println(strings.Repeat("*", 30))
+	fmt.Println(arras[0])
+	fmt.Println(arras[0:2])                  // python支持列表片段访问
+	fmt.Println("number[1:2]=", number[1:2]) //跟操作字符串一样，前闭后开区间
+
+	arras[0][0] = 2
+	fmt.Println("修改 arras[0][0] = ", arras[0][0])
+
+	//删除序列中指定索引的元素
+	var line = 0   //行
+	var column = 0 //列
+	//把一个切片增加到另一个切片中
+	arras[line] = append(arras[line][:column], arras[line][column+1:]...)
+	fmt.Println("删除 arras[0][0] 后 arras[0]=", arras[line])
+
+	//不允许列表相加
+	//print("列表相加", [1, 2, 3]+[4, 5, 6])
+	//不允许列表乘
+	//print("列表相乘", ["Hi"]*4)
 }
 
 //字典操作
@@ -103,22 +151,20 @@ func testMap() {
 	//不过，Map 是无序的，我们无法决定它的返回顺序，
 	//这是因为 Map 是使用 hash 表来实现的。
 
-	var map1 map[string]string //申明一个map
+	var map1 map[string]int //申明一个map
 	fmt.Println("map1=", map1)
 	if map1 == nil {
 		fmt.Println("map1 is nil")
 	}
-	//map1["A"] = "优秀"//对nil赋值，崩溃
+	//map1["A"] = 90//对nil赋值，崩溃
 	fmt.Println("map1=", map1)
-	map1 = make(map[string]string) //创建map，实例化
-	map1["A"] = "优秀"               //添加元素
+	map1 = make(map[string]int) //创建map，实例化
+	map1["A"] = 90               //添加元素
+	fmt.Println("插入字典 map1=", map1)
+	map1["B"] = 80 //添加元素
 	fmt.Println("map1=", map1)
-	map1["B"] = "良好" //添加元素
-	fmt.Println("map1=", map1)
-
-	for k, v := range map1 {
-		fmt.Println("map1[", k, "]=", v)
-	}
+	delete(map1,"A")
+	fmt.Println("移除字典 map1=", map1)
 
 	v, ok := map1["C"]
 	if ok {
@@ -131,6 +177,11 @@ func testMap() {
 	fmt.Println("删除C map1=", map1)
 	delete(map1, "A")
 	fmt.Println("删除A map1=", map1)
+
+	//遍历字典
+	for k, v := range map1 {
+		fmt.Println("map1[", k, "]=", v)
+	}
 }
 
 func main() {

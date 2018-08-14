@@ -21,16 +21,29 @@ func add(a, b int) (int) {
 }
 
 //函数返回多个值
-
 func swap(a, b int) (int, int, int) {
 	return b, a, a + b
 }
 
 //上面都是值传递
-
 func sub(a, b *int) (int) {
 	*a += 100
 	return *a - *b
+}
+
+/**
+go 语言不支持函数的默认参数
+func addEx(a=0, b=1 int) int {
+	return a + b
+}
+*/
+
+func average(val ...interface{}) int {
+	result := 0
+	for i,v := range val {
+		fmt.Println(i,v)
+	}
+	return result
 }
 
 //前面test1和test2中都有main函数，一个go程序实例只允许存在一个main函数
@@ -45,7 +58,9 @@ func main() {
 	var c int = sub(&a, &b)
 	fmt.Println(a, b, c)
 
-	var f = add        //函数类型的变量
+	fmt.Println("平均值为", average(10, 5, 3, 4, 5, 6))  // 位置参数调用
+
+	var f = add            //函数类型的变量
 	fmt.Println(f(10, 11)) //调用
 
 	//函数闭包
@@ -57,12 +72,11 @@ func main() {
 	type Circle struct {
 		radius float64
 	}
-	getArea := func(c Circle) float64 {//计算圆面积
+	getArea := func(c Circle) float64 { //计算圆面积
 		fmt.Println(c.radius)
 		return 3.14 * c.radius * c.radius
 	}
 	var c1 Circle
 	c1.radius = 10
 	fmt.Println("area = ", getArea(c1))
-
 }
