@@ -25,6 +25,7 @@ func testTimer() {
 	<-done
 	fmt.Println("AfterFunc 4")
 
+	//NewTicker的使用
 	tick := time.NewTicker(time.Second * 2)
 	cnt := 0
 	fmt.Println("NewTicker 1")

@@ -164,7 +164,7 @@ func testSelect() {
 	var chanSelect3 = make(chan int32)
 	var chanCnt int32 = 0
 
-	go func() {
+	go func() { //匿名函数
 		for i := 0; i < 5; i++ {
 			time.Sleep(2 * time.Second)
 			chanSelect1 <- "str_" + strconv.Itoa(i)
