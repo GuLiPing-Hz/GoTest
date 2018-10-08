@@ -11,6 +11,9 @@ import (
 )
 
 //mysql -u root -p 打开服务器上的MySQL
+//show databases;
+//use xx(database)
+//show tables;
 
 func testMySql(dbMgr *tool.DBMgr) {
 	fmt.Printf("SQL Open OK %s\n", dbMgr.DbInst)
