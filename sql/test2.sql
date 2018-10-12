@@ -125,6 +125,8 @@ SELECT DATEDIFF(NOW(), UTC_TIMESTAMP()); #计算相差几天
 SELECT TIMEDIFF('22:11:11', '20:10:10'); #('2018-05-10 22:10:10', '2018-04-10 20:10:10'); 报错
 SELECT TIMEDIFF(NOW(), UTC_TIMESTAMP()); #计算相差多少时间，只是计算时间差值
 
+#将一个日期转换成天数
+SELECT TO_DAYS(NOW()),TO_DAYS("2018-10-10");
 
 #数据 增删改查
 
@@ -279,4 +281,3 @@ UNION SELECT *
 # SELECT *
 # INTO user_bac
 # FROM user;
-

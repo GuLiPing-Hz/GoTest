@@ -197,19 +197,52 @@ func testSyncMap() {
 	m1.Store(2, &RobotUser{2, "b"})
 	m1.Store(3, &RobotUser{3, "c"})
 
+	var ru4 *RobotUser = new(RobotUser)
+	ru4.UID = 4
+	ru4.Name = "d"
+	m1.Store(4, ru4)
+
 	v, ok := m1.Load(1)
 	if ok {
 		fmt.Println(v)
 
+		var v1 = v.(*RobotUser)
 		aa := RobotUser{1, "aa"}
+
+		fmt.Println("尝试更新map数据 1", v, v1)
+
+		//尝试更新map数据
 		v = &aa
-		fmt.Println(v)
+		v1 = &aa
+		fmt.Println("尝试更新map数据 2", v, v1)
 		v, _ := m1.Load(1)
-		fmt.Println("使用指针更新map",v)//这个没用
-		m1.Store(1,&aa)
+		fmt.Println("结果重新load：使用指针更新map", v) //这个没用
+		m1.Store(1, &aa)
 
 		v, _ = m1.Load(1)
-		fmt.Println("使用store更新map",v)//这个有效更新到map
+		fmt.Println("使用store更新map", v) //这个有效更新到map
+	}
+
+	fmt.Println("testSyncMap id 4")
+	v, ok = m1.Load(4)
+	if ok {
+		fmt.Println(v)
+
+		var v1 = v.(*RobotUser)
+		aa := RobotUser{4, "dd"}
+
+		fmt.Println("尝试更新map数据 1", v, v1)
+
+		//尝试更新map数据
+		v = &aa
+		v1 = &aa
+		fmt.Println("尝试更新map数据 2", v, v1)
+		v, _ := m1.Load(4)
+		fmt.Println("结果重新load：使用指针更新map", v) //这个没用
+		m1.Store(1, &aa)
+
+		v, _ = m1.Load(1)
+		fmt.Println("使用store更新map", v) //这个有效更新到map
 	}
 }
 
@@ -220,7 +253,7 @@ func main() {
 	////测试自定义数据结构Set
 	//testSet()
 	////测试json解析
-	//testJson()
+	testJson()
 	//testMutex()
 	testSyncMap()
 }

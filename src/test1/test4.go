@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"crypto/md5"
 )
 
 //学习 字符串常用函数，数组，切片(动态数组),字典
@@ -60,6 +61,12 @@ func testStr() {
 	fmt.Println("字符串比较", s, "\n", s2, "\n", strings.EqualFold(s, s2), s == s2)
 	fmt.Println("字符串分割Fields", strings.Fields(s)) //以空格分割字符串返回字符串数组
 
+	var plainText = "abcdefghijklmnopqrstuvwxyz"
+	fmt.Println(plainText[0:len(plainText)-1])
+
+	var sign = md5.Sum([]byte("123"))
+	sign2 := fmt.Sprintf("%x",sign)
+	fmt.Println(sign2)
 }
 
 //数组操作
@@ -80,7 +87,7 @@ func testArra() {
 	}
 	fmt.Println("append之前 slice1=", slice1, len(slice1), cap(slice1)) //空切片
 	slice2 := append(slice1, 1, 2)                                    //                           //可同时添加多个元素
-	fmt.Println("append之后 slice1=", slice1, len(slice1), cap(slice1))
+	fmt.Println("append之后 slice1=", slice1, len(slice1), cap(slice1), slice1 == nil)
 	fmt.Println("slice2=", slice2, len(slice2), cap(slice2))
 
 	//使用make创建一个切片
@@ -159,11 +166,11 @@ func testMap() {
 	//map1["A"] = 90//对nil赋值，崩溃
 	fmt.Println("map1=", map1)
 	map1 = make(map[string]int) //创建map，实例化
-	map1["A"] = 90               //添加元素
+	map1["A"] = 90              //添加元素
 	fmt.Println("插入字典 map1=", map1)
 	map1["B"] = 80 //添加元素
 	fmt.Println("map1=", map1)
-	delete(map1,"A")
+	delete(map1, "A")
 	fmt.Println("移除字典 map1=", map1)
 
 	v, ok := map1["C"]

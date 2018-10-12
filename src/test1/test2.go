@@ -117,7 +117,8 @@ func main() {
 		println("未知类型")
 	}
 
-	//a == 1 ? println("a==1"):println("a!=1")
+	//三目不行
+	//b := a == 1 ? println("a==1"):println("a!=1")
 
 	//go select语句
 	//go 独特的select语句

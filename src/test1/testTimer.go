@@ -58,6 +58,8 @@ func testTime() {
 }
 
 func main() {
+	fmt.Println("Unix time 单位秒", time.Now().Unix())
+
 	testTime()
 	testTimer()
 }
