@@ -132,7 +132,10 @@ func testJson() {
 	json.Unmarshal(bytes, &room2)
 	fmt.Println(room2, err)
 
-	var rooms []roomStatus
+	var rooms []roomStatus = make([]roomStatus, 0)
+	bytes1, err := json.Marshal(rooms)
+	fmt.Println("json rooms1=", bytes1, string(bytes1), err)
+
 	var a1 = roomStatus{"101", 1, 1, 2}
 	var a2 = roomStatus{"102", 1, 1, 2}
 	var a3 = roomStatus{"103", 1, 1, 2}
@@ -146,14 +149,14 @@ func testJson() {
 	roomPointers = append(roomPointers, &a3)
 
 	//go数据序列化成字节
-	bytes1, err := json.Marshal(rooms)
-	fmt.Println("json rooms1=", bytes1, err)
+	bytes1, err = json.Marshal(rooms)
+	fmt.Println("json rooms2=", bytes1, string(bytes1), err)
 
 	bytes2, err := json.Marshal(roomPointers)
-	fmt.Println("json rooms2=", bytes2, err)
+	fmt.Println("json rooms3=", bytes2, err)
 	var rooms2 []roomStatus
 	json.Unmarshal(bytes2, &rooms2)
-	fmt.Println("roomPointers2 = ", rooms2)
+	fmt.Println("roomPointers1 = ", rooms2)
 
 	var roomPointers2 []*roomStatus
 	json.Unmarshal(bytes2, &roomPointers2)
