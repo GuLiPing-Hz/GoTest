@@ -12,3 +12,6 @@ SELECT * FROM lzdb_log WHERE uid=170662;
 UPDATE user_stat SET lb_points = ? WHERE uid = ?;
 UPDATE user_stat SET lb_points = 10 WHERE uid = 100027;
 
+
+SELECT * FROM ip_rule WHERE id>9 OR tm>ADDDATE(NOW(),INTERVAL -2 MINUTE);
+
