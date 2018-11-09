@@ -77,7 +77,15 @@ func main() {
 		h2 = iota //7,恢复计数
 		i2        //8
 	)
-	fmt.Println(a2, b2, c2, d2, e2, f2, g2, h2, i2)
+	fmt.Println("IOTA", a2, b2, c2, d2, e2, f2, g2, h2, i2)
+
+	const (
+		aa1 = g2 + iota
+		aa2
+		aa3
+		aa4
+	)
+	fmt.Println("IOTA", aa1, aa2, aa3, aa4)
 
 	//声明变量
 	var a = 10
@@ -199,7 +207,7 @@ func main() {
 	users = append(users, User{"a", 8})
 	users = append(users, User{"b", 10})
 	for _, user := range users {
-		println("name=",user.name,"score=", user.score)
+		println("name=", user.name, "score=", user.score)
 	}
 
 	println("切片实验，修改前")

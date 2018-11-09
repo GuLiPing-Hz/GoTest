@@ -143,7 +143,7 @@ SELECT TO_DAYS(NOW()),TO_DAYS("2018-10-10");
 #自增列可以插入 NULL 或者 0
 INSERT INTO databaSETest.tabtest1 VALUES (0, '100001', 'Aaa', UTC_TIMESTAMP(), 99, '2000-01-01', '13711111111');
 INSERT INTO databaSETest.tabtest1 VALUES (NULL, '100001', 'Aaa', UTC_TIMESTAMP(), 99, '2000-01-01', '13711111111');
-INSERT INTO databaSETest.tabtest1 (uuid, name) values ('100002', 'Bbb');
+INSERT INTO databaSETest.tabtest1 (uuid, name) VALUES ('100002', 'Bbb');
 #IGNORE INTO 当插入数据时，在设置了记录的唯一性后，如果插入重复数据，将不返回错误，只以警告形式返回
 INSERT IGNORE INTO databaSETest.tabtest1 VALUES (0, '100001', 'Aaa', UTC_TIMESTAMP(), 99, '2000-01-01', '13711111111');
 #REPLACE INTO into如果存在primary 或 unique相同的记录，则先删除掉。再插入新记录
