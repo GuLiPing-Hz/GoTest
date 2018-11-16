@@ -67,4 +67,5 @@ WHERE uid = 177849;
 
 
 SELECT * FROM ip_rule WHERE id>9 OR tm>ADDDATE(NOW(),INTERVAL -2 MINUTE);
+select * from mail_reward where id = 21338;
 
