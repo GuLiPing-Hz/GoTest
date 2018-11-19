@@ -3,10 +3,10 @@ FROM Buyu.user_stat
 WHERE uid = 170652;
 SELECT *
 FROM Buyu.user
-WHERE uid = 177851;
+WHERE uid = 177854;
 SELECT *
 FROM Buyu.user_stat
-WHERE uid = 177851;
+WHERE uid = 177854;
 
 SELECT *
 FROM Buyu.yule_playerlog
