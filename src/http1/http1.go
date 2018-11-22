@@ -11,6 +11,8 @@ import (
 	"net/url"
 	"encoding/json"
 	"test1/tool"
+	"crypto/sha1"
+	"sort"
 )
 
 var DbMgr = tool.DBMgr{}
@@ -138,12 +140,40 @@ func httpTestJson(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, string(bs))
 }
 
+func httpCreate(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm() //解析参数，默认是不会解析的
+	printRequest(r)
+
+	var sign = r.Header.Get("sign")
+
+	var plain = ""
+	var dicKeys []string
+	for k, _ := range r.Form {
+		dicKeys = append(dicKeys, k)
+	}
+	sort.Strings(dicKeys) //go默认升序，可以用reverse获取降序
+	fmt.Println(dicKeys)
+	for _, v := range dicKeys {
+		plain += v + "=" + r.Form[v][0] + "&"
+	}
+
+	key := "ZsNXN8e4Mrpzk7GKDyRcdkk1BSJCkBIHtY6UWbQjFgBXPYt40I48bwoOdTIq6QiK"
+	plain = key + plain[:len(plain)-1]
+	fmt.Println(plain)
+	//获取16进制的签名数据
+	calcSign := fmt.Sprintf("%x", sha1.Sum([]byte(plain)))
+
+	fmt.Println(sign, calcSign)
+	fmt.Fprintf(w, "ok")
+}
+
 func testServer() {
 	http.HandleFunc("/", sayhelloName)     //设置访问的路径
 	http.HandleFunc("/more", sayMore)      //设置访问的路径
 	http.HandleFunc("/more/", sayMore1)    //设置访问的路径
 	http.HandleFunc("/register", register) //设置访问的路径
 	http.HandleFunc("/testJson", httpTestJson)
+	http.HandleFunc("/api/orders/create", httpCreate)
 
 	server := &http.Server{Addr: ":9090", Handler: nil} //设置监听的端口
 	err := server.ListenAndServe()
