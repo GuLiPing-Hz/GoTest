@@ -146,7 +146,7 @@ DELIMITER ;
 -- #查询帮会列表 end
 -- ----------------------------
 
-call proc_select_unions();
+# call proc_select_unions();
 
 -- ----------------------------
 -- #查询帮会列表 begin
@@ -222,6 +222,6 @@ DELIMITER ;
 -- #查询帮会列表 end
 -- ----------------------------
 
-call proc_select_contributions(10000, 177851);
+# call proc_select_contributions(10000, 177851);
 
 
