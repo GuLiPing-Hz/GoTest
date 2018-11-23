@@ -3,11 +3,10 @@ ALTER TABLE Buyu.alms_log
 comment '破产的时候的流水值，用于破产保护机制';
 
 -- ----------------------------
--- #当日获取破产次数，已经最近破产的经验值 begin
+-- #当日获取破产次数，以及最近破产的经验值 begin
 -- ----------------------------
 DROP PROCEDURE IF EXISTS proc_select_collapse_count;
 DELIMITER //
-#@param uid 可以为空，为空查询整个联盟的贡献数据
 CREATE PROCEDURE proc_select_collapse_count(in uidIn bigint, in uuidIn text)
   BEGIN
     #Routine body goes here...
@@ -46,6 +45,49 @@ CREATE PROCEDURE proc_select_collapse_count(in uidIn bigint, in uuidIn text)
 //
 DELIMITER ;
 -- ----------------------------
--- #当日获取破产次数，已经最近破产的经验值 end
+-- #当日获取破产次数，以及最近破产的经验值 end
 -- ----------------------------
 # call proc_select_collapse_count(170652, '0874E0CA-AECF-4D2F-C0FA-00717FA4FAC7')
+
+
+create table if not exists Buyu.pay_exp_log
+(
+  id      bigint PRIMARY KEY    NOT NULL AUTO_INCREMENT,
+  uid     bigint                NOT NULL
+  COMMENT '用户id',
+  oid     bigint                NOT NULL
+  COMMENT '订单号',
+  paycoin int                   NOT NULL
+  COMMENT '充值对应的金币数值',
+  exp     bigint COMMENT '用户充值的时候对应的经验值',
+  time    datetime                       DEFAULT now()
+  COMMENT '写入时间'
+);
+ALTER TABLE pay_exp_log
+  COMMENT = '充值的时候对应的用户经验值';
+
+create index uid
+  on Buyu.pay_exp_log (uid);
+
+-- ----------------------------
+-- #获取当日最近一笔充值金额 begin
+-- ----------------------------
+DROP PROCEDURE IF EXISTS proc_select_payexp_last;
+DELIMITER //
+CREATE PROCEDURE proc_select_payexp_last(in uidIn bigint)
+  BEGIN
+    #Routine body goes here...
+    select
+      paycoin,
+      exp
+    from Buyu.pay_exp_log
+    where uid = uidIn and date(time) = curdate()
+    order by time desc
+    limit 1;
+  END
+//
+DELIMITER ;
+-- ----------------------------
+-- #获取当日最近一笔充值金额 end
+-- ----------------------------
+# call proc_select_payexp_last(170652);
