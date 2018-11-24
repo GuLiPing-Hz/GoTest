@@ -161,7 +161,7 @@ func httpCreate(w http.ResponseWriter, r *http.Request) {
 	plain = key + plain[:len(plain)-1]
 	fmt.Println(plain)
 	//获取16进制的签名数据
-	calcSign := fmt.Sprintf("%x", sha1.Sum([]byte(plain)))
+	calcSign := fmt.Sprintf("%X", sha1.Sum([]byte(plain)))
 
 	fmt.Println(sign, calcSign)
 	fmt.Fprintf(w, "ok")
@@ -174,6 +174,7 @@ func testServer() {
 	http.HandleFunc("/register", register) //设置访问的路径
 	http.HandleFunc("/testJson", httpTestJson)
 	http.HandleFunc("/api/orders/create", httpCreate)
+	http.HandleFunc("/api/orders/list", httpCreate)
 
 	server := &http.Server{Addr: ":9090", Handler: nil} //设置监听的端口
 	err := server.ListenAndServe()
