@@ -161,6 +161,7 @@ CREATE PROCEDURE proc_test_tmp_table()
         from databasetest.tabtest1
         group by uuid, name;
 
+    #ifnull判断，如果为空，填入后面一个值
     select ifnull(sum(score), 0) as s
     into sumTotal -- 只接受一行数据
     from databasetest.tabtest1;
