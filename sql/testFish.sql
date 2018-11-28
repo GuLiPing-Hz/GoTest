@@ -3,7 +3,7 @@ FROM Buyu.user_stat
 WHERE uid = 177861;
 SELECT *
 FROM Buyu.user
-WHERE uid = 177854;
+WHERE uid = 177861;
 SELECT *
 FROM Buyu.user_stat
 WHERE uid = 177854;

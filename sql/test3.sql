@@ -134,6 +134,53 @@ SELECT
 #DROP PROCEDURE [过程1[,过程2…]]
 #DataGrip见schemas->database->routines 右击Drop
 
+
+-- ----------------------------
+-- Procedure structure for `proc_add` begin
+-- ----------------------------
+# 如果已经存在一个同名存储过程，那么我们移除掉
+DROP PROCEDURE IF EXISTS proc_test_tmp_table;
+# MySQL默认以";"为分隔符，如果没有声明分割符，则编译器会把存储过程当成SQL语句进行处理，
+# 因此编译过程会报错，所以要事先用“DELIMITER //”声明当前段分隔符，
+# 让编译器把两个"//"之间的内容当做存储过程的代码，不会执行这些代码；“DELIMITER ;”的意为把分隔符还原。
+DELIMITER //
+# DEFINER指定权限的存储过程
+# CREATE DEFINER =`root`@`localhost` PROCEDURE `proc_adder`(IN a int, IN b int, OUT sum int)
+CREATE PROCEDURE proc_test_tmp_table()
+  BEGIN
+    #Routine body goes here...
+    DECLARE sumTotal INT; #声明变量sumTotal
+
+    #创建临时表，进行查询操作
+    DROP TEMPORARY TABLE IF EXISTS tmp_t_;
+    CREATE TEMPORARY TABLE tmp_t_
+        select
+          uuid,
+          name,
+          sum(score) as sum
+        from databasetest.tabtest1
+        group by uuid, name;
+
+    select ifnull(sum(score), 0) as s
+    into sumTotal -- 只接受一行数据
+    from databasetest.tabtest1;
+    #查询到的结果
+    select *
+    from tmp_t_;
+
+    select sumTotal;
+
+    -- 删除临时表
+    DROP TEMPORARY TABLE IF EXISTS tmp_t_;
+  END
+//
+#分隔符还原
+DELIMITER ;
+-- ----------------------------
+-- Procedure structure for `proc_add` END
+-- ----------------------------
+call proc_test_tmp_table();
+
 # MySQL存储过程的基本函数
 # 字符串类
 # CHARSET(str) //返回字串字符集
