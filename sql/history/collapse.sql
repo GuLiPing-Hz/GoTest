@@ -70,7 +70,7 @@ DELIMITER ;
 -- ----------------------------
 -- #当日获取破产次数，以及最近破产的经验值是否充值破产 end
 -- ----------------------------
-call proc_select_collapse_count(165338, '0874E0CA-AECF-4D2F-C0FA-00717FA4FAC7');
+# call proc_select_collapse_count(165338, '0874E0CA-AECF-4D2F-C0FA-00717FA4FAC7');
 
 
 create table if not exists Buyu.pay_exp_log
