@@ -65,7 +65,15 @@ FROM user
 WHERE uid = 177849;
 
 
+SELECT *
+FROM ip_rule
+WHERE id > 9 OR tm > ADDDATE(NOW(), INTERVAL -2 MINUTE);
+select *
+from mail_reward
+where id = 21338;
 
-SELECT * FROM ip_rule WHERE id>9 OR tm>ADDDATE(NOW(),INTERVAL -2 MINUTE);
-select * from mail_reward where id = 21338;
+# call proc_select_collapse_count(165338,'445CE2DC-86E1-DA19-76BE-A493EB78EA78');
+insert into alms_log (uid, uuid, login_ip, coin, tm, platform, exp,charge)
+values (177863, '43BA4F0B-776F-F184-6AFE-FB5C6095EA90', '183.156.125.192'
+  , 8000, '2018-11-30 12:53:20', '0', 107850, 0)
 
