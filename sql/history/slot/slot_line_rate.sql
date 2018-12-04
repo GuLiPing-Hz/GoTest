@@ -1,0 +1,14 @@
+INSERT INTO slot.line_rate (pic_id, pic_name, three_multiple, four_multiple, five_multiple, full_multiple, mary_multiple) VALUES (0, '水浒传', 0, 0, 2000, 3000, 0);
+INSERT INTO slot.line_rate (pic_id, pic_name, three_multiple, four_multiple, five_multiple, full_multiple, mary_multiple) VALUES (1, '忠义堂', 50, 200, 1000, 1500, 200);
+INSERT INTO slot.line_rate (pic_id, pic_name, three_multiple, four_multiple, five_multiple, full_multiple, mary_multiple) VALUES (2, '替天行道', 20, 80, 400, 600, 100);
+INSERT INTO slot.line_rate (pic_id, pic_name, three_multiple, four_multiple, five_multiple, full_multiple, mary_multiple) VALUES (3, '宋江', 15, 40, 200, 300, 70);
+INSERT INTO slot.line_rate (pic_id, pic_name, three_multiple, four_multiple, five_multiple, full_multiple, mary_multiple) VALUES (4, '林冲', 10, 30, 160, 240, 50);
+INSERT INTO slot.line_rate (pic_id, pic_name, three_multiple, four_multiple, five_multiple, full_multiple, mary_multiple) VALUES (5, '鲁智深', 7, 20, 100, 150, 20);
+INSERT INTO slot.line_rate (pic_id, pic_name, three_multiple, four_multiple, five_multiple, full_multiple, mary_multiple) VALUES (6, '金刀', 5, 15, 60, 90, 10);
+INSERT INTO slot.line_rate (pic_id, pic_name, three_multiple, four_multiple, five_multiple, full_multiple, mary_multiple) VALUES (7, '银枪', 3, 10, 40, 60, 5);
+INSERT INTO slot.line_rate (pic_id, pic_name, three_multiple, four_multiple, five_multiple, full_multiple, mary_multiple) VALUES (8, '铁斧', 2, 5, 20, 30, 2);
+INSERT INTO slot.line_rate (pic_id, pic_name, three_multiple, four_multiple, five_multiple, full_multiple, mary_multiple) VALUES (9, '全盘人物', 0, 0, 0, 50, 0);
+INSERT INTO slot.line_rate (pic_id, pic_name, three_multiple, four_multiple, five_multiple, full_multiple, mary_multiple) VALUES (10, '全盘武器', 0, 0, 0, 15, 0);
+INSERT INTO slot.line_rate (pic_id, pic_name, three_multiple, four_multiple, five_multiple, full_multiple, mary_multiple) VALUES (11, '水浒传小玛丽次数', 1, 2, 3, 0, 0);
+INSERT INTO slot.line_rate (pic_id, pic_name, three_multiple, four_multiple, five_multiple, full_multiple, mary_multiple) VALUES (12, '小玛丽内三连', 0, 0, 0, 0, 20);
+INSERT INTO slot.line_rate (pic_id, pic_name, three_multiple, four_multiple, five_multiple, full_multiple, mary_multiple) VALUES (13, '小玛丽内四连', 0, 0, 0, 0, 500);

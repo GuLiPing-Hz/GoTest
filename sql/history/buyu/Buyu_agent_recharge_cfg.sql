@@ -1,0 +1,1 @@
+INSERT INTO Buyu.agent_recharge_cfg (fixedAmount, plus) VALUES (10000, 2);

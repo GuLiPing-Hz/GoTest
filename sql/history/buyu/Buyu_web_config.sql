@@ -1,0 +1,1 @@
+INSERT INTO Buyu.web_config (id, xchg_rate) VALUES (1, 10000);

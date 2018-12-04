@@ -1,0 +1,17 @@
+INSERT INTO Buyu.fort_cfg (id, pkg_id, name, type, value) VALUES (1, 21, '龙息火炮', 1, 1);
+INSERT INTO Buyu.fort_cfg (id, pkg_id, name, type, value) VALUES (2, 22, '蓝色狂乱', 1, 2);
+INSERT INTO Buyu.fort_cfg (id, pkg_id, name, type, value) VALUES (3, 23, '邪能弩炮', 1, 3);
+INSERT INTO Buyu.fort_cfg (id, pkg_id, name, type, value) VALUES (4, 24, '太阳之怒', 1, 4);
+INSERT INTO Buyu.fort_cfg (id, pkg_id, name, type, value) VALUES (5, 25, '黑洞之眼', 1, 5);
+INSERT INTO Buyu.fort_cfg (id, pkg_id, name, type, value) VALUES (6, 26, '宇宙湮灭', 1, 6);
+INSERT INTO Buyu.fort_cfg (id, pkg_id, name, type, value) VALUES (7, 27, '赤色要塞', 2, 0);
+INSERT INTO Buyu.fort_cfg (id, pkg_id, name, type, value) VALUES (8, 28, '金甲战神', 20, 1880000);
+INSERT INTO Buyu.fort_cfg (id, pkg_id, name, type, value) VALUES (9, 29, '未来之翼', 24, 5880000);
+INSERT INTO Buyu.fort_cfg (id, pkg_id, name, type, value) VALUES (10, 30, '紫晶之辉', 16, 2880000);
+INSERT INTO Buyu.fort_cfg (id, pkg_id, name, type, value) VALUES (11, 31, '深海巨鲨', 16, 6880000);
+INSERT INTO Buyu.fort_cfg (id, pkg_id, name, type, value) VALUES (12, 32, '皇家礼炮', 16, 1880000);
+INSERT INTO Buyu.fort_cfg (id, pkg_id, name, type, value) VALUES (13, 33, '天空之城', 16, 2880000);
+INSERT INTO Buyu.fort_cfg (id, pkg_id, name, type, value) VALUES (14, 34, '凤凰之击', 16, 8880000);
+INSERT INTO Buyu.fort_cfg (id, pkg_id, name, type, value) VALUES (15, 35, '绿色军团', 16, 4880000);
+INSERT INTO Buyu.fort_cfg (id, pkg_id, name, type, value) VALUES (16, 36, '钻石购买炮台1', 32, 3888);
+INSERT INTO Buyu.fort_cfg (id, pkg_id, name, type, value) VALUES (17, 37, '钻石购买炮台2', 32, 4888);

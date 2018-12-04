@@ -1,0 +1,14 @@
+INSERT INTO Buyu.newer7_cfg (day, coin) VALUES (1, 5000);
+INSERT INTO Buyu.newer7_cfg (day, coin) VALUES (2, 6000);
+INSERT INTO Buyu.newer7_cfg (day, coin) VALUES (3, 7000);
+INSERT INTO Buyu.newer7_cfg (day, coin) VALUES (4, 8000);
+INSERT INTO Buyu.newer7_cfg (day, coin) VALUES (5, 9000);
+INSERT INTO Buyu.newer7_cfg (day, coin) VALUES (6, 10000);
+INSERT INTO Buyu.newer7_cfg (day, coin) VALUES (7, 11000);
+INSERT INTO Buyu.newer7_cfg (day, coin) VALUES (8, 8000);
+INSERT INTO Buyu.newer7_cfg (day, coin) VALUES (9, 10000);
+INSERT INTO Buyu.newer7_cfg (day, coin) VALUES (10, 12000);
+INSERT INTO Buyu.newer7_cfg (day, coin) VALUES (11, 14000);
+INSERT INTO Buyu.newer7_cfg (day, coin) VALUES (12, 16000);
+INSERT INTO Buyu.newer7_cfg (day, coin) VALUES (13, 18000);
+INSERT INTO Buyu.newer7_cfg (day, coin) VALUES (14, 20000);

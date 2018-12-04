@@ -1,0 +1,1 @@
+INSERT INTO slot.stock (id, stock_large, stock_normal, bibei_large, bibei_normal, fee_large, fee_normal, mvcnt_large, mvcnt_normal, addTime, updateTime) VALUES (1, 210676360, 3334, 23520000, 0, 443340, 243, 0, 0, '2018-07-16 16:16:53', '2018-12-04 00:00:00');

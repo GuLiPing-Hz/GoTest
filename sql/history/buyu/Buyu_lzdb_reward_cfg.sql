@@ -1,0 +1,14 @@
+INSERT INTO Buyu.lzdb_reward_cfg (id, r_points, r_type, r_cnt, p_type, relate_id) VALUES (1, 5, 10, 1000, 1, 8);
+INSERT INTO Buyu.lzdb_reward_cfg (id, r_points, r_type, r_cnt, p_type, relate_id) VALUES (2, 10, 10, 2000, 1, 9);
+INSERT INTO Buyu.lzdb_reward_cfg (id, r_points, r_type, r_cnt, p_type, relate_id) VALUES (3, 50, 10, 5000, 1, 10);
+INSERT INTO Buyu.lzdb_reward_cfg (id, r_points, r_type, r_cnt, p_type, relate_id) VALUES (4, 100, 10, 10000, 1, 11);
+INSERT INTO Buyu.lzdb_reward_cfg (id, r_points, r_type, r_cnt, p_type, relate_id) VALUES (5, 500, 10, 20000, 1, 12);
+INSERT INTO Buyu.lzdb_reward_cfg (id, r_points, r_type, r_cnt, p_type, relate_id) VALUES (6, 1000, 10, 50000, 1, 13);
+INSERT INTO Buyu.lzdb_reward_cfg (id, r_points, r_type, r_cnt, p_type, relate_id) VALUES (7, 5000, 10, 100000, 1, 14);
+INSERT INTO Buyu.lzdb_reward_cfg (id, r_points, r_type, r_cnt, p_type, relate_id) VALUES (8, 200, 10, 1000, 2, 1);
+INSERT INTO Buyu.lzdb_reward_cfg (id, r_points, r_type, r_cnt, p_type, relate_id) VALUES (9, 500, 10, 2500, 2, 2);
+INSERT INTO Buyu.lzdb_reward_cfg (id, r_points, r_type, r_cnt, p_type, relate_id) VALUES (10, 2000, 10, 5000, 2, 3);
+INSERT INTO Buyu.lzdb_reward_cfg (id, r_points, r_type, r_cnt, p_type, relate_id) VALUES (11, 5000, 10, 10000, 2, 4);
+INSERT INTO Buyu.lzdb_reward_cfg (id, r_points, r_type, r_cnt, p_type, relate_id) VALUES (12, 20000, 10, 20000, 2, 5);
+INSERT INTO Buyu.lzdb_reward_cfg (id, r_points, r_type, r_cnt, p_type, relate_id) VALUES (13, 50000, 10, 50000, 2, 6);
+INSERT INTO Buyu.lzdb_reward_cfg (id, r_points, r_type, r_cnt, p_type, relate_id) VALUES (14, 200000, 10, 200000, 2, 7);

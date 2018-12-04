@@ -175,5 +175,5 @@ DELIMITER ;
 -- #更新用户输赢值 end
 -- ----------------------------
 
-call proc_update_user_exp(177863, -10000);
+# call proc_update_user_exp(177863, -10000);
 

@@ -1,0 +1,14 @@
+INSERT INTO Buyu.agent_recharge_limit (id, uid, rechargeLimit, createTime) VALUES (51, 100070, 0, '2018-05-15 07:19:03');
+INSERT INTO Buyu.agent_recharge_limit (id, uid, rechargeLimit, createTime) VALUES (2, 100035, 20, '2018-05-15 00:00:00');
+INSERT INTO Buyu.agent_recharge_limit (id, uid, rechargeLimit, createTime) VALUES (52, 100070, 1, '2018-05-16 08:48:00');
+INSERT INTO Buyu.agent_recharge_limit (id, uid, rechargeLimit, createTime) VALUES (53, 100062, 1, '2018-05-16 12:57:47');
+INSERT INTO Buyu.agent_recharge_limit (id, uid, rechargeLimit, createTime) VALUES (54, 100070, 1, '2018-05-17 06:01:50');
+INSERT INTO Buyu.agent_recharge_limit (id, uid, rechargeLimit, createTime) VALUES (55, 100070, 9997, '2018-05-18 06:04:21');
+INSERT INTO Buyu.agent_recharge_limit (id, uid, rechargeLimit, createTime) VALUES (56, 100062, 9995, '2018-05-18 06:06:44');
+INSERT INTO Buyu.agent_recharge_limit (id, uid, rechargeLimit, createTime) VALUES (57, 100070, 10000, '2018-05-19 11:23:39');
+INSERT INTO Buyu.agent_recharge_limit (id, uid, rechargeLimit, createTime) VALUES (58, 100070, 10000, '2018-05-20 11:12:03');
+INSERT INTO Buyu.agent_recharge_limit (id, uid, rechargeLimit, createTime) VALUES (59, 100070, 10000, '2018-05-21 10:37:58');
+INSERT INTO Buyu.agent_recharge_limit (id, uid, rechargeLimit, createTime) VALUES (60, 165324, 10000, '2018-05-23 02:24:48');
+INSERT INTO Buyu.agent_recharge_limit (id, uid, rechargeLimit, createTime) VALUES (61, 100070, 10000, '2018-05-23 13:57:35');
+INSERT INTO Buyu.agent_recharge_limit (id, uid, rechargeLimit, createTime) VALUES (62, 100070, 10000, '2018-05-25 13:43:45');
+INSERT INTO Buyu.agent_recharge_limit (id, uid, rechargeLimit, createTime) VALUES (63, 165324, 9000, '2018-05-31 02:44:13');

@@ -1,0 +1,13 @@
+INSERT INTO Buyu.mail_reward (id, mail_giftid, reward_id, reward_cnt, isvalid, addTime, operator) VALUES (1, '1', 11, 10, 1, '2018-07-25 15:00:37', null);
+INSERT INTO Buyu.mail_reward (id, mail_giftid, reward_id, reward_cnt, isvalid, addTime, operator) VALUES (2, '2', 11, 10, 1, '2018-07-25 15:00:37', null);
+INSERT INTO Buyu.mail_reward (id, mail_giftid, reward_id, reward_cnt, isvalid, addTime, operator) VALUES (3, '3', 11, 50, 1, '2018-07-25 15:00:37', null);
+INSERT INTO Buyu.mail_reward (id, mail_giftid, reward_id, reward_cnt, isvalid, addTime, operator) VALUES (4, '4', 11, 200, 1, '2018-07-25 15:00:37', null);
+INSERT INTO Buyu.mail_reward (id, mail_giftid, reward_id, reward_cnt, isvalid, addTime, operator) VALUES (5, '5', 11, 500, 1, '2018-07-25 15:00:37', null);
+INSERT INTO Buyu.mail_reward (id, mail_giftid, reward_id, reward_cnt, isvalid, addTime, operator) VALUES (6, '6', 11, 2000, 1, '2018-07-25 15:00:37', null);
+INSERT INTO Buyu.mail_reward (id, mail_giftid, reward_id, reward_cnt, isvalid, addTime, operator) VALUES (7, '1', 21, 1, 1, '2018-07-25 15:00:37', null);
+INSERT INTO Buyu.mail_reward (id, mail_giftid, reward_id, reward_cnt, isvalid, addTime, operator) VALUES (8, '2', 22, 1, 1, '2018-07-25 15:00:37', null);
+INSERT INTO Buyu.mail_reward (id, mail_giftid, reward_id, reward_cnt, isvalid, addTime, operator) VALUES (9, '3', 23, 1, 1, '2018-07-25 15:00:37', null);
+INSERT INTO Buyu.mail_reward (id, mail_giftid, reward_id, reward_cnt, isvalid, addTime, operator) VALUES (10, '4', 24, 1, 1, '2018-07-25 15:00:37', null);
+INSERT INTO Buyu.mail_reward (id, mail_giftid, reward_id, reward_cnt, isvalid, addTime, operator) VALUES (11, '5', 25, 1, 1, '2018-07-25 15:00:37', null);
+INSERT INTO Buyu.mail_reward (id, mail_giftid, reward_id, reward_cnt, isvalid, addTime, operator) VALUES (12, '6', 26, 1, 1, '2018-07-25 15:00:37', null);
+INSERT INTO Buyu.mail_reward (id, mail_giftid, reward_id, reward_cnt, isvalid, addTime, operator) VALUES (13, '7', 27, 1, 1, '2018-07-25 15:00:37', null);
