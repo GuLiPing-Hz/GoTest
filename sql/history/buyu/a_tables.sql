@@ -1654,7 +1654,8 @@ create table order_log
   diamond   bigint default '0'                   not null
   comment '购买商品获得的钻石值',
   result    int default '0'                      null
-  comment 'json返回值，0成功，-1初始值，其他失败;微信支付1成功，其他失败',
+  comment '订单状态值。支付宝：-1未知，0支付成功，1等待付款，2失败或已退款，3不可退款。
+微信 -1未知，0支付成功',
   issandbox tinyint default '0'                  not null
   comment '是否是沙箱测试账号充值',
   isget     tinyint default '0'                  null
@@ -1700,12 +1701,16 @@ create table pay_exp_log
   exp     bigint                             null
   comment '用户充值的时候对应的经验值',
   time    datetime default CURRENT_TIMESTAMP null
-  comment '写入时间'
+  comment '写入时间',
+  constraint pay_exp_log_oid_uindex
+  unique (oid)
 )
   comment '充值的时候对应的用户经验值';
 
 create index uid
   on pay_exp_log (uid);
+
+
 
 -- auto-generated definition
 create table pk_game_log

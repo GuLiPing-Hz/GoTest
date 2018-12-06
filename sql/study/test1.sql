@@ -2,6 +2,11 @@
 #创建数据库和表，
 #对表字段进行操作
 
+#设置mysql超时断开时间
+show variables like '%timeout%';
+set interactive_timeout = 604800; #60*60*8=28800 8小时不断
+set wait_timeout = 604800; #60*60*24=604800 24小时不断
+
 #创建数据库
 # DataBaseTest1 是数据库名字
 CREATE DATABASE DataBaseTest1; #如果上一步已经做好了,那么在命令行中敲入:
@@ -82,9 +87,9 @@ ALTER TABLE tabtest1
 USE databasetest;
 CREATE TEMPORARY TABLE tabUserTemp
 (
-    rowId INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    account TEXT NOT NULL,
-    pwd TEXT NOT NULL
+  rowId   INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  account TEXT            NOT NULL,
+  pwd     TEXT            NOT NULL
 );
 #临时表的插入查询删除跟普通表操作一样
 
@@ -92,12 +97,14 @@ CREATE TEMPORARY TABLE tabUserTemp
 USE databasetest;
 CREATE TABLE tabUser
 (
-    rowId INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    account TEXT NOT NULL,
-    pwd TEXT NOT NULL
+  rowId   INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  account TEXT            NOT NULL,
+  pwd     TEXT            NOT NULL
 );
 # CREATE UNIQUE INDEX tabUser_rowId_uindex ON tabUser (rowId);
-CREATE UNIQUE INDEX tabUser_account_uindex ON tabUser (account);
-ALTER TABLE tabUser COMMENT = '用户表';
+CREATE UNIQUE INDEX tabUser_account_uindex
+  ON tabUser (account);
+ALTER TABLE tabUser
+  COMMENT = '用户表';
 
 
