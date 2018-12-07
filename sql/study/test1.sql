@@ -3,9 +3,11 @@
 #对表字段进行操作
 
 #设置mysql超时断开时间
-show variables like '%timeout%';
-set interactive_timeout = 604800; #60*60*8=28800 8小时不断
-set wait_timeout = 604800; #60*60*24=604800 24小时不断
+show global variables like '%timeout%';
+#这个只能设置当前会话，退出登录又没了
+# set interactive_timeout = 604800; #60*60*8=28800 8小时不断
+set global interactive_timeout = 604800;
+set global wait_timeout = 604800; #60*60*24=604800 24小时不断
 
 #创建数据库
 # DataBaseTest1 是数据库名字
