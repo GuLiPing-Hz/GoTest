@@ -130,6 +130,7 @@ func httpTestJson(w http.ResponseWriter, r *http.Request) {
 	}
 
 	body, _ := ioutil.ReadAll(r.Body)
+	defer r.Body.Close() //这里需要自己关闭
 
 	fmt.Println("httpTestJson body=", string(body))
 
