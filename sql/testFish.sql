@@ -82,4 +82,9 @@ insert into notice(title,content,sender,receiver,addtime,isValid,showOrder,ntype
 select reward_id,reward_cnt,operator from mail_reward where mail_giftid = 7 and isvalid = 1;
 
 SELECT totalsum FROM yule_gamelog ORDER BY round DESC limit 1;
+update user_stat set coin=0 where uid in (
+    select uid from user where type=3
+);
 
+
+update user_stat set coin=18000 where uid=165331;
