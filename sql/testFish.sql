@@ -88,3 +88,4 @@ update user_stat set coin=0 where uid in (
 
 
 update user_stat set coin=18000 where uid=165331;
+delete from coin_log;
