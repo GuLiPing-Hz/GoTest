@@ -89,3 +89,6 @@ update user_stat set coin=0 where uid in (
 
 update user_stat set coin=18000 where uid=165331;
 delete from coin_log;
+
+UPDATE user_stat AS a,card_log AS b SET a.daily_reward=a.daily_reward+2 WHERE a.uid=b.uid AND b.end_tm>0 AND b.wares_id='lailai.fish.thirtyday';
+

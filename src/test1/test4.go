@@ -44,7 +44,7 @@ func testStr() {
 	fmt.Println("字符串查找IndexAny2", strings.IndexAny(s, "le")) //any的意思就是找到指定字符串中的任意字符
 	fmt.Println("字符串查找LastIndex", strings.LastIndex(s, "l"))
 	fmt.Println("字符串查找IndexRune", strings.IndexRune(s, 'l')) //l字节
-	fmt.Println("字符串替换", strings.Replace(s, "l", "L", 2))    // 最后一个参数是要替换的次数，不填，默认全部替换
+	fmt.Println("字符串替换", strings.Replace(s, "l", "L", 2))    // 最后一个参数是要替换的次数，-1全部替换
 	fmt.Println("字符串替换", strings.Replace(s, "l", "L", -1))
 	////去除字符串左空格 TrimLeft ，右空格 TrimRight,左右空格Trim
 	fmt.Println("Trim=" + strings.Trim(" ss s1  ", " ")) //等价于TrimSpace
@@ -67,6 +67,9 @@ func testStr() {
 	var sign = md5.Sum([]byte("123"))
 	sign2 := fmt.Sprintf("%x",sign)
 	fmt.Println(sign2)
+
+	//字符串转byte []byte(字符串)
+	//byte转字符串 string([]byte)
 }
 
 //数组操作
