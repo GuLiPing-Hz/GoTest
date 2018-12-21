@@ -14,13 +14,13 @@ create table room_win_log
   comment '房间龙珠奖池',
   bill       bigint default '0'                 null
   comment '房间累积流水',
-  roomWin    bigint default '0'                 null
+  roomWin    double default '0'                 null
   comment '房间累积输赢',
   type       tinyint                            not null
   comment '0 正常记录，1实时输赢清空',
   curBill    bigint default '0'                 null
   comment '当前房间时段流水',
-  curRoomWin bigint default '0'                 null
+  curRoomWin double default '0'                 null
   comment '当前房间时段房间输赢',
   tm         datetime default CURRENT_TIMESTAMP null
 )

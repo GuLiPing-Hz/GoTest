@@ -210,7 +210,7 @@ func testDbRoutines(dbMgr *tool.DBMgr) {
 
 func main() {
 	var (
-		dbhostsip  = "192.168.0.18:3306" //IP地址
+		dbhostsip  = "127.0.0.1:3306" //IP地址
 		dbusername = "glp4703"           //用户名
 		dbpassword = `glp3329`           //密码
 		dbname     = "databasetest"      //数据库名
@@ -239,7 +239,7 @@ func main() {
 	testReflect(&dbTemp)
 	fmt.Println(dbTemp)
 
-	//testMySql(&dbMgr)
+	testMySql(&dbMgr)
 	//testDbHelp(&dbMgr)
 	//testDbRoutines(&dbMgr)
 }

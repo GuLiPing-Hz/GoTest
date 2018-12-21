@@ -88,7 +88,18 @@ update user_stat set coin=0 where uid in (
 
 
 update user_stat set coin=18000 where uid=165331;
-delete from coin_log;
+delete from room_win_log;
 
 UPDATE user_stat AS a,card_log AS b SET a.daily_reward=a.daily_reward+2 WHERE a.uid=b.uid AND b.end_tm>0 AND b.wares_id='lailai.fish.thirtyday';
 
+ALTER TABLE user_props_log MODIFY sendType smallint NOT NULL COMMENT '参见Trello。数据库字段说明';
+ALTER TABLE coin_log MODIFY game_type tinyint DEFAULT 0 COMMENT 'LOBBY = 0, -- 大厅
+        FISH = 1, -- 捕鱼游戏
+        OTHER = 2, -- 其他
+        LOTTERY = 3, -- 抽奖
+        GAME_YULE = 8, -- 鱼乐游戏
+        GAME_SLOT = 9 -- 水浒传';
+
+update dragoncard_use_log set starttime=0,deadtime=0,updateTime='2018-12-20 14:56:21' where uid=165617;
+update user_stat set coin = 5000;
+update user_stat set multi_rate = 1;
