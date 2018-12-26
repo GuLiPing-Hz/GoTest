@@ -27,4 +27,39 @@ create table room_win_log
   comment '房间实时输赢日志';
 
 
+-- ----------------------------
+-- #查询添加活跃任务奖励 begin
+-- ----------------------------
+DROP PROCEDURE IF EXISTS proc_query_add_user_act;
+DELIMITER //
+CREATE PROCEDURE proc_query_add_user_act(in uidIn bigint, in unionIdIn bigint, in valIn bigint)
+  BEGIN
+    #Routine body goes here...
+    declare total bigint;
+    declare con bigint;
+
+    select contribution
+    into con
+    from Buyu.union_member_log
+    where uid = uidIn and unionId = unionIdIn and curdate() = date(time);
+
+    if con is null
+    then
+      set total = valIn;
+      insert into Buyu.union_member_log (unionId, uid, contribution) values (unionIdIn, uidIn, total);
+    else
+      set total = valIn + con;
+      update Buyu.union_member_log
+      set contribution = total
+      where uid = uidIn and unionId = unionIdIn and curdate() = date(time);
+    end if;
+
+
+  END
+//
+DELIMITER ;
+-- ----------------------------
+-- #查询添加活跃任务奖励 end
+-- ----------------------------
+
 
