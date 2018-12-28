@@ -58,3 +58,17 @@ INSERT INTO `hbq_dui_cfg` (`id`, `cost`, `type`, `cnt`) VALUES ('6', '5000', '10
 INSERT INTO `hbq_dui_cfg` (`id`, `cost`, `type`, `cnt`) VALUES ('7', '580', '13', '58');
 INSERT INTO `hbq_dui_cfg` (`id`, `cost`, `type`, `cnt`) VALUES ('8', '5000', '13', '600');
 INSERT INTO `hbq_dui_cfg` (`id`, `cost`, `type`, `cnt`) VALUES ('9', '200', '10', '20000');
+
+ALTER TABLE user_props_log
+  MODIFY optUid bigint(20) NOT NULL
+  COMMENT '操作者ID，0表示系统，其他表示用户ID，如果是sendType是红包提现（41），
+这个表示订单ID';
+
+ALTER TABLE user
+  MODIFY phone_valid tinyint DEFAULT 0
+  COMMENT '是否已经领取0.3元新手引导礼包。 0未领取，1领取';
+update user
+set phone_valid = 0;
+
+
+

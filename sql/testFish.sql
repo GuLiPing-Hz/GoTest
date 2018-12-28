@@ -127,11 +127,9 @@ update dragoncard_use_log
 set starttime = 0, deadtime = 0, updateTime = '2018-12-20 14:56:21'
 where uid = 165617;
 update user_stat
-set coin = 1000000
-where uid in (select uid
-              from user
-              where type = 4);
-delete from user_exp;
+set coin = 2000
+where uid between 166668 and 167250;
+delete from user_exp where uid between 166668 and 167250;
 update user_stat
 set multi_rate = 1;
 
