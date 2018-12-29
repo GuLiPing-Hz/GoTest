@@ -70,5 +70,7 @@ ALTER TABLE user
 update user
 set phone_valid = 0;
 
+ALTER TABLE user_stat MODIFY lucky_flag int NOT NULL DEFAULT '0' COMMENT '00000000000000000000000000000  从右往左 第一位表示是否已经兑换过2元红包';
+update user_stat set lucky_flag=0;
 
 
