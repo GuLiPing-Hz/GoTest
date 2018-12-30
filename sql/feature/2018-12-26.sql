@@ -1,9 +1,11 @@
-ALTER TABLE user_stat
-  MODIFY user_win int DEFAULT '0'
-  COMMENT '用户当前红包，单位分';
-ALTER TABLE user_stat
-  MODIFY winstat int(20) DEFAULT '0'
-  COMMENT '微信红包，单位分';
+ALTER TABLE user_stat CHANGE user_win hbq int DEFAULT '0' COMMENT '红包券，兑换微信红包，单位分';
+ALTER TABLE user_stat CHANGE winstat hb int DEFAULT '0' COMMENT '微信红包，可提现，单位分';
+ALTER TABLE user_stat MODIFY lucky_flag int NOT NULL DEFAULT '0' COMMENT '00000000000000000000000000000  从右往左 第一位表示是否已经兑换过2元红包';
+update user_stat set lucky_flag=0;
+
+update user_stat set hbq = 0;
+update user_stat set hb = 0;
+
 ALTER TABLE user_props_log
   MODIFY type int(11) DEFAULT '-1'
   COMMENT '见trello 字段说明物品类型';
@@ -70,7 +72,6 @@ ALTER TABLE user
 update user
 set phone_valid = 0;
 
-ALTER TABLE user_stat MODIFY lucky_flag int NOT NULL DEFAULT '0' COMMENT '00000000000000000000000000000  从右往左 第一位表示是否已经兑换过2元红包';
-update user_stat set lucky_flag=0;
+
 
 
