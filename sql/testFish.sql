@@ -135,3 +135,6 @@ set multi_rate = 1;
 
 select count(1) from gift_pkg_log;
 SELECT * FROM growth_task_log WHERE uid=166847 ORDER BY task_id;
+
+SELECT * FROM portal_pay_order WHERE oid=144;
+SELECT * FROM portal_pay_order WHERE orderId=144;
