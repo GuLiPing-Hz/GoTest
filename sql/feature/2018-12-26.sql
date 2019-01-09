@@ -1,6 +1,7 @@
 ALTER TABLE user_stat CHANGE user_win hbq int DEFAULT '0' COMMENT '红包券，兑换微信红包，单位分';
 ALTER TABLE user_stat CHANGE winstat hb int DEFAULT '0' COMMENT '微信红包，可提现，单位分';
 ALTER TABLE user_stat MODIFY lucky_flag int NOT NULL DEFAULT '0' COMMENT '00000000000000000000000000000  从右往左 第一位表示是否已经兑换过2元红包';
+ALTER TABLE user CHANGE phone_valid guide_flag tinyint DEFAULT 0 COMMENT '是否已经领取0.3元新手引导礼包。 0未领取，1领取';
 update user_stat set lucky_flag=0;
 
 update user_stat set hbq = 0;
