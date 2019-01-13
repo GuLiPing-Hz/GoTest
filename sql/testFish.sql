@@ -139,4 +139,4 @@ SELECT * FROM growth_task_log WHERE uid=166847 ORDER BY task_id;
 SELECT * FROM portal_pay_order WHERE oid=144;
 SELECT * FROM portal_pay_order WHERE orderId=144;
 
-select count(1) from user_props_log where uid=%d and date(time)=curdate() and optUid=%d;
+select * from user where token='f162fe500f22f01415039cc50f218e10';

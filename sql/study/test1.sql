@@ -9,6 +9,9 @@ show global variables like '%timeout%';
 set global interactive_timeout = 604800;
 set global wait_timeout = 604800; #60*60*24=604800 7*24小时不断
 
+#重启mysql服务器
+#/etc/init.d/mysqld restart
+
 #创建数据库
 # DataBaseTest1 是数据库名字
 CREATE DATABASE DataBaseTest1; #如果上一步已经做好了,那么在命令行中敲入:

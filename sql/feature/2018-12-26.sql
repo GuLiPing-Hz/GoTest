@@ -55,10 +55,10 @@ INSERT INTO `wares_cfg` VALUES
 
 CREATE TABLE hbq_dui_cfg
 (
-  id   int PRIMARY KEY,
+  id    int PRIMARY KEY,
   price int COMMENT '需要花费的红包券数量，单位分',
-  type int COMMENT '兑换的物品类型，参见trello物品类型',
-  cnt  int COMMENT '兑换的数量，如果是红包(41)，单位是分'
+  type  int COMMENT '兑换的物品类型，参见trello物品类型',
+  cnt   int COMMENT '兑换的数量，如果是红包(41)，单位是分'
 );
 ALTER TABLE hbq_dui_cfg
   COMMENT = '红包券兑换配置信息';
@@ -84,7 +84,9 @@ ALTER TABLE user
 update user
 set phone_valid = 0;
 
-
+ALTER TABLE user
+  MODIFY type tinyint(4) DEFAULT '0'
+  COMMENT '用户类型，0.普通用户1.普通推广员2.金牌推广员3.机器人，4捕鱼机器人';
 
 
 
