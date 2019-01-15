@@ -71,9 +71,11 @@ func main() {
 	a = 1 //使用全局变量
 	if a == 0 {
 		println("a==0")
-	} else if a == 1 {
+	} else
+	if a == 1 {
 		println("a==1")
-	} else {
+	} else
+	{
 		println("!(a==0 || a==1)")
 	}
 

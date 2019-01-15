@@ -1,26 +1,56 @@
+#user
+ALTER TABLE user
+  MODIFY type tinyint(4) DEFAULT '0'
+  COMMENT '用户类型，0.普通用户1.普通推广员2.金牌推广员3.机器人，4捕鱼机器人';
+
+ALTER TABLE user
+  CHANGE phone_valid guide_flag tinyint DEFAULT 0
+COMMENT '废弃字段';
+
+#user_stat
 ALTER TABLE user_stat
   CHANGE user_win hbq int DEFAULT '0'
 COMMENT '红包券，兑换微信红包，单位分';
+update user_stat
+set hbq = 0;
 ALTER TABLE user_stat
   CHANGE winstat hb int DEFAULT '0'
 COMMENT '微信红包，可提现，单位分';
-ALTER TABLE user_stat
-  MODIFY lucky_flag int NOT NULL DEFAULT '0'
-  COMMENT '00000000000000000000000000000  从右往左 第一位表示是否已经兑换过2元红包';
-ALTER TABLE user
-  CHANGE phone_valid guide_flag tinyint DEFAULT 0
-COMMENT '是否已经领取0.3元新手引导礼包。 0未领取，1领取';
-update user_stat
-set lucky_flag = 0;
-
-update user_stat
-set hbq = 0;
 update user_stat
 set hb = 0;
 
+ALTER TABLE user_stat
+  MODIFY lucky_flag int NOT NULL DEFAULT '0'
+  COMMENT '00000000000000000000000000000  从右往左 第一位表示是否已经兑换过2元红包';
+update user_stat
+set lucky_flag = 0;
+
+ALTER TABLE user_stat
+  CHANGE add_rate guide_flag int NOT NULL DEFAULT 0
+COMMENT '是否已经领取0.3元新手引导礼包。 0未领取，1领取';
+update user
+set guide_flag = 0;
+
+ALTER TABLE user_stat
+  MODIFY giftin_coin bigint(20) DEFAULT '0'
+  COMMENT '用户礼物接受的金币，现在是龙珠对应价值的金币；只统计代理向别人赠送，代理接收不统计';
+ALTER TABLE user_stat
+  MODIFY giftout_coin bigint(20) DEFAULT '0'
+  COMMENT '用户礼物赠送出去的金币，只统计代理赠送出去的金币';
+ALTER TABLE user_stat
+  MODIFY daily_reward int(11) NOT NULL DEFAULT '0'
+  COMMENT '周月卡每日奖励是否已领取  二进制：...[月卡][周卡]  ...10 表示月卡可以领取，周卡不能领';
+
+#user_props_log
 ALTER TABLE user_props_log
   MODIFY type int(11) DEFAULT '-1'
   COMMENT '见trello 字段说明物品类型';
+
+ALTER TABLE user_props_log
+  MODIFY optUid bigint(20) NOT NULL
+  COMMENT '操作者ID，0表示系统，其他表示用户ID，如果是sendType是红包提现（61），
+这个表示订单ID；如果是是sendType是商店兑换(60)，这个表示兑换的物品类型';
+
 
 CREATE TABLE hbq_cfg
 (
@@ -73,20 +103,7 @@ INSERT INTO `hbq_dui_cfg` (`id`, price, `type`, `cnt`) VALUES ('7', '580', '13',
 INSERT INTO `hbq_dui_cfg` (`id`, price, `type`, `cnt`) VALUES ('8', '5000', '13', '600');
 INSERT INTO `hbq_dui_cfg` (`id`, price, `type`, `cnt`) VALUES ('9', '200', '10', '20000');
 
-ALTER TABLE user_props_log
-  MODIFY optUid bigint(20) NOT NULL
-  COMMENT '操作者ID，0表示系统，其他表示用户ID，如果是sendType是红包提现（61），
-这个表示订单ID；如果是是sendType是商店兑换(60)，这个表示兑换的物品类型';
 
-ALTER TABLE user
-  MODIFY phone_valid tinyint DEFAULT 0
-  COMMENT '是否已经领取0.3元新手引导礼包。 0未领取，1领取';
-update user
-set phone_valid = 0;
-
-ALTER TABLE user
-  MODIFY type tinyint(4) DEFAULT '0'
-  COMMENT '用户类型，0.普通用户1.普通推广员2.金牌推广员3.机器人，4捕鱼机器人';
 
 
 

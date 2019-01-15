@@ -2,12 +2,12 @@ package main
 
 import (
 	"fmt"
+	"reflect"
 	"strconv"
+	"time"
 	"runtime"
 	"path"
 	"strings"
-	"reflect"
-	"time"
 )
 
 /*
@@ -28,6 +28,21 @@ window用户可以使用msi安装，并且必须在环境变量中指定GOPATH,�
 //import f "fmt"导入fmt，并给他启别名ｆ
 //import . "fmt"，将fmt启用别名"."，这样就可以直接使用其内容，而不用再添加ｆｍｔ，如fmt.Println可以直接写成Println
 //import  _ "fmt" 表示不使用该包，而是只是使用该包的init函数，并不显示的使用该包的其他内容。注意：这种形式的import，当import时就执行了fmt包中的init函数，而不能够使用该包的其他函数。
+
+/**
+	%v the value in a default format
+	when printing structs, the plus flag (%+v) adds field names
+	%#v a Go-syntax representation of the value
+	%T a Go-syntax representation of the type of the value
+不同类型默认的%v 如下:
+	bool: %t
+	int, int8 etc.: %d
+	uint, uint8 etc.: %d, %#x if printed with %#v
+	float32, complex64, etc: %g
+	string: %s
+	chan: %p
+	pointer: %p
+ */
 
 func main() {
 	//最简单的打印-注释(单行)
