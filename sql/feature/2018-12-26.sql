@@ -103,6 +103,8 @@ INSERT INTO `hbq_dui_cfg` (`id`, price, `type`, `cnt`) VALUES ('7', '580', '13',
 INSERT INTO `hbq_dui_cfg` (`id`, price, `type`, `cnt`) VALUES ('8', '5000', '13', '600');
 INSERT INTO `hbq_dui_cfg` (`id`, price, `type`, `cnt`) VALUES ('9', '200', '10', '20000');
 
+-- 添加coin_log game_type索引
+ALTER TABLE `coin_log` ADD INDEX game_type ( `game_type` )
 
 
 
