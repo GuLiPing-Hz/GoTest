@@ -1,4 +1,4 @@
-package main
+=package main
 
 import (
 	"fmt"
@@ -12,11 +12,11 @@ import (
 /**
 定义接口
 type interface_name interface {
-	method_name1 [return_type]
-method_name2 [return_type]
-method_name3 [return_type]
+	method_name1() [return_type]
+method_name2() [return_type]
+method_name3() [return_type]
 ...
-method_namen [return_type]
+method_namen() [return_type]
 }
 
 定义结构体
