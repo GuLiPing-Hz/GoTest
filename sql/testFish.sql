@@ -140,3 +140,6 @@ SELECT * FROM portal_pay_order WHERE oid=144;
 SELECT * FROM portal_pay_order WHERE orderId=144;
 
 select * from user where token='f162fe500f22f01415039cc50f218e10';
+
+call xianwan_user(167348,"MARKET_xw");
+call xianwan_user2(167348,"MARKET_xw");
