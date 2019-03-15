@@ -9,6 +9,10 @@ show global variables like '%timeout%';
 set global interactive_timeout = 604800;
 set global wait_timeout = 604800; #60*60*24=604800 7*24小时不断
 
+#批量插入数据库限制
+show global variables like '%max_al%';
+set global max_allowed_packet = 1073741824;
+
 #重启mysql服务器
 #/etc/init.d/mysqld restart
 

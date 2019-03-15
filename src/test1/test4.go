@@ -62,10 +62,10 @@ func testStr() {
 	fmt.Println("字符串分割Fields", strings.Fields(s)) //以空格分割字符串返回字符串数组
 
 	var plainText = "abcdefghijklmnopqrstuvwxyz"
-	fmt.Println(plainText[0:len(plainText)-1])
+	fmt.Println(plainText[0 : len(plainText)-1])
 
 	var sign = md5.Sum([]byte("123"))
-	sign2 := fmt.Sprintf("%x",sign)
+	sign2 := fmt.Sprintf("%x", sign)
 	fmt.Println(sign2)
 
 	//字符串转byte []byte(字符串)
@@ -194,8 +194,26 @@ func testMap() {
 	}
 }
 
+type Student struct {
+	id   int32  `json:"id"`
+	name string `json:"name"`
+}
+
+func testPointer1() *Student {
+	student := Student{
+		101, "Jack",
+	}
+	return &student //在c++中，这是个局部变量，返回局部变量，该指针就会变成野指针，打印的信息会乱码
+}
+func testPointer() {
+	//但是在go中却不会，应该是动态创建的变量
+	fmt.Printf("student=%v\n", testPointer1())
+	fmt.Printf("student=%v\n", *testPointer1())
+}
+
 func main() {
-	testStr()
-	testArra()
-	testMap()
+	//testStr()
+	//testArra()
+	//testMap()
+	testPointer()
 }

@@ -107,3 +107,66 @@ WHERE (`id` = '26');
 INSERT INTO `Buyu`.`sub_act_cfg` (`activity_id`, `sub_id`, `level`, `total_cnt`, `sub_title`, `sub_content`)
 VALUES (9, 1, 0, 99999999, DEFAULT, DEFAULT);
 INSERT INTO `Buyu`.`sub_act_gift` (`sub_id`, `activity_id`, `gift_type`, `gift_count`) VALUES (1, 9, 19, 1);
+
+ALTER TABLE fort_log
+  MODIFY add_type tinyint(3) NOT NULL DEFAULT '0'
+  COMMENT '历史遗留：添加类型，0 默认炮台 1 购买 2 成长任务赠送 3 赠送 4 vip赠送 5 周卡赠送 6 月卡赠送 7 购买礼包赠送 8 新手七天奖励 9 邮件赠送 10 抽奖活动
+后面的奖励类型，来源于物品奖励类型，参见trello数据库类型字段说明';
+
+#增加VIP配置信息
+UPDATE `wg_usr_cfg`
+SET `vip` = '7', `count` = '70000', `tp` = '1'
+WHERE (`id` = '8');
+UPDATE `wg_usr_cfg`
+SET `vip` = '8', `count` = '80000', `tp` = '1'
+WHERE (`id` = '9');
+UPDATE `wg_usr_cfg`
+SET `vip` = '9', `count` = '90000', `tp` = '1'
+WHERE (`id` = '10');
+UPDATE `wg_usr_cfg`
+SET `vip` = '10', `count` = '100000', `tp` = '1'
+WHERE (`id` = '11');
+
+INSERT INTO `uservip_cfg` (`vip`, `pay_coin`) VALUES ('8', '20000');
+INSERT INTO `uservip_cfg` (`vip`, `pay_coin`) VALUES ('9', '50000');
+INSERT INTO `uservip_cfg` (`vip`, `pay_coin`) VALUES ('10', '100000');
+
+INSERT INTO `vip_gift_cfg` (`id`, `vip`, `gift_type`, `gift_count`, `once`) VALUES ('51', '8', '15', '80', '1');
+INSERT INTO `vip_gift_cfg` (`id`, `vip`, `gift_type`, `gift_count`, `once`) VALUES ('52', '9', '15', '90', '1');
+INSERT INTO `vip_gift_cfg` (`id`, `vip`, `gift_type`, `gift_count`, `once`) VALUES ('53', '10', '15', '100', '1');
+INSERT INTO `vip_gift_cfg` (`id`, `vip`, `gift_type`, `gift_count`, `once`) VALUES ('54', '8', '16', '80', '1');
+INSERT INTO `vip_gift_cfg` (`id`, `vip`, `gift_type`, `gift_count`, `once`) VALUES ('55', '9', '16', '90', '1');
+INSERT INTO `vip_gift_cfg` (`id`, `vip`, `gift_type`, `gift_count`, `once`) VALUES ('56', '10', '16', '100', '1');
+INSERT INTO `vip_gift_cfg` (`id`, `vip`, `gift_type`, `gift_count`, `once`) VALUES ('57', '8', '12', '8', '1');
+INSERT INTO `vip_gift_cfg` (`id`, `vip`, `gift_type`, `gift_count`, `once`) VALUES ('58', '9', '12', '9', '1');
+INSERT INTO `vip_gift_cfg` (`id`, `vip`, `gift_type`, `gift_count`, `once`) VALUES ('59', '10', '12', '10', '1');
+INSERT INTO `vip_gift_cfg` (`id`, `vip`, `gift_type`, `gift_count`) VALUES ('60', '8', '10', '180000');
+INSERT INTO `vip_gift_cfg` (`id`, `vip`, `gift_type`, `gift_count`) VALUES ('61', '9', '10', '200000');
+INSERT INTO `vip_gift_cfg` (`id`, `vip`, `gift_type`, `gift_count`) VALUES ('62', '10', '10', '250000');
+INSERT INTO `vip_gift_cfg` (`id`, `vip`, `gift_type`, `gift_count`) VALUES ('63', '8', '17', '25');
+INSERT INTO `vip_gift_cfg` (`id`, `vip`, `gift_type`, `gift_count`) VALUES ('64', '9', '17', '30');
+INSERT INTO `vip_gift_cfg` (`id`, `vip`, `gift_type`, `gift_count`) VALUES ('65', '10', '17', '35');
+INSERT INTO `vip_gift_cfg` (`id`, `vip`, `gift_type`, `gift_count`) VALUES ('66', '8', '18', '25');
+INSERT INTO `vip_gift_cfg` (`id`, `vip`, `gift_type`, `gift_count`) VALUES ('67', '9', '18', '30');
+INSERT INTO `vip_gift_cfg` (`id`, `vip`, `gift_type`, `gift_count`) VALUES ('68', '10', '18', '35');
+INSERT INTO `vip_gift_cfg` (`id`, `vip`, `gift_type`, `gift_count`) VALUES ('69', '8', '15', '30');
+INSERT INTO `vip_gift_cfg` (`id`, `vip`, `gift_type`, `gift_count`) VALUES ('70', '9', '15', '30');
+INSERT INTO `vip_gift_cfg` (`id`, `vip`, `gift_type`, `gift_count`) VALUES ('71', '10', '15', '30');
+INSERT INTO `vip_gift_cfg` (`id`, `vip`, `gift_type`, `gift_count`) VALUES ('72', '8', '16', '40');
+INSERT INTO `vip_gift_cfg` (`id`, `vip`, `gift_type`, `gift_count`) VALUES ('73', '9', '16', '50');
+INSERT INTO `vip_gift_cfg` (`id`, `vip`, `gift_type`, `gift_count`) VALUES ('74', '10', '16', '60');
+INSERT INTO `vip_gift_cfg` (`id`, `vip`, `gift_type`, `gift_count`) VALUES ('75', '8', '12', '15');
+INSERT INTO `vip_gift_cfg` (`id`, `vip`, `gift_type`, `gift_count`) VALUES ('76', '9', '12', '15');
+INSERT INTO `vip_gift_cfg` (`id`, `vip`, `gift_type`, `gift_count`) VALUES ('77', '10', '12', '15');
+INSERT INTO `vip_gift_cfg` (`id`, `vip`, `gift_type`, `gift_count`, `once`) VALUES ('78', '8', '32', '-1', '1');
+INSERT INTO `vip_gift_cfg` (`id`, `vip`, `gift_type`, `gift_count`, `once`) VALUES ('79', '9', '30', '-1', '1');
+INSERT INTO `vip_gift_cfg` (`id`, `vip`, `gift_type`, `gift_count`, `once`) VALUES ('80', '10', '35', '-1', '1');
+
+#移除fort_log中的过期时间。。没用。
+alter table fort_log
+  drop column expire_time;
+
+#把当前的解炮倍提升到10000
+update user_stat
+set fort_value = 1000
+where fort_value < 1000;

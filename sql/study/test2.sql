@@ -292,3 +292,19 @@ UNION SELECT *
 # SELECT *
 # INTO user_bac
 # FROM user;
+
+
+#sql语句优化篇
+# explain 语句可以分析某一条语句的执行过程。
+# 例子：
+# user_props_log 数据量有300w级别。
+# explain select sum(variation) from user_props_log l where l.time > '2019-03-07' and l.time <= '2019-03-08' and sendType = 2 and l.type = 40;
+# 具体说明参见 https://juejin.im/post/5bcc2935f265da0ac66987c9
+
+# type显示的是访问类型，是较为重要的一个指标，结果值从好到坏依次是：
+# system > const > eq_ref > ref > fulltext > ref_or_null > index_merge > unique_subquery
+#  > index_subquery > range > index > ALL ，
+# 一般来说，得保证查询至少达到range级别，最好能达到ref。
+
+# Extra 最差的情况是只用了Using where，字段中值重复性较高的尽量不要建索引。datetime字段天然具有重复性低，适合建索引。
+# 'Using index condition; Using where; Using MRR'

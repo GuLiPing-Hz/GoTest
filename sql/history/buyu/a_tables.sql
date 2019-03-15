@@ -656,18 +656,6 @@ create table day_longzhu_log
   collate = utf8mb4_unicode_ci;
 
 -- auto-generated definition
-create table day_pool_log
-(
-  stats_date varchar(19) charset utf8 default '' not null
-  comment '统计时间',
-  room_id    bigint(10)                          null,
-  fee        double                              null
-)
-  comment '每日税收数据'
-  engine = MyISAM
-  collate = utf8mb4_unicode_ci;
-
--- auto-generated definition
 create table day_summary_log
 (
   stats_date    varchar(19) charset utf8 default '' not null
@@ -959,70 +947,6 @@ create table gift_cfg
   comment 'vip限制',
   level    int         null
   comment '等级限制'
-)
-  engine = MyISAM
-  collate = utf8mb4_unicode_ci;
-
--- auto-generated definition
-create table gift_log
-(
-  id            int(11) unsigned auto_increment
-  comment '自增id'
-    primary key,
-  bt            int default '0'    not null
-  comment '0珍珠，1一星龙珠，2二星龙珠，3三星龙珠, 10金币， 11喇叭， 12龙珠卡',
-  fid           int default '0'    not null
-  comment '鱼id，如果是掉落龙珠，即掉落龙珠的鱼的id，如果是掉落珍珠，那么就是掉落珍珠的鱼的id',
-  cnt           int default '0'    not null
-  comment '掉落、合成、珍珠数，龙珠数；赠送龙珠数',
-  uid           bigint default '0' not null
-  comment '掉落、合成拥有者id，使用者id',
-  ouid          bigint default '0' not null
-  comment '赠送者uid，接收者uid',
-  tm            datetime           null
-  comment '记录添加时间',
-  op            int default '0'    not null
-  comment '操作类型，1掉落，2合成，3使用，4赠送，5接收',
-  pearl0        int default '0'    not null
-  comment '珍珠（更新前）',
-  db10          int default '0'    not null
-  comment '一星龙珠（更新前）',
-  db20          int default '0'    not null
-  comment '二星龙珠（更新前）',
-  db30          int default '0'    not null
-  comment '三星龙珠（更新前）',
-  lb0           int default '0'    not null
-  comment '喇叭（更新前）',
-  dc0           int default '0'    not null
-  comment '龙珠卡（更新前）',
-  frozen0       int default '0'    not null
-  comment '冰冻道具（更新前）',
-  lock0         int default '0'    not null
-  comment '锁定道具（更新前）',
-  double_gold0  int default '0'    not null
-  comment '双倍金币（更新前）',
-  double_speed0 int default '0'    not null
-  comment '双倍射速（更新前）',
-  pearl1        int default '0'    not null
-  comment '珍珠（更新后）',
-  db11          int default '0'    not null
-  comment '一星龙珠（更新后）',
-  db21          int default '0'    not null
-  comment '二星龙珠（更新后）',
-  db31          int default '0'    not null
-  comment '三星龙珠（更新后）',
-  lb1           int default '0'    not null
-  comment '喇叭（更新后）',
-  dc1           int default '0'    not null
-  comment '龙珠卡（更新后）',
-  frozen1       int default '0'    not null
-  comment '冰冻道具（更新后）',
-  lock1         int default '0'    not null
-  comment '锁定道具（更新后）',
-  double_gold1  int default '0'    not null
-  comment '双倍金币（更新后）',
-  double_speed1 int default '0'    not null
-  comment '双倍射速（更新后）'
 )
   engine = MyISAM
   collate = utf8mb4_unicode_ci;
@@ -1729,22 +1653,6 @@ create table pk_game_log
   addTime   bigint       null
   comment '时间戳'
 );
-
--- auto-generated definition
-create table pool_changelog
-(
-  id      bigint(11) unsigned auto_increment
-    primary key,
-  ip      varchar(16) charset utf8 null
-  comment '改动ip',
-  roomid  int                      null
-  comment '1.初级2.中级3.高级',
-  reward  bigint                   null
-  comment '改动价值，+为增加，-为减少',
-  addTime datetime                 null
-  comment '改动时间'
-)
-  collate = utf8mb4_unicode_ci;
 
 -- auto-generated definition
 create table pool_log
@@ -2798,3 +2706,28 @@ create table yule_summary
   engine = MyISAM
   collate = utf8mb4_unicode_ci;
 
+-- auto-generated definition
+create table catch_dragon_log
+(
+  id         int(11) unsigned auto_increment
+    primary key,
+  uid        bigint            null,
+  dragon_cnt int               null
+  comment '捕获龙的数量',
+  used_cnt   int default '0'   null
+  comment '使用次数',
+  tm         datetime          null
+  comment '更新时间',
+  totaltm    float default '0' null
+  comment '玩家在线时间'
+);
+
+CREATE TABLE user_stat_day
+(
+    uid bigint PRIMARY KEY NOT NULL,
+    lz_points int DEFAULT 0 NOT NULL COMMENT '龙珠夺宝积分',
+    act int DEFAULT 0 NOT NULL COMMENT '活跃值',
+    online_time int DEFAULT 0 NOT NULL COMMENT '在线时长（分钟）',
+    transfer_coin bigint DEFAULT 0 NOT NULL COMMENT '废弃字段。'
+);
+ALTER TABLE user_stat_day COMMENT = '每日用户状态值';
