@@ -235,3 +235,11 @@ INSERT INTO Buyu.portal_pay_order (orderId, createTime, userId, orderNo, price, 
 INSERT INTO Buyu.portal_pay_order (orderId, createTime, userId, orderNo, price, status, payType, clientIP, money, payTime, payOrderNo, payInfo, waresId, complete) VALUES (1147484191, '2019-01-14 16:53:25', 188787, '201901140856576571003182', -2, 1, 4, '115.210.65.179', 2, '2019-01-14 16:53:27', 'tx2.0', '兑换红包成功', 'tx2', 1);
 INSERT INTO Buyu.portal_pay_order (orderId, createTime, userId, orderNo, price, status, payType, clientIP, money, payTime, payOrderNo, payInfo, waresId, complete) VALUES (1147484194, '2019-01-14 19:12:23', 188787, '201901141115547354131214', -2, 1, 4, '115.210.65.179', 2, '2019-01-14 19:12:24', 'tx2.0', '兑换红包成功', 'tx2', 1);
 INSERT INTO Buyu.portal_pay_order (orderId, createTime, userId, orderNo, price, status, payType, clientIP, money, payTime, payOrderNo, payInfo, waresId, complete) VALUES (1147484195, '2019-01-14 19:12:26', 188787, '201901141115572740362686', -2, 1, 4, '115.210.65.179', 2, '2019-01-14 19:12:27', 'tx2.0', '兑换红包成功', 'tx2', 1);
+
+
+SELECT act,state FROM active_coin WHERE uid=167367 ORDER BY act ASC;
+delete from growth_task_log;
+SELECT act,state FROM active_coin WHERE uid=167367 ORDER BY act ASC;
+select sum(money) as s from pay_log where uid=167367 and result=0 and channel in(2,3);
+
+insert into pay_log(tradeno,channel,uid,waresid,money,result,addtime,transtime) values(?,?,?,?,?,?,?,?,?,?,?)

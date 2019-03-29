@@ -12,16 +12,7 @@ COMMENT '周卡截止时间，utc时间戳，单位秒';
 ALTER TABLE user
   CHANGE plat_src month_card_utc bigint(20) DEFAULT 0
 COMMENT '月卡截止时间，utc时间戳，单位秒';
-update user
-set user.week_card_utc = 0, user.month_card_utc = 0;
-update user
-  inner join card_log on user.uid = card_log.uid
-set week_card_utc = end_tm
-where wares_id = 'lailai.fish.sevenday' and state = 1;
-update user
-  inner join card_log on user.uid = card_log.uid
-set month_card_utc = end_tm
-where wares_id = 'lailai.fish.thirtyday' and state = 1;
+
 
 ALTER TABLE user_stat
   MODIFY daily_reward int(11) NOT NULL DEFAULT '0'
@@ -47,3 +38,15 @@ CREATE TABLE cdkey_log2
 );
 
 drop table yule_betlog;
+
+# 更新用户周月卡时间。
+update user
+set user.week_card_utc = 0, user.month_card_utc = 0;
+update user
+  inner join card_log on user.uid = card_log.uid
+set week_card_utc = end_tm
+where wares_id = 'lailai.fish.sevenday' and state = 1;
+update user
+  inner join card_log on user.uid = card_log.uid
+set month_card_utc = end_tm
+where wares_id = 'lailai.fish.thirtyday' and state = 1;

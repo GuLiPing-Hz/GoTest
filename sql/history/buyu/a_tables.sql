@@ -7,12 +7,10 @@ create table act_log
   comment 'mission id',
   addtime datetime    not null
   comment 'add time',
-  act     bigint(255) null
-  comment 'mission act',
-  act0    bigint(255) null
-  comment 'before add mission act',
-  act1    bigint(255) null
-  comment 'after add mission act'
+  act     smallint null
+  comment '最新活跃值',
+  act0    smallint null
+  comment '变化值'
 )
   engine = MyISAM
   collate = utf8mb4_unicode_ci;
