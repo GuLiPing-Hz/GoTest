@@ -2729,3 +2729,5 @@ CREATE TABLE user_stat_day
     transfer_coin bigint DEFAULT 0 NOT NULL COMMENT '废弃字段。'
 );
 ALTER TABLE user_stat_day COMMENT = '每日用户状态值';
+
+ALTER TABLE login_log MODIFY dev_desc varchar(128) charset utf8mb4 NOT NULL DEFAULT '' COMMENT '设备描述';
