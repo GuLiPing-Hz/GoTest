@@ -1538,13 +1538,7 @@ CREATE PROCEDURE proc_reset_by_day(in tm DATETIME, in tm_utc bigint, in vip_limi
     #Routine body goes here...
     #     DECLARE sumTotal INT; #声明变量sumTotal
 
-    #更新每日在线记录
-    INSERT INTO online_log (uid, tm, addtime) SELECT
-                                                a.uid,
-                                                a.online_time AS tm,
-                                                now()         AS addtime
-                                              FROM user_stat AS a, user AS b
-                                              WHERE a.uid = b.uid AND b.type <> 3 AND a.online_time > 0;
+    DELETE FROM online_log2;
     #更新每日捕获龙的记录
     INSERT INTO catch_dragon_log (uid, dragon_cnt, tm) SELECT
                                                          uid,
@@ -1554,7 +1548,7 @@ CREATE PROCEDURE proc_reset_by_day(in tm DATETIME, in tm_utc bigint, in vip_limi
                                                        WHERE value > 0 AND mid = 4;
     #用户每日状态信息清空
     UPDATE user_stat
-    SET lz_points = 0, act = 0, online_time = 0, transfer_coin = 0, daily_reward = 0;
+    SET lz_points = 0, transfer_coin = 0;
 
     #更新VIP每日奖励领取状态
     update user_stat
@@ -1582,15 +1576,6 @@ CREATE PROCEDURE proc_reset_by_day(in tm DATETIME, in tm_utc bigint, in vip_limi
     UPDATE card_log
     SET state = 0
     WHERE end_tm < tm_utc;
-    #重置用户每日周卡奖励领取
-    UPDATE user_stat AS a, card_log AS b
-    SET a.daily_reward = 1
-    WHERE a.uid = b.uid AND b.end_tm > tm_utc AND b.wares_id = 'lailai.fish.sevenday';
-    #重置用户每日月卡奖励领取
-    UPDATE user_stat AS a, card_log AS b
-    SET a.daily_reward = a.daily_reward + 2
-    WHERE a.uid = b.uid AND b.end_tm > tm_utc AND b.wares_id = 'lailai.fish.thirtyday';
-
   END
 //
 #分隔符还原
