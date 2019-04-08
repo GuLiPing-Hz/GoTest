@@ -13,6 +13,14 @@ set global wait_timeout = 604800; #60*60*24=604800 7*24小时不断
 show global variables like '%max_al%';
 set global max_allowed_packet = 1073741824;
 
+#查看mysql连接数上限
+show global variables like '%max_connections%';
+set global max_connections = 1000;
+
+#查看mysql运行状态
+show status;
+show full processlist;
+
 #重启mysql服务器
 #/etc/init.d/mysqld restart
 

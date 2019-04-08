@@ -40,3 +40,8 @@ CREATE INDEX pay_log_oid_index
   ON pay_log (oid DESC);
 CREATE INDEX pay_log_addtime_index
   ON pay_log (addtime DESC);
+
+ALTER TABLE user_stat
+  MODIFY get_coin bigint(20) DEFAULT '0'
+  COMMENT '龙珠红包个人奖池';
+

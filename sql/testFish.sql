@@ -242,4 +242,10 @@ delete from growth_task_log;
 SELECT act,state FROM active_coin WHERE uid=167367 ORDER BY act ASC;
 select sum(money) as s from pay_log where uid=167367 and result=0 and channel in(2,3);
 
-insert into pay_log(tradeno,channel,uid,waresid,money,result,addtime,transtime) values(?,?,?,?,?,?,?,?,?,?,?)
+insert into pay_log(tradeno,channel,uid,waresid,money,result,addtime,transtime) values(?,?,?,?,?,?,?,?,?,?,?);
+
+
+
+select count(1) as cnt from cdkey_log2 where id='Mv0ycH8lAiro6D5' and uid = 167367;
+SELECT * FROM growth_task_log WHERE uid=167367 ORDER BY task_id ASC;
+delete from growth_task_log;

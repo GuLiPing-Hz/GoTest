@@ -123,57 +123,5 @@ DELIMITER ;
 ALTER TABLE Buyu.user_exp
   ADD exp2 bigint NULL
 COMMENT '用户今日以前的输赢值';
--- ----------------------------
--- #更新用户输赢值 begin
--- ----------------------------
-DROP PROCEDURE IF EXISTS proc_update_user_exp;
-DELIMITER //
-CREATE PROCEDURE proc_update_user_exp(in uidIn bigint, in expIn bigint)
-  BEGIN
-    #Routine body goes here...
-    declare today datetime;
 
-    declare lastExp bigint;
-    declare lastUpdate datetime;
-    declare lastExp2 bigint;
-
-    set today = now();
-    select
-      exp,
-      exp2,
-      update_time
-    into lastExp, lastExp2, lastUpdate
-    from Buyu.user_exp
-    where uid = uidIn;
-
-    if lastExp2 is null
-    then
-      set lastExp2 = lastExp;
-    end if;
-
-    if isnull(lastUpdate)
-    then
-      insert into Buyu.user_exp (uid, exp) values (uidIn, expIn);
-      set lastExp2 = 0;
-    elseif date(today) = date(lastUpdate)
-      then
-        update Buyu.user_exp
-        set exp = expIn
-        where uid = uidIn;
-    else
-      update Buyu.user_exp
-      set exp = expIn, exp2 = lastExp
-      where uid = uidIn;
-      set lastExp2 = lastExp;
-    end if;
-
-    select lastExp2 as exp2;
-  END
-//
-DELIMITER ;
--- ----------------------------
--- #更新用户输赢值 end
--- ----------------------------
-
-# call proc_update_user_exp(177863, -10000);
 
