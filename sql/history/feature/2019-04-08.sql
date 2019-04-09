@@ -96,8 +96,8 @@ DROP PROCEDURE IF EXISTS proc_update_onlinelog;
 DELIMITER //
 # DEFINER指定权限的存储过程
 # CREATE DEFINER =`root`@`localhost` PROCEDURE `proc_reset_by_day`(IN a int, IN b int, OUT sum int)
-CREATE PROCEDURE proc_update_onlinelog(in uidIn bigint, in vipIn tinyint, in seconds int,
-                                       in lobby int, in game int)
+CREATE PROCEDURE proc_update_onlinelog(in uidIn   bigint, in vipIn tinyint, in seconds int,
+                                       in lobbyIn int, in gameIn int)
   BEGIN
     declare cnt int;
     select count(1)
@@ -108,10 +108,10 @@ CREATE PROCEDURE proc_update_onlinelog(in uidIn bigint, in vipIn tinyint, in sec
     if cnt > 0
     then
       update online_log2
-      set value = seconds, lobby = lobby, game = game, vip = vipIn
+      set value = seconds, lobby = lobbyIn, game = gameIn, vip = vipIn
       where uid = uidIn;
     else
-      insert into online_log2 (uid, vip, value, lobby, game) values (uidIn, vipIn, seconds, lobby, game);
+      insert into online_log2 (uid, vip, value, lobby, game) values (uidIn, vipIn, seconds, lobbyIn, gameIn);
     end if;
   END
 //
