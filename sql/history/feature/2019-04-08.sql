@@ -121,3 +121,5 @@ DELIMITER ;
 -- Procedure structure for `proc_update_onlinelog` END
 -- ----------------------------
 # call proc_update_onlinelog(167367, 1, 10);
+
+ALTER TABLE user_stat MODIFY online_time bigint(20) DEFAULT '1' COMMENT '用户在线总时长 废弃';
