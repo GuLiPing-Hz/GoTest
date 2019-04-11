@@ -410,3 +410,4 @@ where p.type = 40
 group by l.uid;
 
 delete from coin_log;
+select sum(fee) from coin_log;
