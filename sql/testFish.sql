@@ -409,5 +409,8 @@ where p.type = 40
       and p.sendType = 2
 group by l.uid;
 
+delete from yule_gamelog;
+
 delete from coin_log;
 select sum(fee) from coin_log;
+
