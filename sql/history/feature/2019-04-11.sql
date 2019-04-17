@@ -4,4 +4,3 @@
 #把老玩家的龙珠红包引导置为已完成
 update user_stat
 set guide_flag = guide_flag | 2;
-

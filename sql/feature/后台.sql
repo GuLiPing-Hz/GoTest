@@ -219,3 +219,25 @@ do
     CALL buyu_summary(now());
   END;
 
+
+-- auto-generated definition
+drop table if exists online_count;
+create table online_count
+(
+  id      int(11) unsigned auto_increment
+    primary key,
+  tp      int      null
+  comment '统计类型，1.在线人数2.游戏人数',
+  p_cnt   bigint   null,
+  tms     int      null
+  comment '统计频率1.每分钟5.每五分钟',
+  addtime datetime null
+);
+CREATE INDEX online_count_addtime_index
+  ON online_count (addtime);
+
+call proc_get_today_flag(167374, '00110011', '2019-04-16', 0,1,0);
+
+delete from coin_log;
+delete from user_props_log;
+delete from online_count;

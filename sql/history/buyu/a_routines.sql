@@ -1537,8 +1537,9 @@ CREATE PROCEDURE proc_reset_by_day(in tm DATETIME, in tm_utc bigint, in vip_limi
   BEGIN
     #Routine body goes here...
     #     DECLARE sumTotal INT; #声明变量sumTotal
-
-    DELETE FROM online_log2;
+    #每日0点清空在线日志
+    call online_log_summary(tm); #数据统计。
+    DELETE FROM online_log2; #清理表
     #更新每日捕获龙的记录
     INSERT INTO catch_dragon_log (uid, dragon_cnt, tm) SELECT
                                                          uid,

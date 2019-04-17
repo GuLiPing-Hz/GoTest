@@ -1467,28 +1467,6 @@ create table online_count
 );
 
 -- auto-generated definition
-create table online_log
-(
-  id      bigint unsigned auto_increment
-  comment '自增id'
-    primary key,
-  uid     bigint   null
-  comment '用户id',
-  tm      int      null
-  comment '在线时长（分钟）',
-  addtime datetime null
-  comment '记录添加时间'
-)
-  engine = MyISAM
-  collate = utf8mb4_unicode_ci;
-
-create index addtime
-  on online_log (addtime);
-
-create index uid
-  on online_log (uid);
-
--- auto-generated definition
 create table online_reward_cfg
 (
   id          int(11) unsigned auto_increment

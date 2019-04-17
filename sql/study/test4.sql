@@ -1,7 +1,7 @@
 #学习定时任务
 
 #查看event是否开启
-show variables like '%event_sche%';
+show global variables like '%event_sche%';
 #开启event
 set global event_scheduler = 1;
 #关闭event
