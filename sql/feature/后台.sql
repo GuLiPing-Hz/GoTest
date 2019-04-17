@@ -238,6 +238,7 @@ CREATE INDEX online_count_addtime_index
 
 call proc_get_today_flag(167374, '00110011', '2019-04-16', 0,1,0);
 
+delete from room_win_log;
 delete from coin_log;
 delete from user_props_log;
 delete from online_count;
