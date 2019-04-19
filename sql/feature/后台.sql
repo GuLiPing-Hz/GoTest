@@ -237,6 +237,9 @@ CREATE INDEX online_count_addtime_index
   ON online_count (addtime);
 
 call proc_get_today_flag(167374, '00110011', '2019-04-16', 0,1,0);
+select count(1)
+      from awards_log
+      where awards_type = 45 and uid = 183270 AND tm >= '2019-04-18';
 
 delete from room_win_log;
 delete from coin_log;
