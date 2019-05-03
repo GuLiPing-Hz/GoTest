@@ -1,8 +1,10 @@
-ALTER TABLE buyu_summary ADD paoCoin1 bigint DEFAULT 0 NULL COMMENT '用户累计购买的炮台花费的金币';
+ALTER TABLE buyu_summary
+    ADD paoCoin1 bigint DEFAULT 0 NULL COMMENT '用户累计购买的炮台花费的金币';
 
 DROP PROCEDURE IF EXISTS buyu_summary;
-CREATE DEFINER =`root`@`192.168.100.3` PROCEDURE `buyu_summary`(in tmIn DATETIME)
-  BEGIN
+CREATE
+    DEFINER =`root`@`192.168.100.3` PROCEDURE `buyu_summary`(in tmIn DATETIME)
+BEGIN
 
     declare v_twoHoursAgo datetime;
     declare v_chanchu bigint;
@@ -42,120 +44,107 @@ CREATE DEFINER =`root`@`192.168.100.3` PROCEDURE `buyu_summary`(in tmIn DATETIME
     set v_twoHoursAgo = DATE_SUB(tmIn, INTERVAL 1 HOUR);
 
     -- 用户金币
-    select
-      ifnull(sum(s.coin), 0),
-      ifnull(sum(get_coin), 0)
-    into v_total_coin, v_getCoin
+    select ifnull(sum(s.coin), 0),
+           ifnull(sum(get_coin), 0)
+           into v_total_coin, v_getCoin
     from user_stat s
-      left join user u on u.uid = s.uid
+             left join user u on u.uid = s.uid
     where u.type in (0, 1, 2);
 
     -- 龙珠+珍珠转换金币+龙珠个人奖池
-    select ifnull(sum(a + b + c + d + e), 0)
-    into v_dbcoin
-    from (select
-            sum(pearl * 100)   a,
-            sum(db1 * 10000)   b,
-            sum(db2 * 100000)  c,
-            sum(db3 * 1000000) d,
-            sum(get_coin)      e
+    select ifnull(sum(a + b + c + d + e), 0) into v_dbcoin
+    from (select sum(pearl * 100)   a,
+                 sum(db1 * 10000)   b,
+                 sum(db2 * 100000)  c,
+                 sum(db3 * 1000000) d,
+                 sum(get_coin)      e
           from user_stat s
-            left join user u on u.uid = s.uid
+                   left join user u on u.uid = s.uid
           where u.type in (0, 1, 2)) a;
 
     --  龙珠奖池库存（初级场，中级场，红包场）
     -- 房间当前流水 * 房间当前抽水平均比例初级场 10中级场 11红包场 39
-    select
-      ifnull(dragonball, 0),
-      curBill
-    into v_dragonball2, v_curBill2
+    select ifnull(dragonball, 0),
+           curBill
+           into v_dragonball2, v_curBill2
     from room_win_log
     where rid = 2
     order by tm desc
     limit 1;
 
-    select
-      ifnull(dragonball, 0),
-      curBill
-    into v_dragonball3, v_curBill3
+    select ifnull(dragonball, 0),
+           curBill
+           into v_dragonball3, v_curBill3
     from room_win_log
     where rid = 3
     order by tm desc
     limit 1;
 
-    select
-      ifnull(dragonball, 0),
-      curBill
-    into v_dragonball8, v_curBill8
+    select ifnull(dragonball, 0),
+           curBill
+           into v_dragonball8, v_curBill8
     from room_win_log
     where rid = 8
     order by tm desc
     limit 1;
 
     -- 购买炮台金币
-    select sum(coin_change)
-    into v_paoCoin1
+    select sum(coin_change) into v_paoCoin1
     from coin_log
     where change_type = 34;
     -- 充值金币
-    select ifnull(sum(coin_change), 0)
-    into v_rechargeCoin
+    select ifnull(sum(coin_change), 0) into v_rechargeCoin
     from coin_log
     where change_type in (7, 8, 9, 10, 18, 46);
 
     -- 奖励金币
-    select ifnull(sum(coin_change), 0)
-    into v_rewardCoin
+    select ifnull(sum(coin_change), 0) into v_rewardCoin
     from coin_log
     where change_type in (0, 1, 6, 11, 12, 17, 19, 20, 26, 29, 37, 38, 39, 40, 41, 45, 47, 49, 50, 52, 53, 55, 62);
 
     -- 红包券兑换金币
-    select ifnull(sum(coin_change), 0)
-    into v_hbqCoin
+    select ifnull(sum(coin_change), 0) into v_hbqCoin
     from coin_log
     where change_type = 60;
 
     -- 房间累积输赢(roomWin)
-    select max(roomWin)
-    into v_roomWin2
+    select max(roomWin) into v_roomWin2
     from room_win_log
     where rid = 2;
-    select max(roomWin)
-    into v_roomWin3
+    select max(roomWin) into v_roomWin3
     from room_win_log
     where rid = 3;
-    select max(roomWin)
-    into v_roomWin8
+    select max(roomWin) into v_roomWin8
     from room_win_log
     where rid = 8;
 
     -- 时段流水
-    select ifnull(sum(fee), 0)
-    into v_room2flowing
+    select ifnull(sum(fee), 0) into v_room2flowing
     from coin_log
-    where room_id = 2 and add_time > v_twoHoursAgo;
-    select ifnull(sum(fee), 0)
-    into v_room3flowing
+    where room_id = 2
+      and add_time > v_twoHoursAgo;
+    select ifnull(sum(fee), 0) into v_room3flowing
     from coin_log
-    where room_id = 3 and add_time > v_twoHoursAgo;
-    select ifnull(sum(fee), 0)
-    into v_room8flowing
+    where room_id = 3
+      and add_time > v_twoHoursAgo;
+    select ifnull(sum(fee), 0) into v_room8flowing
     from coin_log
-    where room_id = 8 and add_time > v_twoHoursAgo;
+    where room_id = 8
+      and add_time > v_twoHoursAgo;
 
-    select sum(coin_change)
-    into v_paoCoin
+    select sum(coin_change) into v_paoCoin
     from coin_log
-    where change_type = 34 and add_time > v_twoHoursAgo;
+    where change_type = 34
+      and add_time > v_twoHoursAgo;
 
     -- 时段产出
-    select ifnull(sum(coin_change), 0)
-    into v_chanchu
+    select ifnull(sum(coin_change), 0) into v_chanchu
     from coin_log
     where change_type in (0, 1, 6, 11, 12, 17, 19, 20, 26, 29, 37, 38, 39, 40, 41, 45, 47, 49, 50, 52, 53, 55, 62, #金币奖励
                           7, 8, 9, 10, 18, 46, #金币充值
                           60 #红包券兑换金币
-    ) and add_time > v_twoHoursAgo;
+        )
+      and add_time > v_twoHoursAgo;
 
     insert into buyu_summary (stats_time,
                               chanchu,
@@ -180,28 +169,28 @@ CREATE DEFINER =`root`@`192.168.100.3` PROCEDURE `buyu_summary`(in tmIn DATETIME
                               curBill8,
                               dragonball8)
     values (tmIn,
-      v_chanchu,
-      v_room2flowing * 0.01,
-      v_room3flowing * 0.011,
-      v_room8flowing * 0.039,
-      v_total_coin,
-      v_dbcoin,
-      v_getCoin,
-      v_rechargeCoin,
-      v_rewardCoin,
-      v_hbqCoin,
-      v_paoCoin,
-      v_paoCoin1,
-      v_roomWin2,
-      v_curBill2 * 0.01,
-      v_dragonball2,
-      v_roomWin3,
-      v_curBill3 * 0.011,
-      v_dragonball3,
-      v_roomWin8,
-      v_curBill8 * 0.039,
+            v_chanchu,
+            v_room2flowing * 0.01,
+            v_room3flowing * 0.011,
+            v_room8flowing * 0.039,
+            v_total_coin,
+            v_dbcoin,
+            v_getCoin,
+            v_rechargeCoin,
+            v_rewardCoin,
+            v_hbqCoin,
+            v_paoCoin,
+            v_paoCoin1,
+            v_roomWin2,
+            v_curBill2 * 0.01,
+            v_dragonball2,
+            v_roomWin3,
+            v_curBill3 * 0.011,
+            v_dragonball3,
+            v_roomWin8,
+            v_curBill8 * 0.039,
             v_dragonball8);
-  END;
+END;
 
 
 call Buyu.buyu_summary('2019-04-15 16:00:00');
@@ -209,39 +198,52 @@ call Buyu.buyu_summary('2019-04-15 16:00:00');
 
 DROP EVENT IF EXISTS buyu_summary;
 create definer = root@`192.168.100.3` event buyu_summary
-  on schedule
-    every '1' HOUR
-      starts '2019-04-11 00:00:00'
-  on completion preserve
-  enable
-do
-  BEGIN
-    CALL buyu_summary(now());
-  END;
+    on schedule
+        every '1' HOUR
+            starts '2019-04-11 00:00:00'
+    on completion preserve
+    enable
+    do
+    BEGIN
+        CALL buyu_summary(now());
+    END;
 
 
 -- auto-generated definition
 drop table if exists online_count;
 create table online_count
 (
-  id      int(11) unsigned auto_increment
-    primary key,
-  tp      int      null
-  comment '统计类型，1.在线人数2.游戏人数',
-  p_cnt   bigint   null,
-  tms     int      null
-  comment '统计频率1.每分钟5.每五分钟',
-  addtime datetime null
+    id      int(11) unsigned auto_increment
+        primary key,
+    tp      int      null
+        comment '统计类型，1.在线人数2.游戏人数',
+    p_cnt   bigint   null,
+    tms     int      null
+        comment '统计频率1.每分钟5.每五分钟',
+    addtime datetime null
 );
 CREATE INDEX online_count_addtime_index
-  ON online_count (addtime);
+    ON online_count (addtime);
 
-call proc_get_today_flag(167374, '00110011', '2019-04-16', 0,1,0);
+call proc_get_today_flag(167374, '00110011', '2019-04-16', 0, 1, 0);
 select count(1)
-      from awards_log
-      where awards_type = 45 and uid = 183270 AND tm >= '2019-04-18';
+from awards_log
+where awards_type = 45
+  and uid = 183270
+  AND tm >= '2019-04-18';
 
-delete from room_win_log;
-delete from coin_log;
-delete from user_props_log;
-delete from online_count;
+delete
+from room_win_log
+where true;
+
+delete
+from coin_log
+where true;
+
+delete
+from user_props_log
+where true;
+
+delete
+from online_count
+where true;
