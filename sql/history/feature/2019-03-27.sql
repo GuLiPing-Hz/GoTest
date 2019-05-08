@@ -31,7 +31,9 @@ create table pay_log
   transtime datetime                                      not null
   comment '订单完成时间',
   des       text                                          null
-  comment '订单状态描述'
+  comment '订单状态描述',
+  phone     varchar(20)                                   null
+  comment '充值号码'
 
 )
   collate = utf8mb4_unicode_ci;
