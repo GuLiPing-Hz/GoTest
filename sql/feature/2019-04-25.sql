@@ -1,16 +1,23 @@
 CREATE TABLE msg
 (
-    id     bigint PRIMARY KEY AUTO_INCREMENT,
-    type   int               NOT NULL
-        COMMENT '消息类型',
-    uid    bigint            NOT NULL,
-    fromid bigint DEFAULT -1 NOT NULL
-        COMMENT '-1表示系统，0表示自己，其他根据type定义，可能为uid，也可能为ytid。。',
-    tm     datetime          NOT NULL,
-    msg    text COMMENT '消息内容。'
+    id      bigint PRIMARY KEY NOT NULL comment '消息id 64位
+1位保留-31位时间戳（单位秒，136年内不会重复）-8位集群id-4位服务器id-20位sequence',
+    type    tinyint            NOT NULL
+        COMMENT '消息类型:
+        SYSTEM = 0, --系统消息；
+        P2P = 1, --点对点消息
+        TEAM = 2, --群组消息
+        YT_APPLY = 3, --鱼塘申请消息',
+    from_id bigint             NOT NULL comment '消息来源ID，可以为uid，或者ytid或者0表示系统',
+    to_id   bigint             NOT NULL COMMENT '消息前往ID，可以为uid，或者ytid',
+    tm      datetime           NOT NULL,
+    msg     text COMMENT '消息内容。'
 );
 ALTER TABLE msg
     COMMENT = '消息表';
+create index msg_tm_index
+    on msg (tm);
+
 
 CREATE TABLE yt
 (
@@ -40,14 +47,14 @@ CREATE TABLE yt_user
 (
     uid     bigint PRIMARY KEY NOT NULL,
     ytid    int                NOT NULL
-        COMMENT '鱼塘id',
+        COMMENT '鱼塘id 0表示未加入鱼塘',
     tm      datetime           NOT NULL
         COMMENT '加入时间',
     yuhuo   bigint default 0
         comment '累计鱼货，离开鱼塘马上清零',
     checkin int    default 0
         comment '累计签到次数，离开鱼塘马上清零',
-    endtm   datetime COMMENT '离开时间-保护期24小时，此期间无法再申请加入其它鱼塘'
+    utc     bigint COMMENT '单位秒，离开时间-保护期24小时，此期间无法再申请加入其它鱼塘'
 );
 ALTER TABLE yt_user
     COMMENT = '鱼塘用户表';
