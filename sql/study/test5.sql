@@ -2,39 +2,41 @@
 #
 create table score
 (
-  rowId  int auto_increment
-    primary key,
-  uid    int         not null,
-  score  text        not null,
-  course varchar(20) null
+    rowId  int auto_increment
+        primary key,
+    uid    int         not null,
+    score  text        not null,
+    course varchar(20) null
 );
-INSERT INTO databasetest.score (rowId, uid, score, course) VALUES (1, 1, '80', 'math');
-INSERT INTO databasetest.score (rowId, uid, score, course) VALUES (2, 2, '90', 'english');
-INSERT INTO databasetest.score (rowId, uid, score, course) VALUES (3, 2, '100', 'math');
-INSERT INTO databasetest.score (rowId, uid, score, course) VALUES (4, 1, '95', 'english');
+INSERT INTO databasetest.score (rowId, uid, score, course)
+    VALUES (1, 1, '80', 'math');
+INSERT INTO databasetest.score (rowId, uid, score, course)
+    VALUES (2, 2, '90', 'english');
+INSERT INTO databasetest.score (rowId, uid, score, course)
+    VALUES (3, 2, '100', 'math');
+INSERT INTO databasetest.score (rowId, uid, score, course)
+    VALUES (4, 1, '95', 'english');
 #
 #对于上面的这张表
 use databasetest;
 create view view_students_ as
-  select
-    uid,
-    case course
-    when 'math'
-      then score
-    else 0 end as mathscore,
-    case course
-    when 'english'
-      then score
-    else 0 end as englishscore
-  from score;
+select uid,
+       case course
+           when 'math'
+               then score
+           else 0 end as mathscore,
+       case course
+           when 'english'
+               then score
+           else 0 end as englishscore
+from score;
 
 create view view_students as
-  select
-    uid,
-    max(mathscore)    as mathscore,
-    max(englishscore) as englishscore
-  from view_students_
-  group by uid;
+select uid,
+       max(mathscore)    as mathscore,
+       max(englishscore) as englishscore
+from view_students_
+group by uid;
 
 select *
 from view_students;
@@ -50,3 +52,7 @@ from view_students;
 # 所以可以说MySQL创建以下六种触发器：
 # BEFORE INSERT,BEFORE DELETE,BEFORE UPDATE
 # AFTER INSERT,AFTER DELETE,AFTER UPDATE
+
+#mysql 随机数
+# rand() 取值范围 0~1.0
+select cast(rand() * 0.01 + 0.01 as int);

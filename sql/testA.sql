@@ -1,0 +1,1 @@
+select * from view_yt_rank_reward limit 100

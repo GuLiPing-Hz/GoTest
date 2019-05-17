@@ -80,7 +80,7 @@ values (177863, '43BA4F0B-776F-F184-6AFE-FB5C6095EA90', '183.156.125.192'
 UPDATE mission
 SET state = 1
 WHERE uid = 177863 AND mid = 2 AND state = 0 AND value >= 60;
-insert into notice (title, content, sender, receiver, addtime, isValid, showOrder, ntype, mail_type, mail_giftid)
+insert into notice (title, content, sender, receiver, addtime, isValid, showOrder, ntype, mail_type, mail_gift)
 values ('新手七天奖励', '新手七天大礼，奖励已送达，请签收。', 0, 177863, '2018-12-04 11:26:20', 1, 2, 1, 5, '7');
 select
   reward_id,

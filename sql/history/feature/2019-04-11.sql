@@ -5,10 +5,10 @@
 update user_stat
 set guide_flag = guide_flag | 2;
 
-alter table notice modify mail_giftid varchar(100) null comment '如果是邮件型的消息带有礼物id';
+alter table notice modify mail_gift varchar(100) null comment '如果是邮件型的消息带有礼物id';
 
 create index notice_mail_giftid_index
-	on notice (mail_giftid);
+	on notice (mail_gift);
 
 alter table mail_reward modify mail_giftid varchar(100) null comment '礼物编号';
 
