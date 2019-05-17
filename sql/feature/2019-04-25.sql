@@ -166,7 +166,7 @@ order by act desc;
 
 create table yt_yuhuo
 (
-    uid       bigint PRIMARY KEY NOT NULL,
+    uid      bigint PRIMARY KEY NOT NULL,
     yuhuocur bigint default 0,
     yuhuoutc bigint default -1 comment '鱼货状态(单位秒)
 -2表示正在初始化，-1表示关闭状态，0表示开启,>0表示倒计时的截止时间'
@@ -176,9 +176,9 @@ drop view if exists view_yt_user;
 create view view_yt_user as
 select a.uid,
        ytid,
-       nick_name             as nickname,
+       nick_name            as nickname,
        avatar,
-       a.tm                  as tm,
+       a.tm                 as tm,
        ifnull(yuhuocur, 0)  as yuhuocur,
        ifnull(yuhuoutc, -2) as yuhuoutc,
        yuhuo,
@@ -267,6 +267,7 @@ create table yt_clear_cfg
         comment '周期，以天为单位'
 )
     comment '鱼塘清理活跃度配置。鱼塘排名是按活跃度来的。';
+insert into yt_clear_cfg(starttm, life) value (date(now()), 7);
 
 create table yt_create_cfg
 (
@@ -443,6 +444,7 @@ BEGIN
     declare vToday datetime;
     declare vCnt int;
     declare vReward int;
+    declare vSystemReward int;
     declare vPool bigint;
 
     set vToday = date(vNow);
@@ -466,8 +468,14 @@ BEGIN
         leave exe;
     end if;
 
+    select reward into vSystemReward from yt_create_cfg limit 1;
+
+    if vSystemReward is null then
+        set vSystemReward = 1000;
+    end if;
+
     #判断当前鱼塘资金是否够发签到奖励
-    if vReward - 1000 > vPool then
+    if vReward - vSystemReward > vPool then
         select 10134 as status;
         leave exe;
     end if;
