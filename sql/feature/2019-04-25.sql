@@ -398,7 +398,7 @@ DELIMITER ;
 
 -- ----------------------------
 -- Procedure structure for `proc_accept_apply` begin
---
+-- 同意申请加入鱼塘
 -- ----------------------------
 DROP PROCEDURE IF EXISTS proc_accept_apply;
 DELIMITER //
@@ -416,6 +416,7 @@ BEGIN
     #删除该玩家的其他申请
     delete from yt_user where uid = vUid;
     insert into yt_user(uid, ytid, tm, apply) value (vUid, vYtid, vTm, 0);
+    update yt set ver=ver + 1 where ytid = vYtid;
     select 0 as status;
 END
 //
@@ -435,6 +436,7 @@ DELIMITER ;
 #         10114 请求参数错误，无法获取到对应的鱼塘奖励数据
 #         10134 鱼塘资金不足，无法签到
 #     reward: 签到奖励
+#     pool:鱼塘当前资金
 -- ----------------------------
 DROP PROCEDURE IF EXISTS proc_yt_checkin;
 DELIMITER //
@@ -485,10 +487,11 @@ BEGIN
         value (vNow, vUid, vUUID, vYtid, vReward, 0, 0);
 
     #减少鱼塘库存金币
-    update yt set pool=pool - vReward where ytid = vYtid;
+    set vPool = vPool - vReward;
+    update yt set pool=vPool where ytid = vYtid;
 
     #返回签到的金币数量
-    select 0 as status, vReward as reward;
+    select 0 as status, vReward as reward, vPool as pool;
 END
 //
 #分隔符还原
