@@ -182,6 +182,7 @@ select a.uid,
        ifnull(yuhuocur, 0)  as yuhuocur,
        ifnull(yuhuoutc, -2) as yuhuoutc,
        yuhuo,
+       utc,
        checkin
 from yt_user a
          inner join user b on a.uid = b.uid
