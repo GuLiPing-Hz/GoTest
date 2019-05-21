@@ -24,7 +24,7 @@ alter table fort_log
 create index notice_addtime_index
     on notice (addtime);
 alter table cdkey_cfg
-    add flavor varchar(100) null comment '能使用的渠道,null 表示所有渠道都可以使用';
+    add flavor varchar(100) null comment '能使用的渠道,null 表示所有渠道都可以使用,也可以存放uid，表示指定用户使用';
 
 alter table cdkey_cfg
     add reg_tm datetime default '2017-01-01' not null comment '使用的注册最晚时间，低于此时间注册将不能使用兑换码';
@@ -119,6 +119,10 @@ CREATE TABLE yt_user
     constraint yt_user_pk
         primary key (uid, ytid)
 ) COMMENT = '鱼塘用户表';
+create index yt_user_tm_index
+    on yt_user (tm);
+create index yt_user_uid_index
+    on yt_user (uid);
 
 
 drop view if exists view_yt_membcnt;
@@ -176,11 +180,11 @@ drop view if exists view_yt_user;
 create view view_yt_user as
 select a.uid,
        ytid,
-       nick_name            as nickname,
+       nick_name           as nickname,
        avatar,
-       a.tm                 as tm,
-       ifnull(yuhuocur, 0)  as yuhuocur,
-       ifnull(yuhuoutc, -2) as yuhuoutc,
+       a.tm                as tm,
+       ifnull(yuhuocur, 0) as yuhuocur,
+       ifnull(yuhuoutc, 0) as yuhuoutc,
        yuhuo,
        utc,
        checkin
@@ -260,26 +264,19 @@ CREATE UNIQUE INDEX yt_fc_cfg_rank_uindex
 ALTER TABLE yt_fc_cfg
     COMMENT = '鱼塘扶持奖励列表';
 
-create table yt_clear_cfg
-(
-    starttm datetime default CURRENT_TIMESTAMP not null
-        comment '起始日期',
-    life    smallint(6)                        not null
-        comment '周期，以天为单位'
-)
-    comment '鱼塘清理活跃度配置。鱼塘排名是按活跃度来的。';
-insert into yt_clear_cfg(starttm, life) value (date(now()), 7);
-
 create table yt_create_cfg
 (
-    coin           bigint  default 3000000 not null comment '创建鱼塘需要消耗的金币->划归鱼塘',
-    vip            tinyint default 0 comment '创建鱼塘需要的VIP',
-    reward         int     default 1000 comment '鱼塘每日签到系统奖励',
-    modify_diamond int     default 100 comment '修改鱼塘信息需要花费的钻石'
+    id             tinyint primary key default 1,
+    coin           bigint              default 3000000           not null comment '创建鱼塘需要消耗的金币->划归鱼塘',
+    vip            tinyint             default 0 comment '创建鱼塘需要的VIP',
+    reward         int                 default 1000 comment '鱼塘每日签到系统奖励',
+    modify_diamond int                 default 100 comment '修改鱼塘信息需要花费的钻石',
+    tm             datetime            default CURRENT_TIMESTAMP not null
+        comment '清理活跃起始日期，此后按周期计算到了就再次清空鱼塘活跃度',
+    life           smallint(6)         default 7                 not null
+        comment '周期，以天为单位'
 );
-insert into yt_create_cfg(vip) value (0);
-
-
+insert into yt_create_cfg(vip, tm) value (0, date(now()));
 
 # ---------------------------------存储过程 -----------------------------------
 # ---------------------------------存储过程 -----------------------------------
@@ -299,13 +296,43 @@ BEGIN
     declare tm_yesterday datetime;
     set tm_yesterday = date_sub(vTm, INTERVAL 1 DAY);
 
-    delete from yt_yuhuo where true;#清空一下。
-    insert into yt_yuhuo
-    select a.uid uid, -sum(fee), -1
+    delete from yt_yuhuo where true;
+    #清空一下。
+#     insert into yt_yuhuo
+#     explain select a.uid, floor(-sum(fee) / 1000) as bill, -1
+#             from coin_log a
+#                      inner join yt_user b on a.uid = b.uid
+#             where b.apply = 0
+#               and a.change_type = 74
+#               and a.add_time >= '2019-05-20'
+#               and a.add_time < '2019-05-21'
+#             group by a.uid
+#             having bill >= 1000;
+
+    DROP TEMPORARY TABLE IF EXISTS tmp_yt_yhuo;
+    CREATE TEMPORARY TABLE tmp_yt_yhuo
+    select a.uid, b.ytid, floor(-sum(fee) / 1000) as bill
     from coin_log a
-             inner join yt_user b on a.uid = b.uid and a.change_type = 74
+             inner join yt_user b on a.uid = b.uid
     where b.apply = 0
-    group by a.uid and a.add_time >= tm_yesterday and a.add_time < vTm;
+      and a.change_type = 74
+      and a.add_time >= tm_yesterday
+      and a.add_time < vTm
+    group by a.uid
+    having bill >= 1000;
+
+    update yt set ver=ver + 1;
+
+    #更新用户的累计鱼货。
+    update yt_user a inner join tmp_yt_yhuo b on a.uid = b.uid set yuhuo=yuhuo + bill;
+    #更新鱼塘的活跃度。
+    update yt a inner join (select ytid, sum(bill) as bill1 from tmp_yt_yhuo group by ytid) b on a.ytid = b.ytid
+    set a.act = a.act + bill1;
+
+    insert into yt_yuhuo select uid, bill, -1 from tmp_yt_yhuo;
+
+    -- 删除临时表
+    DROP TEMPORARY TABLE IF EXISTS tmp_yt_yhuo;
 END
 //
 #分隔符还原
@@ -313,6 +340,14 @@ DELIMITER ;
 -- ----------------------------
 -- Procedure structure for `proc_update_yuhuo_by_day` END
 -- ----------------------------
+select uid, sum(fee)
+from coin_log
+where change_type = 74;
+call proc_update_yuhuo_by_day('2019-05-21');
+update coin_log
+set change_type=74
+where change_type = 2
+  and add_time > '2019-05-21';
 
 -- ----------------------------
 -- Procedure structure for `proc_create_yt` begin
@@ -328,7 +363,7 @@ CREATE PROCEDURE proc_create_yt(in vUid bigint, in vName text, in vIntro text,
 exec:
 BEGIN
     declare vCnt int;
-    select count(1) into vCnt from yt_user where uid = vUid and apply = 0;
+    select count(1) into vCnt from yt_user where uid = vUid and apply = 0 and ytid > 0;
     if vCnt > 0 then
         select 10123 as status;
         leave exec;
@@ -418,7 +453,7 @@ BEGIN
     delete from yt_user where uid = vUid;
     insert into yt_user(uid, ytid, tm, apply) value (vUid, vYtid, vTm, 0);
     update yt set ver=ver + 1 where ytid = vYtid;
-    select 0 as status;
+    select 0 as status, a.* from view_yt_user a where uid = vUid;
 END
 //
 #分隔符还原
@@ -487,9 +522,12 @@ BEGIN
     insert yt_coin_log(tm, uid, uuid, ytid, reward, type, optuid)
         value (vNow, vUid, vUUID, vYtid, vReward, 0, 0);
 
-    #减少鱼塘库存金币
+    #减少鱼塘库存金币,鱼塘成员累计签到数更新。。。
     set vPool = vPool - vReward;
-    update yt set pool=vPool where ytid = vYtid;
+    update yt set pool=vPool, ver=ver + 1 where ytid = vYtid;
+
+    #更新鱼塘成员累计签到。
+    update yt_user set checkin=checkin + 1 where uid = vUid;
 
     #返回签到的金币数量
     select 0 as status, vReward as reward, vPool as pool;
@@ -551,6 +589,8 @@ BEGIN
     #如果vUid和vOptedUid表示收取自己的鱼货，反之则是偷取别人的鱼货
     if vUid = vOptedUid then
         update yt_yuhuo set yuhuocur=0 where uid = vOptedUid;
+        #更新当前的鱼塘版本信息
+        update yt set ver=ver + 1 where ytid = vYtid;
         select 0 as status, vYuhuo as yuhuo;
     else
         #一天一个uid只能被同一个uid偷一次
@@ -577,9 +617,11 @@ BEGIN
 
         #记录偷取的金额
         insert into yt_coin_log(tm, uid, ytid, reward, type, optuid)
-            value (vTm, vUid, vYtid, vSteal, 0, vOptedUid);
+            value (vTm, vUid, vYtid, vSteal, 1, vOptedUid);
         #更新当前的鱼货金额
         update yt_yuhuo set yuhuocur=yuhuocur - vSteal where uid = vOptedUid;
+        #更新当前的鱼塘版本信息
+        update yt set ver=ver + 1 where ytid = vYtid;
         select 0 as status, vSteal as yuhuo;
     end if;
 END
@@ -589,4 +631,6 @@ DELIMITER ;
 -- ----------------------------
 -- Procedure structure for `proc_get_yuhuo` END
 -- ----------------------------
+
+
 
