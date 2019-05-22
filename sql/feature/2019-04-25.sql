@@ -6,7 +6,7 @@ update notice
 set isTop=0;
 alter table notice
     change isTop can_delete tinyint default 0 not null comment '是否可以被客户端请求删除 0不能，1可以';
-alter table notice
+alter table noticproc_create_yte
     drop column showOrder;
 drop index notice_mail_giftid_index on notice;
 update notice
@@ -15,6 +15,8 @@ where true;
 alter table notice
     change mail_giftid mail_gift varchar(200) null comment '礼物具体信息的一个json字符串。可以为空，空表示没有礼物。';
 
+alter table notice
+    modify sender bigint null comment '发送者，0:系统（默认）1:管理员 2:其他';
 alter table notice
     modify id bigint auto_increment comment '公告编号';
 alter table notice
@@ -78,11 +80,11 @@ create index msg_tm_index
 CREATE TABLE yt
 (
     ytid    int PRIMARY KEY COMMENT '鱼塘id',
-    uid     bigint      NOT NULL
+    uid     bigint                      NOT NULL
         COMMENT '创建者uid',
-    name    varchar(50) NOT NULL
+    name    varchar(50) charset utf8mb4 NOT NULL
         COMMENT '鱼塘名称',
-    intro   text COMMENT '鱼塘简介',
+    intro   text charset utf8mb4 COMMENT '鱼塘简介',
     reward  int    DEFAULT 0
         COMMENT '鱼塘每日签到奖励',
     `limit` int    DEFAULT 100
@@ -194,16 +196,24 @@ from yt_user a
 where ytid > 0
   and apply = 0;
 
+drop view if exists view_coin_log_fee;
+create view view_coin_log_fee as
+select uid, date(add_time) as tm, sum(fee) as fee
+from coin_log
+where change_type in (2, 74)
+group by uid, date(add_time);
+
 drop view if exists view_yt_apply;
 create view view_yt_apply as
 select a.uid,
        ytid,
-       nick_name as nickname,
+       nick_name          as nickname,
        avatar,
-       a.tm      as tm,
-       yuhuo
+       a.tm               as tm,
+       floor(-fee / 1000) as yuhuo
 from yt_user a
          inner join user b on a.uid = b.uid
+         left join view_coin_log_fee c on a.uid = c.uid
 where ytid > 0
   and apply = 1;
 
@@ -340,14 +350,6 @@ DELIMITER ;
 -- ----------------------------
 -- Procedure structure for `proc_update_yuhuo_by_day` END
 -- ----------------------------
-select uid, sum(fee)
-from coin_log
-where change_type = 74;
-call proc_update_yuhuo_by_day('2019-05-21');
-update coin_log
-set change_type=74
-where change_type = 2
-  and add_time > '2019-05-21';
 
 -- ----------------------------
 -- Procedure structure for `proc_create_yt` begin
@@ -433,7 +435,24 @@ DELIMITER ;
 -- ----------------------------
 
 -- ----------------------------
--- Procedure structure for `proc_accept_apply` begin
+-- Procedure structure for `proc_disband_yt` begin
+-- 解散鱼塘
+-- ----------------------------
+DROP PROCEDURE IF EXISTS proc_disband_yt;
+DELIMITER //
+CREATE PROCEDURE proc_disband_yt(in vYtid bigint, in vUtc bigint)
+exec:
+BEGIN
+    delete from yt_user where ytid = vYtid and apply = 1;
+    update yt_user set ytid=0, yuhuo=0, checkin=0, utc=vUtc where ytid = vYtid;
+    delete from yt where ytid = vYtid;
+END
+//
+#分隔符还原
+DELIMITER ;
+
+-- ----------------------------
+-- Procedure structure for `proc_disband_yt` begin
 -- 同意申请加入鱼塘
 -- ----------------------------
 DROP PROCEDURE IF EXISTS proc_accept_apply;
