@@ -84,7 +84,7 @@ CREATE TABLE yt
         COMMENT '创建者uid',
     name    varchar(50) charset utf8mb4 NOT NULL
         COMMENT '鱼塘名称',
-    intro   text charset utf8mb4 COMMENT '鱼塘简介',
+    intro   varchar(120) charset utf8mb4 COMMENT '鱼塘简介',
     reward  int    DEFAULT 0
         COMMENT '鱼塘每日签到奖励',
     `limit` int    DEFAULT 100
@@ -542,7 +542,7 @@ BEGIN
         value (vNow, vUid, vUUID, vYtid, vReward, 0, 0);
 
     #减少鱼塘库存金币,鱼塘成员累计签到数更新。。。
-    set vPool = vPool - vReward;
+    set vPool = vPool - (vReward - vSystemReward);
     update yt set pool=vPool, ver=ver + 1 where ytid = vYtid;
 
     #更新鱼塘成员累计签到。
