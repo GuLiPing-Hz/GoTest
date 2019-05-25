@@ -173,7 +173,7 @@ order by act desc;
 create table yt_yuhuo
 (
     uid      bigint PRIMARY KEY NOT NULL,
-    yuhuocur bigint default 0,
+    yuhuocur bigint default 0 comment '今日鱼货',
     yuhuoutc bigint default -1 comment '鱼货状态(单位秒)
 -2表示正在初始化，-1表示关闭状态，0表示开启,>0表示倒计时的截止时间'
 ) COMMENT = '今日鱼货数据，每日6:50分清空表数据';
