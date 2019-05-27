@@ -17,8 +17,9 @@ where b.apply = 0
 group by a.uid
 having bill > 1000;
 
-call proc_get_yuhuo(167374, 165272, 165272, '2019-05-21 14:05:42', 1558418742)
-
-select name
-from yt
-where ytid = 165272;
+select count(1)
+    from yt_coin_log
+    where (uuid = 'ABBA1969-3E3A-84D9-39CA-A685A9476255' or uid = 165272)
+      and tm >= '2019-05-27'
+      and type = 0;
+call proc_yt_checkin(165272,,165272,'2019-05-27 21:38:39')

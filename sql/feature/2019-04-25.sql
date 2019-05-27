@@ -14,6 +14,86 @@ set mail_giftid=null
 where true;
 alter table notice
     change mail_giftid mail_gift varchar(200) null comment '礼物具体信息的一个json字符串。可以为空，空表示没有礼物。';
+alter table activities
+    drop column activityDes;
+alter table activities
+    drop column sub_id;
+alter table activities
+    drop column imgUrl;
+alter table activities
+    drop column activityUrl;
+alter table activities
+    drop column isDeleted;
+alter table activities
+    drop column isEnabled;
+alter table activities
+    drop column createTime;
+alter table activities
+    drop column startTime;
+alter table activities
+    add isEnabled tinyint default 0 not null comment '是否启用，0不启用(默认),1启用';
+
+alter table sub_act_cfg
+    modify total_cnt int default 0 not null comment '总的数量,-1表示无限供应';
+alter table sub_act_cfg
+    modify sub_title varchar(128) null comment '子任务标题；仅用于 更新公告';
+alter table sub_act_cfg
+    modify sub_content varchar(8192) null comment '子任务详细内容；仅用于 更新公告';
+
+INSERT INTO Buyu.activities (id, title, endTime, sortNo, isEnabled)
+VALUES (11, '鱼塘排位', '2019-12-31 00:00:00', 11, 0);
+INSERT INTO `Buyu`.`activities` (`id`, `title`, `endTime`, `sortNo`, `isEnabled`)
+VALUES (12, '鱼货达人', '2019-12-31 00:00:00', 12, 0);
+INSERT INTO `Buyu`.`sub_act_gift` (`sub_id`, `activity_id`, `gift_type`, `gift_count`)
+VALUES (1, 11, 10, 50000);
+INSERT INTO `Buyu`.`sub_act_gift` (`sub_id`, `activity_id`, `gift_type`, `gift_count`)
+VALUES (1, 11, 3, 10);
+INSERT INTO `Buyu`.`sub_act_gift` (`sub_id`, `activity_id`, `gift_type`, `gift_count`)
+VALUES (2, 11, 10, 30000);
+INSERT INTO `Buyu`.`sub_act_gift` (`sub_id`, `activity_id`, `gift_type`, `gift_count`)
+VALUES (2, 11, 3, 5);
+INSERT INTO `Buyu`.`sub_act_gift` (`sub_id`, `activity_id`, `gift_type`, `gift_count`)
+VALUES (3, 11, 10, 10000);
+INSERT INTO `Buyu`.`sub_act_gift` (`sub_id`, `activity_id`, `gift_type`, `gift_count`)
+VALUES (3, 11, 3, 3);
+INSERT INTO `Buyu`.`sub_act_gift` (`sub_id`, `activity_id`, `gift_type`, `gift_count`)
+VALUES (4, 11, 10, 5000);
+INSERT INTO `Buyu`.`sub_act_gift` (`sub_id`, `activity_id`, `gift_type`, `gift_count`)
+VALUES (4, 11, 3, 1);
+
+INSERT INTO `Buyu`.`sub_act_gift` (`sub_id`, `activity_id`, `gift_type`, `gift_count`)
+VALUES (1, 12, 10, 10000);
+INSERT INTO `Buyu`.`sub_act_gift` (`sub_id`, `activity_id`, `gift_type`, `gift_count`)
+VALUES (2, 12, 10, 20000);
+INSERT INTO `Buyu`.`sub_act_gift` (`sub_id`, `activity_id`, `gift_type`, `gift_count`)
+VALUES (3, 12, 10, 50000);
+INSERT INTO `Buyu`.`sub_act_gift` (`sub_id`, `activity_id`, `gift_type`, `gift_count`)
+VALUES (4, 12, 10, 200000);
+INSERT INTO `Buyu`.`sub_act_gift` (`sub_id`, `activity_id`, `gift_type`, `gift_count`)
+VALUES (5, 12, 10, 500000);
+INSERT INTO `Buyu`.`sub_act_gift` (`sub_id`, `activity_id`, `gift_type`, `gift_count`)
+VALUES (6, 12, 10, 5000000);
+INSERT INTO `Buyu`.`sub_act_gift` (`sub_id`, `activity_id`, `gift_type`, `gift_count`)
+VALUES (7, 12, 10, 10000000);
+INSERT INTO `Buyu`.`sub_act_gift` (`sub_id`, `activity_id`, `gift_type`, `gift_count`)
+VALUES (8, 12, 10, 20000000);
+
+INSERT INTO `Buyu`.`sub_act_cfg` (`activity_id`, `sub_id`, `level`, `total_cnt`, `sub_title`, `sub_content`)
+VALUES (12, 1, 10000, -1, DEFAULT, DEFAULT);
+INSERT INTO `Buyu`.`sub_act_cfg` (`activity_id`, `sub_id`, `level`, `total_cnt`, `sub_title`, `sub_content`)
+VALUES (12, 2, 50000, -1, DEFAULT, DEFAULT);
+INSERT INTO `Buyu`.`sub_act_cfg` (`activity_id`, `sub_id`, `level`, `total_cnt`, `sub_title`, `sub_content`)
+VALUES (12, 3, 100000, -1, DEFAULT, DEFAULT);
+INSERT INTO `Buyu`.`sub_act_cfg` (`activity_id`, `sub_id`, `level`, `total_cnt`, `sub_title`, `sub_content`)
+VALUES (12, 4, 500000, -1, DEFAULT, DEFAULT);
+INSERT INTO `Buyu`.`sub_act_cfg` (`activity_id`, `sub_id`, `level`, `total_cnt`, `sub_title`, `sub_content`)
+VALUES (12, 5, 1000000, -1, DEFAULT, DEFAULT);
+INSERT INTO `Buyu`.`sub_act_cfg` (`activity_id`, `sub_id`, `level`, `total_cnt`, `sub_title`, `sub_content`)
+VALUES (12, 6, 5000000, -1, DEFAULT, DEFAULT);
+INSERT INTO `Buyu`.`sub_act_cfg` (`activity_id`, `sub_id`, `level`, `total_cnt`, `sub_title`, `sub_content`)
+VALUES (12, 7, 10000000, -1, DEFAULT, DEFAULT);
+INSERT INTO `Buyu`.`sub_act_cfg` (`activity_id`, `sub_id`, `level`, `total_cnt`, `sub_title`, `sub_content`)
+VALUES (12, 8, 50000000, -1, DEFAULT, DEFAULT);
 
 alter table notice
     modify sender bigint null comment '发送者，0:系统（默认）1:管理员 2:其他';
@@ -112,7 +192,7 @@ CREATE TABLE yt_user
     tm      datetime NOT NULL
         COMMENT '加入时间/申请时间',
     yuhuo   bigint  default 0
-        comment '累计鱼货/申请携带的鱼货，离开鱼塘马上清零',
+        comment '在某个鱼塘的累计收取/偷取鱼货；申请加入时携带的鱼货，离开鱼塘马上清0',
     checkin int     default 0
         comment '累计签到次数，离开鱼塘马上清零',
     utc     bigint  default 0 COMMENT '单位秒，离开时间-保护期24小时，此期间无法再申请加入其它鱼塘',
@@ -262,18 +342,6 @@ from yt_coin_log a
          inner join user b on a.uid = b.uid
          inner join user c on a.optuid = c.uid;
 
-CREATE TABLE yt_fc_cfg
-(
-    num  int PRIMARY KEY NOT NULL
-        COMMENT '排名。',
-    coin int DEFAULT 0   NOT NULL
-        COMMENT '每日签到奖励金币增加额度'
-);
-CREATE UNIQUE INDEX yt_fc_cfg_rank_uindex
-    ON yt_fc_cfg (num);
-ALTER TABLE yt_fc_cfg
-    COMMENT = '鱼塘扶持奖励列表';
-
 create table yt_create_cfg
 (
     id             tinyint primary key default 1,
@@ -288,6 +356,22 @@ create table yt_create_cfg
 );
 insert into yt_create_cfg(vip, tm) value (0, date(now()));
 
+create table yt_rank_last
+(
+    ytid bigint primary key not null comment '鱼塘id',
+    act  bigint default 0 comment '活跃度',
+    num  int comment '排名'
+) comment '活跃度清0前的排名值';
+
+drop view if exists view_yt_rank_act_last;
+create view view_yt_rank_act_last as
+select a.ytid,
+       nickname,
+       name,
+       a.act,
+       num
+from yt_rank_last a
+         inner join view_yt_rank_act b on a.ytid = b.ytid;
 # ---------------------------------存储过程 -----------------------------------
 # ---------------------------------存储过程 -----------------------------------
 # ---------------------------------存储过程 -----------------------------------
@@ -306,18 +390,8 @@ BEGIN
     declare tm_yesterday datetime;
     set tm_yesterday = date_sub(vTm, INTERVAL 1 DAY);
 
-    delete from yt_yuhuo where true;
     #清空一下。
-#     insert into yt_yuhuo
-#     explain select a.uid, floor(-sum(fee) / 1000) as bill, -1
-#             from coin_log a
-#                      inner join yt_user b on a.uid = b.uid
-#             where b.apply = 0
-#               and a.change_type = 74
-#               and a.add_time >= '2019-05-20'
-#               and a.add_time < '2019-05-21'
-#             group by a.uid
-#             having bill >= 1000;
+    delete from yt_yuhuo where true;
 
     DROP TEMPORARY TABLE IF EXISTS tmp_yt_yhuo;
     CREATE TEMPORARY TABLE tmp_yt_yhuo
@@ -334,7 +408,7 @@ BEGIN
     update yt set ver=ver + 1;
 
     #更新用户的累计鱼货。
-    update yt_user a inner join tmp_yt_yhuo b on a.uid = b.uid set yuhuo=yuhuo + bill;
+    #update yt_user a inner join tmp_yt_yhuo b on a.uid = b.uid set yuhuo=yuhuo + bill;
     #更新鱼塘的活跃度。
     update yt a inner join (select ytid, sum(bill) as bill1 from tmp_yt_yhuo group by ytid) b on a.ytid = b.ytid
     set a.act = a.act + bill1;
@@ -503,7 +577,11 @@ BEGIN
     declare vReward int;
     declare vSystemReward int;
     declare vPool bigint;
+    declare vYtRankEnable int;
+    declare vYtRank int;
+    declare vActivityReward int;
 
+    set vActivityReward = 0;
     set vToday = date(vNow);
 
     select count(1) into vCnt
@@ -537,6 +615,24 @@ BEGIN
         leave exe;
     end if;
 
+    select count(1) into vYtRankEnable from activities where id = 12 and isEnabled = 1 and endTime > vNow;
+    if vYtRankEnable > 0 then
+        select ifnull(num, 0) into vYtRank from yt_rank_last where ytid = vYtid;
+        if vYtRank <= 3 then
+            select gift_count into vActivityReward
+            from sub_act_gift
+            where activity_id = 11
+              and sub_id = vYtRank
+              and gift_type = 10;
+        elseif vYtRank <= 10 then
+            select gift_count into vActivityReward
+            from sub_act_gift
+            where activity_id = 11
+              and sub_id = 4
+              and gift_type = 10;
+        end if;
+    end if;
+
     #记录个人签到金额
     insert yt_coin_log(tm, uid, uuid, ytid, reward, type, optuid)
         value (vNow, vUid, vUUID, vYtid, vReward, 0, 0);
@@ -549,7 +645,7 @@ BEGIN
     update yt_user set checkin=checkin + 1 where uid = vUid;
 
     #返回签到的金币数量
-    select 0 as status, vReward as reward, vPool as pool;
+    select 0 as status, vReward as reward, vPool as pool, vActivityReward as reward2;
 END
 //
 #分隔符还原
@@ -610,6 +706,8 @@ BEGIN
         update yt_yuhuo set yuhuocur=0 where uid = vOptedUid;
         #更新当前的鱼塘版本信息
         update yt set ver=ver + 1 where ytid = vYtid;
+        #加入到累计收取鱼货中(收取)
+        update yt_user set yuhuo=yuhuo + vYuhuo where uid = vUid;
         select 0 as status, vYuhuo as yuhuo;
     else
         #一天一个uid只能被同一个uid偷一次
@@ -637,6 +735,8 @@ BEGIN
         #记录偷取的金额
         insert into yt_coin_log(tm, uid, ytid, reward, type, optuid)
             value (vTm, vUid, vYtid, vSteal, 1, vOptedUid);
+        #加入到累计收取鱼货中(偷取)
+        update yt_user set yuhuo=yuhuo + vSteal where uid = vUid;
         #更新当前的鱼货金额
         update yt_yuhuo set yuhuocur=yuhuocur - vSteal where uid = vOptedUid;
         #更新当前的鱼塘版本信息
@@ -651,5 +751,27 @@ DELIMITER ;
 -- Procedure structure for `proc_get_yuhuo` END
 -- ----------------------------
 
+-- ----------------------------
+-- Procedure structure for `proc_clear_yt_act` begin
+-- 清空鱼塘活跃度,清空前把排名放到yt_rank_last。
+-- ----------------------------
+DROP PROCEDURE IF EXISTS proc_clear_yt_act;
+DELIMITER //
+CREATE PROCEDURE proc_clear_yt_act()
+exec:
+BEGIN
+    delete from yt_rank_last where true;
+    insert into yt_rank_last
+    select ytid, act, (@rowNum := @rowNum + 1) as num
+    from view_yt_rank_act a,
+         (select (@rowNum := 0)) b;
+    update yt set act=0 where true;
+END
+//
+#分隔符还原
+DELIMITER ;
+-- ----------------------------
+-- Procedure structure for `proc_clear_yt_act` END
+-- ----------------------------
 
 
