@@ -17,9 +17,4 @@ where b.apply = 0
 group by a.uid
 having bill > 1000;
 
-select count(1)
-    from yt_coin_log
-    where (uuid = 'ABBA1969-3E3A-84D9-39CA-A685A9476255' or uid = 165272)
-      and tm >= '2019-05-27'
-      and type = 0;
-call proc_yt_checkin(165272,,165272,'2019-05-27 21:38:39')
+call proc_clear_yt_act();

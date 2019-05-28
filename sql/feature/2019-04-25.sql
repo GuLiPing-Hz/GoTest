@@ -1,5 +1,6 @@
 drop index oid on coin_log;
-
+alter table fort_log
+    drop column id;
 alter table coin_log
     drop column task_id;
 update notice
@@ -32,6 +33,13 @@ alter table activities
     drop column startTime;
 alter table activities
     add isEnabled tinyint default 0 not null comment '是否启用，0不启用(默认),1启用';
+
+delete
+from fort_log
+where fort_id = 0;
+alter table fort_log
+    add constraint fort_log_pk
+        unique (uid, fort_id);
 
 alter table sub_act_cfg
     modify total_cnt int default 0 not null comment '总的数量,-1表示无限供应';
