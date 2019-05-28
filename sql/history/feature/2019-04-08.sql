@@ -32,7 +32,6 @@ DROP PROCEDURE IF EXISTS proc_update_onlinelog;
 # 让编译器把两个"//"之间的内容当做存储过程的代码，不会执行这些代码；“DELIMITER ;”的意为把分隔符还原。
 DELIMITER //
 # DEFINER指定权限的存储过程
-# CREATE DEFINER =`root`@`localhost` PROCEDURE `proc_reset_by_day`(IN a int, IN b int, OUT sum int)
 CREATE PROCEDURE proc_update_onlinelog(in uidIn   bigint, in vipIn tinyint, in seconds int,
                                        in lobbyIn int, in gameIn int)
   BEGIN

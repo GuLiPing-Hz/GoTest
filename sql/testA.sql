@@ -1,6 +1,7 @@
 update coin_log
 set add_time='2019-05-21 07:00:00'
-where change_type = 74 and add_time = '2019-05-20 07:00:00';
+where change_type = 74
+  and add_time = '2019-05-20 07:00:00';
 call proc_update_yuhuo_by_day('2019-05-22');
 
 update yt
@@ -17,4 +18,4 @@ where b.apply = 0
 group by a.uid
 having bill > 1000;
 
-call proc_clear_yt_act();
+call proc_reset_by_day('2019-05-28 20:39:05',1559047145700,4);
