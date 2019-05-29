@@ -1,39 +1,3 @@
-drop index oid on coin_log;
-alter table fort_log
-    drop column id;
-alter table coin_log
-    drop column task_id;
-update notice
-set isTop=0;
-alter table notice
-    change isTop can_delete tinyint default 0 not null comment '是否可以被客户端请求删除 0不能，1可以';
-alter table noticproc_create_yte
-    drop column showOrder;
-drop index notice_mail_giftid_index on notice;
-update notice
-set mail_giftid=null
-where true;
-alter table notice
-    change mail_giftid mail_gift varchar(200) null comment '礼物具体信息的一个json字符串。可以为空，空表示没有礼物。';
-alter table activities
-    drop column activityDes;
-alter table activities
-    drop column sub_id;
-alter table activities
-    drop column imgUrl;
-alter table activities
-    drop column activityUrl;
-alter table activities
-    drop column isDeleted;
-alter table activities
-    drop column isEnabled;
-alter table activities
-    drop column createTime;
-alter table activities
-    drop column startTime;
-alter table activities
-    add isEnabled tinyint default 0 not null comment '是否启用，0不启用(默认),1启用';
-
 delete
 from fort_log
 where fort_id = 0;
@@ -413,8 +377,6 @@ BEGIN
     group by a.uid
     having bill >= 1000;
 
-    update yt set ver=ver + 1;
-
     #更新用户的累计鱼货。
     #update yt_user a inner join tmp_yt_yhuo b on a.uid = b.uid set yuhuo=yuhuo + bill;
     #更新鱼塘的活跃度。
@@ -422,6 +384,7 @@ BEGIN
     set a.act = a.act + bill1;
 
     insert into yt_yuhuo select uid, bill, -1 from tmp_yt_yhuo;
+    update yt set ver=ver + 1 where true;
 
     -- 删除临时表
     DROP TEMPORARY TABLE IF EXISTS tmp_yt_yhuo;

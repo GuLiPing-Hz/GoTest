@@ -1,1 +1,0 @@
-INSERT INTO Buyu.wg_buylb_cfg (id, price, points) VALUES (1, 1000000, 10);

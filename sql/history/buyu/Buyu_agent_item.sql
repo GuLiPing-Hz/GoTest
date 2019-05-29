@@ -1,3 +1,0 @@
-INSERT INTO Buyu.agent_item (itemNo, createTime, isEnabled, itemName, displayName, price, coin, sortNo) VALUES (1, '2018-03-03 00:00:00', '1', '金币', '90000金币', '5', 90000, 1);
-INSERT INTO Buyu.agent_item (itemNo, createTime, isEnabled, itemName, displayName, price, coin, sortNo) VALUES (7, '2018-03-03 14:58:12', '1', '金币', '180000金币', '10', 180000, 2);
-INSERT INTO Buyu.agent_item (itemNo, createTime, isEnabled, itemName, displayName, price, coin, sortNo) VALUES (8, '2018-03-03 14:58:12', '1', '金币', '900000金币', '50', 900000, 3);

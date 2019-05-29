@@ -1,1 +1,0 @@
-INSERT INTO Buyu.gift_cfg (max_fee, switch, fee_rate, vip, level) VALUES (1000, 1, 0, 2, 0);

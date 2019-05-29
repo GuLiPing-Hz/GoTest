@@ -1,1 +1,0 @@
-INSERT INTO Buyu.invite_cfg (id, inviterGift, inviteesGift, time) VALUES (1, 50000, 50000, '2018-11-25 00:00:00');
