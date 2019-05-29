@@ -212,7 +212,7 @@ end:
 }
 
 func main() {
-	//test1()
+	//study()
 	//fmt.Println("\n" + strings.Repeat("*", 100))
 	////test2()
 	//fmt.Println("\n" + strings.Repeat("*", 100))

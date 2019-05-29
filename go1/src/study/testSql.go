@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql" //go get github.com/go-sql-driver/mysql
-	"test1/tool"
+	"study/tool"
 	"strings"
 	"github.com/mitchellh/mapstructure"
 	"reflect"

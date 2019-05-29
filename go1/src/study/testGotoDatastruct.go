@@ -11,7 +11,7 @@ import (
 
 func test() {
 
-	fmt.Println("test1")
+	fmt.Println("study")
 
 	if false {
 		goto end

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"reflect"
 	"math"
-	"test1/codeerror"
+	"study/codeerror"
 	"errors"
 )
 

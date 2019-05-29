@@ -10,7 +10,7 @@ import (
 	"io/ioutil"
 	"net/url"
 	"encoding/json"
-	"test1/tool"
+	"study/tool"
 	"crypto/sha1"
 	"sort"
 )

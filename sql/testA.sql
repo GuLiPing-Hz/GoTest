@@ -29,7 +29,13 @@ group by a.uid
 having bill >= 1000;
 
 
-update yt set ver=ver + 1 where true;
+update yt
+set ver=ver + 1
+where true;
 
-select a.uid,ytid,ifnull(yuhuoutc, 0) as yuhuoutc,utc
-    from yt_user a left join yt_yuhuo c on a.uid = c.uid where a.uid=165272 and a.apply=0
+select a.uid, ytid, ifnull(yuhuoutc, 0) as yuhuoutc, utc
+from yt_user a
+         left join yt_yuhuo c on a.uid = c.uid
+where a.uid = 165272
+  and a.apply = 0;
+
