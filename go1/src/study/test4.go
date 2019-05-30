@@ -1,10 +1,10 @@
 package main
 
 import (
+	"crypto/md5"
 	"fmt"
 	"strconv"
 	"strings"
-	"crypto/md5"
 )
 
 //学习 字符串常用函数，数组，切片(动态数组),字典
@@ -89,7 +89,7 @@ func testArra() {
 		fmt.Println("slice1 is nil")
 	}
 	fmt.Println("append之前 slice1=", slice1, len(slice1), cap(slice1)) //空切片
-	slice2 := append(slice1, 1, 2)                                    //                           //可同时添加多个元素
+	slice2 := append(slice1, 1, 2)                                    //可同时添加多个元素
 	fmt.Println("append之后 slice1=", slice1, len(slice1), cap(slice1), slice1 == nil)
 	fmt.Println("slice2=", slice2, len(slice2), cap(slice2))
 
