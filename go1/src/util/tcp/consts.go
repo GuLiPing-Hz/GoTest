@@ -15,13 +15,23 @@ const (
 )
 
 var (
-	ErrBuffer = errors.New("Server buffer error")
-	ErrInner  = errors.New("Server inner error")
-	ErrOOM    = errors.New("Server oom")
+	ErrParam   = errors.New("param error")
+	ErrBuffer  = errors.New("Server buffer error")
+	ErrInner   = errors.New("Server inner error")
+	ErrOOM     = errors.New("Server oom")
+	ErrTimeout = errors.New("Server time out")
 )
 
-type StatusConn struct {
-	net.Conn
+type StatusErr struct {
 	Status StatusNO //StatusNormal
 	Err    error    //当为其他异常时，这里会有赋值
+}
+type StatusConn struct {
+	net.Conn
+	StatusErr
+}
+
+type StatusConnServer struct {
+	listener *net.TCPListener
+	StatusErr
 }

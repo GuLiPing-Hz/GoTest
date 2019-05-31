@@ -11,18 +11,42 @@ import (
 	"util"
 )
 
+func CheckTimeout(err error) bool {
+	if err != nil {
+		if err1, ok := err.(*net.OpError); ok {
+			return err1.Timeout()
+		}
+	}
+	return false
+}
+
 type OnSocket interface {
+	/**
+	连接上服务器回调
+	*/
 	Connect(*ClientSocketBase)
+	/**
+	连接超时,写入超时,读取超时回调
+	*/
 	Timeout(*ClientSocketBase)
+	/**
+	服务器主动关闭回调
+	*/
 	Close(*ClientSocketBase)
-	ConnectErr(*ClientSocketBase)
-	RecvErr(*ClientSocketBase)
-	SendErr(*ClientSocketBase)
+	/**
+	网络错误回调
+	*/
 	NetErr(*ClientSocketBase)
+
+	/**
+	以goroutine的形式回调
+	*/
+	RecvMsg(*ClientSocketBase, []byte)
 }
 
 type DataDecodeBase interface {
-	Process(*ClientSocketBase)
+	GetPackageHeadLen() int
+	GetPackageLen([]byte) int
 }
 
 type DataBlock struct {
@@ -61,8 +85,8 @@ func (this *DataBlock) GetBuf() []byte {
 	return this.buffer
 }
 
-func (this *DataBlock) GetPos() int32 {
-	return int32(len(this.buffer))
+func (this *DataBlock) GetPos() int {
+	return len(this.buffer)
 }
 
 func (this *DataBlock) InitPos() {
@@ -72,38 +96,37 @@ func (this *DataBlock) InitPos() {
 type ClientSocketBase struct {
 	StatusConn
 	readDB      DataBlock
-	rMutex      sync.Mutex
 	writeDB     DataBlock
 	wMutex      sync.Mutex
 	dataDecoder DataDecodeBase
-	ttl         int32
+	ttl         time.Duration
+	rttl        time.Duration
 	onSocket    OnSocket
 }
 
-func (this *ClientSocketBase) GetReadDB() *DataBlock {
-	return &this.readDB
-}
+func (this *ClientSocketBase) Connect(host string, port, ttl time.Duration, onSocket OnSocket, ddb DataDecodeBase) error {
+	if onSocket == nil {
+		return ErrParam
+	}
 
-func (this *ClientSocketBase) GetWriteDB() *DataBlock {
-	return &this.writeDB
-}
-
-func (this *ClientSocketBase) SetDataDecode(ddb *DataDecodeBase) {
-	this.dataDecoder = ddb
-}
-
-func (this *ClientSocketBase) Connect(host string, port, ttl int32) error {
+	this.onSocket = onSocket
 	this.ttl = ttl
+	this.dataDecoder = ddb
+	if ddb == nil {
+		this.dataDecoder = new(DataDecode)
+	}
 
 	//通过域名找IP地址
 	ip, err := net.ResolveIPAddr("", host)
 	if err != nil {
 		return err
 	}
-	ipStr := fmt.Sprintf("%s:20003", ip.IP.String())
-
-	this.Conn, err = net.DialTimeout("tcp", ipStr, time.Second*time.Duration(this.ttl))
+	ipStr := fmt.Sprintf("%s:%d", ip.IP.String(), port)
+	this.Conn, err = net.DialTimeout("tcp", ipStr, time.Second*this.ttl)
 	if err != nil {
+		if err1, ok := err.(*net.OpError); ok && err1.Timeout() {
+			return ErrTimeout
+		}
 		return err
 	}
 
@@ -111,32 +134,111 @@ func (this *ClientSocketBase) Connect(host string, port, ttl int32) error {
 	return nil
 }
 
-func (this *ClientSocketBase) Send(buf [] byte) bool {
-	defer this.wMutex.Unlock()
+func Agent(conn StatusConn, ttl time.Duration, onSocket OnSocket) *ClientSocketBase {
+	if onSocket == nil {
+		return nil
+	}
+
+	csb := &ClientSocketBase{
+		StatusConn: conn,
+		ttl:        ttl,
+		rttl:       ttl,
+		onSocket:   onSocket,
+	}
+	go rector(csb)
+	return csb
+}
+
+func (this *ClientSocketBase) close() {
+	err := this.Close()
+	if err != nil {
+		util.E("close error=%v", err.Error())
+	}
+	this.onSocket.Close(this)
+}
+
+func (this *ClientSocketBase) send() {
 	this.wMutex.Lock()
-	return this.writeDB.Append(buf) > 0
+	buffer := this.writeDB.GetBuf()
+	this.writeDB.InitPos()
+	this.wMutex.Unlock()
+
+	err := this.SetWriteDeadline(time.Now().Add(time.Second * this.ttl))
+	if err != nil {
+		this.Status = StatusError
+		this.Err = err
+		this.onSocket.NetErr(this)
+		//把发生错误的socket及时关闭
+		this.close()
+	}
+
+	_, err = this.Write(buffer)
+	if err != nil {
+		if CheckTimeout(err) {
+			this.Status = StatusTimeout
+			this.onSocket.Timeout(this)
+		} else {
+			this.Status = StatusError
+			this.Err = err
+			this.onSocket.NetErr(this)
+		}
+		//把超时的socket及时关闭
+		this.close()
+		return
+	}
+}
+
+func (this *ClientSocketBase) Send(buf [] byte) {
+	this.wMutex.Lock()
+	defer this.wMutex.Unlock()
+
+	this.writeDB.Append(buf)
+	go this.send()
+}
+
+func (this *ClientSocketBase) process() error {
+	headLen := int(this.dataDecoder.GetPackageHeadLen())
+	for {
+		if this.readDB.GetPos() < headLen { //不足包长
+			return nil
+		}
+
+		packageLen := this.dataDecoder.GetPackageLen(this.readDB.GetBuf())
+		if packageLen == 0 { //异常包
+			this.readDB.InitPos()
+			return ErrBuffer
+		}
+
+		fullLen := headLen + packageLen
+		if fullLen < this.readDB.GetPos() { //不足一个包
+			return nil
+		}
+
+		packageBuf := make([]byte, fullLen)
+		copy(packageBuf, this.readDB.GetBuf()[:fullLen])
+		this.readDB.Move(this.readDB.GetBuf()[fullLen:])
+		go this.onSocket.RecvMsg(this, packageBuf)
+	}
 }
 
 func rector(client *ClientSocketBase) {
-	defer func() {
-		err := client.Close()
-		if err != nil {
-			util.E("close error=%v", err.Error())
-		}
-		if client.onSocket != nil {
-			client.onSocket.Close(client)
-		}
-	}()
-
-	if client.onSocket == nil || client.dataDecoder == nil {
-		return
-	}
+	defer client.close()
 	client.onSocket.Connect(client)
-
 	for {
+		if client.rttl != 0 { //如果需要判断读超时。
+			err := client.SetReadDeadline(time.Now().Add(time.Second * client.rttl))
+			if err != nil {
+				client.Status = StatusError
+				client.Err = err
+				client.onSocket.NetErr(client)
+				return
+			}
+		}
+
 		buffer := make([]byte, 1024)
 		n, err := client.Read(buffer)
 		if err != nil {
+			err1 := err.(*net.OpError)
 			errStr := err.Error()
 			if err == io.EOF || (runtime.GOOS == "windows" &&
 				strings.Contains(errStr, "An existing connection was forcibly closed by the remote host") ||
@@ -157,22 +259,31 @@ func rector(client *ClientSocketBase) {
 				*/
 				client.Status = StatusClosed
 				client.onSocket.Close(client)
+			} else if err1 != nil && err1.Timeout() {
+				client.Status = StatusTimeout
+				client.onSocket.Timeout(client)
 			} else {
 				client.Status = StatusError
 				client.Err = err
-				client.onSocket.RecvErr(client)
+				client.onSocket.NetErr(client)
 			}
 			return
 		}
 
-		len := int(client.readDB.Append(buffer))
-		if len != n {
-			client.Status = StatusError
+		appendLen := int(client.readDB.Append(buffer))
+		if appendLen != n {
+			client.Status = StatusError //无法把buffer全部塞进去，多半是没有内存了。
 			client.Err = ErrOOM
 			client.onSocket.NetErr(client)
 			return
 		}
 
-		client.dataDecoder.Process(client)
+		err = client.process()
+		if err != nil {
+			client.Status = StatusError
+			client.Err = err
+			client.onSocket.NetErr(client)
+			return
+		}
 	}
 }
