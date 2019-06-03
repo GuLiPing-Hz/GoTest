@@ -374,7 +374,7 @@ BEGIN
       and a.change_type = 74
       and a.add_time >= tm_yesterday
       and a.add_time < vTm
-    group by a.uid
+    group by a.uid, b.ytid
     having bill >= 1000;
 
     #更新用户的累计鱼货。

@@ -17,6 +17,10 @@ set global max_allowed_packet = 1073741824;
 show global variables like '%max_connections%';
 set global max_connections = 1000;
 
+#查看sql_mode
+show global variables like '%sql_mode%';
+set global sql_mode = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION';
+
 #查看mysql运行状态
 show status;
 show full processlist;

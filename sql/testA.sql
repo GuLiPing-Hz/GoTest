@@ -39,3 +39,6 @@ from yt_user a
 where a.uid = 165272
   and a.apply = 0;
 
+
+select count(1) as cnt from hbq_dui_log where uid=199287 and tm>='2019-06-02'
+    and hbqType=2
