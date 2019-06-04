@@ -203,10 +203,12 @@ func testPointer1() *Student {
 	student := Student{
 		101, "Jack",
 	}
-	return &student //在c++中，这是个局部变量，返回局部变量，该指针就会变成野指针，打印的信息会乱码
+
+	//在c++中，这是个局部变量，返回局部变量，该指针就会变成野指针，打印的信息会乱码
+	//但是在go中却不会，应该是动态创建的变量
+	return &student
 }
 func testPointer() {
-	//但是在go中却不会，应该是动态创建的变量
 	fmt.Printf("student=%v\n", testPointer1())
 	fmt.Printf("student=%v\n", *testPointer1())
 }

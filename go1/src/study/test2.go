@@ -96,7 +96,7 @@ func main() {
 	xInterface = true
 
 	println("sizeoof xInterface = ", unsafe.Sizeof(xInterface))
-	switch xInterface.(type) {
+	switch xInterface.(type) {//不需要再写break
 	case nil:
 		println("nil 类型")
 	case int8:

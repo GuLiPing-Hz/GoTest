@@ -41,4 +41,6 @@ where a.uid = 165272
 
 
 select count(1) as cnt from hbq_dui_log where uid=199287 and tm>='2019-06-02'
-    and hbqType=2
+    and hbqType=2;
+
+insert into online_count(p_cnt,tp,tms,addtime) value (0,2,1,'2019-06-04 21:32:25');
