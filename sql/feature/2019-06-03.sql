@@ -1,3 +1,12 @@
+alter table gift_cfg
+	add vip_for_db1 tinyint default 4 not null;
+
+alter table gift_cfg
+	add id int default 1 not null;
+
+alter table gift_cfg
+	add constraint gift_cfg_pk
+		primary key (id);
 
 
 -- auto-generated definition

@@ -1,8 +1,20 @@
 update coin_log
-set add_time='2019-05-28 07:00:00'
+set add_time='2019-06-16 07:00:00'
 where change_type = 74
-  and add_time > '2019-05-29';
-call proc_update_yuhuo_by_day('2019-05-29');
+  and uid in (167369, 167392, 165272)
+  and add_time > '2019-06-17';
+call proc_update_yuhuo_by_day('2019-06-17');
+select uid, -sum(fee)
+from coin_log
+where uid in (167392);
+select a.uid, b.ytid, floor(-sum(fee) / 1000) as bill
+from coin_log a
+         inner join yt_user b on a.uid = b.uid
+where b.apply = 0
+  and a.change_type = 74
+  and a.add_time >= '2019-06-16'
+  and a.add_time < '2019-06-17'
+group by a.uid, b.ytid;
 
 update yt
 set act=0
@@ -40,7 +52,10 @@ where a.uid = 165272
   and a.apply = 0;
 
 
-select count(1) as cnt from hbq_dui_log where uid=199287 and tm>='2019-06-02'
-    and hbqType=2;
+select count(1) as cnt
+from hbq_dui_log
+where uid = 199287
+  and tm >= '2019-06-02'
+  and hbqType = 2;
 
-insert into online_count(p_cnt,tp,tms,addtime) value (0,2,1,'2019-06-04 21:32:25');
+insert into online_count(p_cnt, tp, tms, addtime) value (0, 2, 1, '2019-06-04 21:32:25');
