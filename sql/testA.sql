@@ -59,3 +59,8 @@ where uid = 199287
   and hbqType = 2;
 
 insert into online_count(p_cnt, tp, tms, addtime) value (0, 2, 1, '2019-06-04 21:32:25');
+
+call proc_reset_by_day('2019-06-18 00:00:00',1560787200000,4);
+call online_log_summary('2019-06-18 00:00:00'); #数据统计。
+
+select * from view_yt_apply where ytid=165272 limit 50;

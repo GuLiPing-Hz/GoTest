@@ -249,11 +249,6 @@ where ytid > 0
   and apply = 0;
 
 drop view if exists view_coin_log_fee;
-create view view_coin_log_fee as
-select uid, date(add_time) as tm, sum(fee) as fee
-from coin_log
-where change_type in (2, 74)
-group by uid, date(add_time);
 
 drop view if exists view_yt_apply;
 create view view_yt_apply as
@@ -265,9 +260,17 @@ select a.uid,
        floor(-fee / 1000) as yuhuo
 from yt_user a
          inner join user b on a.uid = b.uid
-         left join view_coin_log_fee c on a.uid = c.uid
+         left join (select uid, date(add_time) as tm, sum(fee) as fee
+                    from coin_log
+                    where change_type in (2, 74)
+                      and add_time > date_sub(now(), interval -1 day)
+                    group by uid, date(add_time)) c on a.uid = c.uid
 where ytid > 0
   and apply = 1;
+select *
+from view_yt_apply
+where ytid = 165272
+limit 50;
 
 
 
