@@ -6,6 +6,8 @@ import (
 	"time"
 )
 
+
+//一个TCP Client连接服务器的例子
 const (
 	TimeFmt = "2006/01/02 15:04:05.000" //毫秒保留3位有效数字
 )
