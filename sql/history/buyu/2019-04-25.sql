@@ -443,6 +443,7 @@ DELIMITER ;
 #         0 提交成功
 #         10131 重复申请（服务器统一错误码）
 #         10116 提交申请达上限 20个（服务器统一错误码）
+#         10136 您申请的鱼塘已经人满了
 -- ----------------------------
 DROP PROCEDURE IF EXISTS proc_applay_yt;
 DELIMITER //
@@ -451,11 +452,23 @@ exec:
 BEGIN
     declare v24HoursAgo datetime;
     declare vApplyCnt int;
+    declare vMemCnt int;
     declare vYuHuo bigint;
 
     select count(1) into vApplyCnt from view_yt_apply where uid = vUid and ytid = vYtid;
     if vApplyCnt > 0 then
         select 10131 as status;
+        leave exec;
+    end if;
+
+    select count(1) into vMemCnt from yt_user where ytid = vYtid and apply = 0;
+    if vMemCnt >= 100 then
+        select 10136 as status;
+        leave exec;
+    end if;
+
+    if vApplyCnt >= 20 then
+        select 10116 as status;
         leave exec;
     end if;
 
@@ -502,17 +515,27 @@ DELIMITER ;
 -- ----------------------------
 -- Procedure structure for `proc_disband_yt` begin
 -- 同意申请加入鱼塘
+-- 10132, --操作失败,请求已过时
+-- 10136 鱼塘满员
 -- ----------------------------
 DROP PROCEDURE IF EXISTS proc_accept_apply;
 DELIMITER //
 CREATE PROCEDURE proc_accept_apply(in vYtid bigint, in vUid bigint, in vTm datetime)
 exec:
 BEGIN
+
     declare vCnt int;
+    declare vMemCnt int;
     select count(1) into vCnt from view_yt_apply where ytid = vYtid and uid = vUid;
 
     if vCnt = 0 then
         select 10132 as status;
+        leave exec;
+    end if;
+
+    select count(1) into vMemCnt from yt_user where ytid = vYtid and apply = 0;
+    if vMemCnt >= 100 then
+        select 10136 as status;
         leave exec;
     end if;
 
