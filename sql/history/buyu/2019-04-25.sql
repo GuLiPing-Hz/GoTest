@@ -238,7 +238,7 @@ select a.uid,
        avatar,
        a.tm                as tm,
        ifnull(yuhuocur, 0) as yuhuocur,
-       ifnull(yuhuoutc, 0) as yuhuoutc,
+       ifnull(yuhuoutc, -2) as yuhuoutc,
        yuhuo,
        utc,
        checkin
@@ -434,7 +434,10 @@ DELIMITER ;
 -- ----------------------------
 -- Procedure structure for `proc_create_yt` END
 -- ----------------------------
-
+update yt
+set `limit` = 200,
+    ver=ver + 1
+where true;
 -- ----------------------------
 -- Procedure structure for `proc_applay_yt` begin
 -- 加入一条申请入鱼塘
@@ -462,7 +465,7 @@ BEGIN
     end if;
 
     select count(1) into vMemCnt from yt_user where ytid = vYtid and apply = 0;
-    if vMemCnt >= 100 then
+    if vMemCnt >= 200 then
         select 10136 as status;
         leave exec;
     end if;
@@ -534,7 +537,7 @@ BEGIN
     end if;
 
     select count(1) into vMemCnt from yt_user where ytid = vYtid and apply = 0;
-    if vMemCnt >= 100 then
+    if vMemCnt >= 200 then
         select 10136 as status;
         leave exec;
     end if;
