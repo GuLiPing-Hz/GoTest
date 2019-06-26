@@ -14,10 +14,12 @@ import (
 )
 
 type Conn interface {
+	//主动关闭连接
 	Close() error
 	// 封装发送buffer
 	Send(buf [] byte)
 
+	//是否是被对方关闭了连接
 	IsClosedByPeer() bool
 
 	//获取最近的错误
@@ -162,8 +164,9 @@ func (this *ClientBase) process() error {
 	}()
 
 	lenHead := int(this.DataDecoder.GetPackageHeadLen())
+
 	for {
-		if this.ReadDB.Len() < lenHead { //不足包长
+		if this.ReadDB.Len() <= 0 || this.ReadDB.Len() < lenHead { //不足包长
 			return nil
 		}
 

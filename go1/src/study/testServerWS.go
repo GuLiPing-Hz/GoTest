@@ -6,10 +6,13 @@ import (
 	"net/http"
 	"os"
 	"time"
-	"util"
 	"util/net"
 	"util/net/ws"
 )
+
+//const (
+//	TimeFmt = "2006/01/02 15:04:05.000" //毫秒保留3位有效数字
+//)
 
 var (
 	upgrader = websocket.Upgrader{
@@ -20,6 +23,20 @@ var (
 	}
 )
 
+func Log2(format string, args ...interface{}) {
+	fmt.Printf(fmt.Sprintf("%s:%s", time.Now().Format("2006/01/02 15:04:05.000"), format), args...)
+}
+
+type DataDecodeWSText struct {
+}
+
+func (this *DataDecodeWSText) GetPackageHeadLen() int {
+	return 0
+}
+func (this *DataDecodeWSText) GetPackageLen(buf []byte) int {
+	return len(buf)
+}
+
 type wsOnSocket struct {
 }
 
@@ -27,37 +44,40 @@ type wsOnSocket struct {
 连接上服务器回调
 */
 func (this *wsOnSocket) OnConnect(client net.Conn) {
-	util.I("OnConnect web client[%v]", client)
+	Log2("OnConnect web client[%v]\n", client)
 }
 
 /**
 连接超时,写入超时,读取超时回调
 */
 func (this *wsOnSocket) OnTimeout(client net.Conn) {
-	util.I("OnTimeout web client[%v]", client)
+	Log2("OnTimeout web client[%v]\n", client)
 }
 
 /**
 服务器主动关闭回调
 */
 func (this *wsOnSocket) OnClose(client net.Conn) {
-	util.I("OnClose web client[%v]", client)
+	Log2("OnClose web client[%v]\n", client)
 }
 
 /**
 网络错误回调
 */
 func (this *wsOnSocket) OnNetErr(client net.Conn) {
-	util.E("OnNetErr web client[%v] msg=%s", client, client.LastErr())
-	os.Stderr.Write(client.LastStack())
+	if client.IsClosedByPeer() {
+		Log2("OnNetErr web client[%v] closed\n", client)
+	} else {
+		Log2("OnNetErr web client[%v] msg=%s\n", client, client.LastErr())
+		os.Stderr.Write(client.LastStack())
+	}
 }
 
 /**
 接受到信息
 */
 func (this *wsOnSocket) OnRecvMsg(client net.Conn, buf []byte) bool {
-
-	util.I("OnRecvMsg web client[%v] msg=%s", client, string(buf))
+	Log2("OnRecvMsg web client[%v] msg=%s\n", client, string(buf))
 	hello := fmt.Sprintf("from server back[go]:%s", string(buf))
 	client.Send([]byte(hello))
 	return true
@@ -71,8 +91,8 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	agent := ws.Agent(conn, websocket.TextMessage, time.Second*10, new(wsOnSocket))
-	util.I("new web client agent=%v", agent)
+	agent := ws.Agent(conn, websocket.TextMessage, time.Second*10, new(wsOnSocket), new(DataDecodeWSText))
+	Log2("new web client agent=%v\n", agent)
 }
 
 func main() {

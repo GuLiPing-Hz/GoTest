@@ -14,4 +14,4 @@ set GOARCH=amd64
 set GOOS=linux
 set GOTRACEBACK=all 
 set GOPATH=%GOPATH%;D:\glp\Github\GoTest\go1\
-go build -o ../bin/go1/go1 ./src/study/testServer.go
+go build -o ../bin/go1/go2 ./src/study/testServerWS.go

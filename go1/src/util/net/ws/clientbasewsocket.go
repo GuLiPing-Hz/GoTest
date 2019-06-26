@@ -1,6 +1,7 @@
 package ws
 
 import (
+	"bytes"
 	"github.com/gorilla/websocket"
 	"net"
 	"time"
@@ -14,16 +15,22 @@ type ClientBaseWSocket struct {
 	conn    *websocket.Conn
 }
 
-func Agent(conn *websocket.Conn, msgType int, ttl time.Duration, OnSocket net2.OnSocket) *ClientBaseWSocket {
+func Agent(conn *websocket.Conn, msgType int, ttl time.Duration, OnSocket net2.OnSocket, dd net2.DataDecodeBase) *ClientBaseWSocket {
 	if OnSocket == nil {
 		return nil
 	}
 
+	if dd == nil {
+		dd = new(net2.DataDecode)
+	}
 	csb := &ClientBaseWSocket{
 		ClientBase: net2.ClientBase{
-			Ttl:      ttl,
-			Rttl:     ttl,
-			OnSocket: OnSocket,
+			ReadDB:      &bytes.Buffer{},
+			WriteDB:     &bytes.Buffer{},
+			DataDecoder: dd,
+			Ttl:         ttl,
+			Rttl:        ttl,
+			OnSocket:    OnSocket,
 		},
 		msgType: msgType,
 		conn:    conn,
@@ -65,7 +72,7 @@ func (this *ClientBaseWSocket) RemoteAddr() net.Addr {
 
 func (this *ClientBaseWSocket) RecvEx() ([]byte, error) {
 	if this.Rttl != 0 { //如果需要判断读超时。
-		err := this.conn.SetReadDeadline(time.Now().Add(time.Second * this.Rttl))
+		err := this.conn.SetReadDeadline(time.Now().Add(this.Rttl))
 		if err != nil {
 			return nil, err
 		}
@@ -73,8 +80,8 @@ func (this *ClientBaseWSocket) RecvEx() ([]byte, error) {
 
 	_, buffer, err := this.conn.ReadMessage()
 	if err != nil {
-		return buffer, nil
+		return nil, err
 	}
 
-	return nil, err
+	return buffer, nil
 }

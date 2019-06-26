@@ -75,9 +75,12 @@ func Agent(conn net.Conn, Ttl time.Duration, OnSocket net2.OnSocket) *ClientBase
 
 	csb := &ClientBaseSocket{
 		ClientBase: net2.ClientBase{
-			Ttl:      Ttl,
-			Rttl:     Ttl,
-			OnSocket: OnSocket,
+			ReadDB:      &bytes.Buffer{},
+			WriteDB:     &bytes.Buffer{},
+			DataDecoder: new(net2.DataDecode),
+			Ttl:         Ttl,
+			Rttl:        Ttl,
+			OnSocket:    OnSocket,
 		},
 		conn: conn,
 	}
@@ -122,7 +125,7 @@ func (this *ClientBaseSocket) RemoteAddr() net.Addr {
 
 func (this *ClientBaseSocket) RecvEx() ([]byte, error) {
 	if this.Rttl != 0 { //如果需要判断读超时。
-		err := this.conn.SetReadDeadline(time.Now().Add(time.Second * this.Rttl))
+		err := this.conn.SetReadDeadline(time.Now().Add(this.Rttl))
 		if err != nil {
 			return nil, err
 		}
@@ -131,8 +134,8 @@ func (this *ClientBaseSocket) RecvEx() ([]byte, error) {
 	buffer := make([]byte, 1024)
 	n, err := this.conn.Read(buffer)
 	if err != nil {
-		return buffer[:n], nil
+		return nil, err
 	}
 
-	return nil, err
+	return buffer[:n], nil
 }
