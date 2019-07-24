@@ -64,3 +64,7 @@ call proc_reset_by_day('2019-06-18 00:00:00',1560787200000,4);
 call online_log_summary('2019-06-18 00:00:00'); #数据统计。
 
 select * from view_yt_apply where ytid=165272 limit 50;
+
+select sum(money) as s from pay_log where uid=188801 and result=0 and channel in(1,2,3) and addtime>='2019-07-15'
+
+explain select code from invite_log where uid=167338;
