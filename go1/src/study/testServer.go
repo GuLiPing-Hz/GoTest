@@ -53,7 +53,7 @@ func handlerClient(conn *StatusConn) {
 		if err != nil {
 			Log("handlerClient err3=%v\n", err.Error())
 			errStr := err.Error()
-			err1 := err.(*net.OpError)
+			err1, ok := err.(*net.OpError)
 			if err == io.EOF || (runtime.GOOS == "windows" &&
 				strings.Contains(errStr, "An existing connection was forcibly closed by the remote host") ||
 				strings.Contains(errStr, "An established connection was aborted by the software in your host machine")) ||
@@ -72,7 +72,7 @@ func handlerClient(conn *StatusConn) {
 						解决办法就是客户端发送数据的时候需要wait一下，然后再close，这样close的结果就是2了
 				*/
 				conn.Status = StatusClosed
-			} else if err1 != nil && err1.Timeout() {
+			} else if ok && err1 != nil && err1.Timeout() {
 				conn.Status = StatusTimeout
 			} else {
 				conn.Status = StatusError

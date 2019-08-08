@@ -682,6 +682,7 @@ BEGIN
     declare vToday datetime;
     declare vStealSameCnt int;
     declare vStealOtherCnt int;
+    declare vStealedCnt int;
 
     set vToday = date(vTm);
     select yuhuocur, yuhuoutc into vYuhuo,vYuhuoUtc from yt_yuhuo where uid = vOptedUid;
@@ -725,6 +726,13 @@ BEGIN
         #一天一个uid最多只能偷别人10次
         select count(1) into vStealOtherCnt from yt_coin_log where tm >= vToday and uid = vUid and type = 1;
         if vStealOtherCnt > 10 then
+            select -5 as status, 0 as yuhuo;
+            leave exec;
+        end if;
+
+        #一天一个uid最多被别人偷10次
+        select count(1) into vStealedCnt from yt_coin_log where tm >= vToday and optuid = vUid and type = 1;
+        if vStealedCnt > 10 then
             select -5 as status, 0 as yuhuo;
             leave exec;
         end if;

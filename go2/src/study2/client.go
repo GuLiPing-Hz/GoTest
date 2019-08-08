@@ -6,7 +6,6 @@ import (
 	"time"
 )
 
-
 //一个TCP Client连接服务器的例子
 const (
 	TimeFmt = "2006/01/02 15:04:05.000" //毫秒保留3位有效数字
@@ -24,7 +23,8 @@ func main() {
 		Log("err1=%v\n", err.Error())
 		return
 	}
-	ipStr := fmt.Sprintf("%s:20003", ip.IP.String())
+	//ipStr := fmt.Sprintf("%s:20003", ip.IP.String())
+	ipStr := fmt.Sprintf("%s:9876", ip.IP.String()) //通过gate服务器
 	conn, err := net.Dial("tcp", ipStr)
 	if err != nil {
 		Log("err2=%v\n", err.Error())
@@ -47,6 +47,7 @@ func main() {
 	}
 	Log("send server [%d]=%s\n", n, hello)
 
+	//接收数据
 	//buffer := make([]byte, 1024)
 	//n, err = conn.Read(buffer)
 	//if err != nil {
@@ -54,6 +55,6 @@ func main() {
 	//	return
 	//}
 	//Log("read server [%d]=%s\n", n, string(buffer))
-
-	//<-time.After(time.Second)
+	//
+	<-time.After(time.Second)
 }

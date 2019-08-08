@@ -68,3 +68,23 @@ select * from view_yt_apply where ytid=165272 limit 50;
 select sum(money) as s from pay_log where uid=188801 and result=0 and channel in(1,2,3) and addtime>='2019-07-15'
 
 explain select code from invite_log where uid=167338;
+
+
+update growth_task_log set task_type=1 where task_id in(1,8,11,13,16);
+update growth_task_log set task_type=2 where task_id in(5,9,15,17,19);
+update growth_task_log set task_type=4 where task_id in(6);
+update growth_task_log set task_type=5 where task_id in(10);
+update growth_task_log set task_type=6 where task_id in(2,3,12,14,18,20,22,24,25,26);
+update growth_task_log set task_type=7 where task_id in(21);
+update growth_task_log set task_type=8 where task_id in(23);
+update growth_task_log set task_type=9 where task_id in(7);
+update growth_task_log set task_type=10 where task_id in(4);
+
+explain select * from user where flavors like 'MARKET_xw%';
+
+update user set sex=0 where true;
+update user set sex=1 where flavors like 'MARKET_xw%';
+
+alter table user modify sex int(10) null comment '指代是否是闲玩用户，0表示非闲玩渠道用户，1表示闲玩用户';
+
+select * from user where ID_valid='A1000055435B2B' and sex=1 order by uid asc limit 1;
