@@ -87,4 +87,11 @@ update user set sex=1 where flavors like 'MARKET_xw%';
 
 alter table user modify sex int(10) null comment '指代是否是闲玩用户，0表示非闲玩渠道用户，1表示闲玩用户';
 
+
 select * from user where ID_valid='A1000055435B2B' and sex=1 order by uid asc limit 1;
+
+insert into online_count(p_cnt,tp,tms,addtime) value (0,2,1,'2019-06-04 21:32:25');
+
+create index alms_log_tm_index
+	on alms_log (tm desc);
+
