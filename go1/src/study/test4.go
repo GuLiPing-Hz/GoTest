@@ -53,7 +53,7 @@ func testStr() {
 	ss := []string{"a", "b", "c"} //申明字符串数组
 	ss2 := ss[:]                  //数组拷贝出来的地址 python不一样，go不一样,似乎只有字符串的处理是不一样的
 	fmt.Println(ss2, " ", &ss, " ", &ss2, " ", &ss == &ss2)
-	fmt.Println("字符串以指定连接符连接", strings.Join(ss, "_"))
+	fmt.Println("字符串以指定连接符连接", strings.Join(ss, "_")) //这个要比用for循环 [s = s+sep+s] 更高效
 	fmt.Println("字符串以指定字符串分隔", strings.Split(s, "l"))
 	fmt.Println("字符串检查指定字符串重复出现次数", strings.Count(s, "l"))
 	fmt.Println("字符串开头检查", s, strings.HasPrefix(s, "Hell"))
@@ -214,7 +214,7 @@ func testPointer() {
 }
 
 func main() {
-	//testStr()
+	testStr()
 	//testArra()
 	//testMap()
 	testPointer()
