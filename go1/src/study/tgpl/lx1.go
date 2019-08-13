@@ -19,7 +19,7 @@ func main() {
 	}
 	//练习1.3
 	var strs []string
-	for i := 0; i < 50000; i++ {
+	for i := 0; i < 5000; i++ {
 		strs = append(strs, fmt.Sprintf("%d", i))
 	}
 	var log, sep string

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"reflect"
 	"math"
-	"study/codeerror"
 	"errors"
 )
 
@@ -107,7 +106,7 @@ func Sqrt(f float64) (float64, error) {
 	if f < 0 {
 		//提示原生错误
 		//return math.Sqrt(f), errors.New("math: square root of negative number")
-		return result, codeerror.New(1, "math: square root of negative number")
+		return result, errors.New("math: square root of negative number")
 	}
 	// 实现
 	return result, nil
@@ -120,13 +119,13 @@ func testError() {
 		fmt.Println("defer func in")
 		p := recover() //recover用于还原现场程序，可继续执行，与panic配对使用
 		if p != nil {
-			if reflect.TypeOf(p) == reflect.TypeOf(&codeerror.CodeError{}) {
-				//interface转换成指定类型的数据,类型不能弄错，否则生成的时候会报错
-				var er = p.(*codeerror.CodeError)
-				fmt.Println(er)
-				fmt.Println("er.Reserve = ", er.Reserve)
-			}
-			fmt.Println(reflect.TypeOf(p), reflect.TypeOf(&codeerror.CodeError{}))
+			//if reflect.TypeOf(p) == reflect.TypeOf(&codeerror.CodeError{}) {
+			//	//interface转换成指定类型的数据,类型不能弄错，否则生成的时候会报错
+			//	var er = p.(*codeerror.CodeError)
+			//	fmt.Println(er)
+			//	fmt.Println("er.Reserve = ", er.Reserve)
+			//}
+			//fmt.Println(reflect.TypeOf(p), reflect.TypeOf(&codeerror.CodeError{}))
 			fmt.Printf("Fatal error: %s\n", p)
 		}
 
