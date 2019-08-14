@@ -14,7 +14,7 @@ func main() {
 	}
 
 	url := os.Args[1]
-	//练习1.8
+	//练习题1.8
 	if !strings.HasPrefix(url, "http://") {
 		url = "http://" + url
 	}
@@ -25,7 +25,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	//练习1.7
+	//练习题1.7
 	_, err = io.Copy(os.Stdout, resp.Body)
 	resp.Body.Close()
 	if err != nil {
@@ -33,6 +33,6 @@ func main() {
 		os.Exit(1)
 	}
 
-	//练习1.9
+	//练习题1.9
 	fmt.Printf("http status:%s", resp.Status)
 }

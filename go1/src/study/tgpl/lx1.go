@@ -11,13 +11,13 @@ import (
 func main() {
 
 	//the Go programming language
-	//练习1.1
+	//练习题1.1
 	fmt.Println(os.Args)
-	//练习1.2
+	//练习题1.2
 	for i, s := range os.Args {
 		fmt.Println(i, s)
 	}
-	//练习1.3
+	//练习题1.3
 	var strs []string
 	for i := 0; i < 5000; i++ {
 		strs = append(strs, fmt.Sprintf("%d", i))

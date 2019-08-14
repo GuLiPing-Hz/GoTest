@@ -38,7 +38,7 @@ func stdinScanner() {
 
 func main() {
 	//stdinScanner()
-	//练习1.4
+	//练习题1.4
 	counts := make(map[string]int)
 	files := make(map[string]string)
 
