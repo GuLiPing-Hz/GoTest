@@ -96,7 +96,7 @@ func main() {
 	xInterface = true
 
 	println("sizeoof xInterface = ", unsafe.Sizeof(xInterface))
-	switch xInterface.(type) {//不需要再写break
+	switch xInterface.(type) { //不需要再写break,可以添加fallthrough来阻止默认的break
 	case nil:
 		println("nil 类型")
 	case int8:
@@ -119,6 +119,18 @@ func main() {
 		println("未知类型")
 	}
 
+	xInt := 11
+	switch {
+	case xInt > 10:
+		println("xInt > 10")
+		fallthrough //表示当前标签不需要break
+	case xInt > 5:
+		println("xInt > 5")
+	default:
+		println("xInt = 5")
+	case xInt < 5:
+		println("xInt < 5")
+	}
 	//三目不行
 	//b := a == 1 ? println("a==1"):println("a!=1")
 

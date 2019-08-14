@@ -7,6 +7,7 @@ import (
 	"io"
 	"math"
 	"os"
+	"math/rand"
 )
 
 var palette = []color.Color{color.White, color.Black,
@@ -36,7 +37,7 @@ func lissajous(out io.Writer) {
 		nframes = 64    // number of animation frames
 		delay   = 8     // delay between frames in 10ms units
 	)
-	freq := 0.5 //rand.Float64() * 3.0 // relative frequency of y oscillator
+	freq := rand.Float64() * 3.0 // relative frequency of y oscillator
 	anim := gif.GIF{LoopCount: nframes}
 	phase := 0.0 // phase difference
 	for i := 0; i < nframes; i++ {
