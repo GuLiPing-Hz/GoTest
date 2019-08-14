@@ -2,11 +2,13 @@ package main
 
 import (
 	"bufio"
-	"os"
 	"fmt"
+	"io/ioutil"
+	"os"
+	"strings"
 )
 
-func main() {
+func stdinScanner() {
 	counts := make(map[string]int)
 	input := bufio.NewScanner(os.Stdin)
 	for input.Scan() { // Scan 函数在读到一行时返回 true ，在 无输入时返回 false
@@ -30,6 +32,34 @@ func main() {
 			//%T 变量的类型
 			//%% 字面上的百分号标志（无操作数）
 			fmt.Printf("%d\t%s\n", n, line)
+		}
+	}
+}
+
+func main() {
+	//stdinScanner()
+	//练习1.4
+	counts := make(map[string]int)
+	files := make(map[string]string)
+
+	paramsFiles := os.Args[1:]
+	for i := range paramsFiles {
+		buf, err := ioutil.ReadFile(paramsFiles[i])
+		if err != nil {
+			continue
+		}
+
+		lines := strings.Split(string(buf), "\n")
+		for j := range lines {
+			counts[lines[j]] ++
+			files[lines[j]] = paramsFiles[i]
+		}
+	}
+
+	fmt.Println("result:")
+	for i := range counts {
+		if counts[i] > 1 {
+			fmt.Println(i, counts[i], files[i])
 		}
 	}
 }
