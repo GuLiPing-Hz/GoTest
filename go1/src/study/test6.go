@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
-	"time"
-	"sync/atomic"
-	"sync"
 	"strconv"
+	"sync"
+	"sync/atomic"
+	"time"
 )
 
 //学习 go chan信道(读取，写入，阻塞) goroutine多线程封装
@@ -37,7 +37,7 @@ func test1() {
 	/**
 	输出
 	0 1 2 3 4 5 6 7 8 9
-	 */
+	*/
 }
 
 //使用goroutine
@@ -49,7 +49,7 @@ func test2() {
 	5 6 7 8 9 //偶尔可能都输出一点
 
 	由于主线程结束的太快，我们的goroutine还没来得及跑，只do了一次
-	 */
+	*/
 }
 
 //创建无缓冲信道消息，主线程会等待消息的返回
@@ -58,11 +58,14 @@ func test3() {
 	messages := make(chan string) //似乎全局信道不能这么写
 	go func(message string) {
 		time.Sleep(time.Second * 3)
+		//close(messages)
 		messages <- message // 存消息 使用 '<-', 指向信道表示存储消息
 	}("hello chan message")
 
 	fmt.Println("等待信道消息...")
-	fmt.Println("收到来自信道的消息", <-messages) // 取消息 '<-', 反向信道表示读取消息
+
+	msg, ok := <-messages                        //第二个表示是否成功读取到消息,如果信道关闭，那么返回值就是false了
+	fmt.Println("收到来自信道的消息=", msg, "；是否成功=", ok) // 取消息 '<-', 反向信道表示读取消息
 }
 
 var ch chan int = make(chan int) //无缓冲信道
@@ -216,11 +219,11 @@ func main() {
 	//fmt.Println("\n" + strings.Repeat("*", 100))
 	////test2()
 	//fmt.Println("\n" + strings.Repeat("*", 100))
-	//test3()
+	test3()
 	//fmt.Println("\n" + strings.Repeat("*", 100))
 	//test4()
 	//fmt.Println("\n" + strings.Repeat("*", 100))
 	//test5()
 	//fmt.Println("\n" + strings.Repeat("*", 100))
-	testSelect()
+	//testSelect()
 }
