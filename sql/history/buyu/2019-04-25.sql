@@ -234,10 +234,10 @@ drop view if exists view_yt_user;
 create view view_yt_user as
 select a.uid,
        ytid,
-       nick_name           as nickname,
+       nick_name            as nickname,
        avatar,
-       a.tm                as tm,
-       ifnull(yuhuocur, 0) as yuhuocur,
+       a.tm                 as tm,
+       ifnull(yuhuocur, 0)  as yuhuocur,
        ifnull(yuhuoutc, -2) as yuhuoutc,
        yuhuo,
        utc,
@@ -656,18 +656,6 @@ DELIMITER ;
 
 -- ----------------------------
 # Procedure structure for `proc_get_yuhuo` begin
-# 收取鱼货或者偷取别人的鱼货
-# @return
-#     status: 状态值
-#         0表示开启,
-#
-#         >0 表示倒计时的截止时间——现在还没到。
-#         -1 表示关闭状态
-#         -2 表示正在初始化
-#         -3 表示鱼货已经被收取
-#         -4 一天一个uid只能被同一个uid偷一次
-#         -5 一天一个uid最多只能偷别人10次
-#     yuhuo:
 # ----------------------------
 DROP PROCEDURE IF EXISTS proc_get_yuhuo;
 DELIMITER //
@@ -675,6 +663,18 @@ CREATE PROCEDURE proc_get_yuhuo(in vUid bigint, in vOptedUid bigint,
                                 in vYtid bigint, in vTm datetime, in vUtc bigint)
 exec:
 BEGIN
+    # 收取鱼货或者偷取别人的鱼货
+    # @return
+    #     status: 状态值
+    #         0表示开启,
+    #
+    #         >0 表示倒计时的截止时间——现在还没到。
+    #         -1 表示关闭状态
+    #         -2 表示正在初始化
+    #         -3 表示鱼货已经被收取
+    #         -4 一天一个uid只能被同一个uid偷一次
+    #         -5 一天一个uid最多只能偷别人10次
+    #     yuhuo:
     declare vYuhuo bigint;
     declare vYuhuoUtc bigint;
     declare vPercent float;
