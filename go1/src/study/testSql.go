@@ -15,11 +15,11 @@ import (
 //use xx(database)
 //show tables;
 
-func testMySql(dbMgr *tool.DBMgr) {
-	fmt.Printf("SQL Open OK %s\n", dbMgr.DbInst)
+func testMySql(dbMgr *sql.DB) {
+	fmt.Printf("SQL Open OK %s\n", dbMgr)
 
 	// Execute the query
-	rows, err := dbMgr.DbInst.Query(`SELECT * FROM user`)
+	rows, err := dbMgr.Query(`SELECT * FROM user`)
 	if err != nil {
 		fmt.Println(err.Error()) // proper error handling instead of panic in your app
 		return
@@ -166,9 +166,9 @@ func testReflect(data interface{}) {
 
 }
 
-func testDbHelp(dbMgr *tool.DBMgr) {
+func testDbHelp(dbMgr *sql.DB) {
 	fmt.Println(strings.Repeat("*", 100))
-	data, err := dbMgr.LoadTable(`SELECT * FROM user`)
+	data, err := dbMgr.Query(`SELECT * FROM user`)
 	if err != nil {
 		fmt.Printf("err = %s\n", err.Error())
 		return
@@ -177,7 +177,7 @@ func testDbHelp(dbMgr *tool.DBMgr) {
 	fmt.Println(data)
 
 	fmt.Println(strings.Repeat("*", 100))
-	data, err = dbMgr.LoadTable(`SELECT * FROM user where uid=?`, 5)
+	data, err = dbMgr.Query(`SELECT * FROM user where uid=?`, 5)
 	if err != nil {
 		fmt.Printf("err = %s\n", err.Error())
 		return
@@ -193,14 +193,14 @@ func testDbHelp(dbMgr *tool.DBMgr) {
 }
 
 //存储过程调用示例
-func testDbRoutines(dbMgr *tool.DBMgr) {
-	_, err := dbMgr.LoadTable(`CALL proc_test_opt(?, ?, ?, @sum_out);`, 1, 0, 5)
+func testDbRoutines(dbMgr *sql.DB) {
+	_, err := dbMgr.Query(`CALL proc_test_opt(?, ?, ?, @sum_out);`, 1, 0, 5)
 	if err != nil {
 		fmt.Printf("err = %s\n", err.Error())
 		return
 	}
 
-	result2, err := dbMgr.LoadTable(`SELECT @sum_out;`)
+	result2, err := dbMgr.Query(`SELECT @sum_out;`)
 	if err != nil {
 		fmt.Printf("err = %s\n", err.Error())
 		return
@@ -224,14 +224,13 @@ func main() {
 	//host指定了访问来源，
 	//db, err := sql.Open("mysql", dbusername + ":"+
 	//	pwd+ "@tcp("+ dbhostsip+ ")/"+ dbname+ "?charset=utf8mb4")
-	dbMgr := tool.DBMgr{}
 	var err error
-	dbMgr.DbInst, err = sql.Open("mysql", dbusername + ":"+
+	dbMgr, err := sql.Open("mysql", dbusername + ":"+
 		pwd+ "@tcp("+ dbhostsip+ ")/"+ dbname+ "?charset=utf8mb4")
 	if err != nil {
 		fmt.Printf("SQL Open Err=%s\n", err)
 	}
-	defer dbMgr.DbInst.Close()
+	defer dbMgr.Close()
 
 	//测试反射
 	dbTemp := DbUser{1, 10, "Hello 世界"}
@@ -239,7 +238,7 @@ func main() {
 	testReflect(&dbTemp)
 	fmt.Println(dbTemp)
 
-	testMySql(&dbMgr)
+	testMySql(dbMgr)
 	//testDbHelp(&dbMgr)
 	//testDbRoutines(&dbMgr)
 }
