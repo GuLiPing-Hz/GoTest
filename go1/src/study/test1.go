@@ -170,18 +170,18 @@ func main() {
 
 	var z float64                      //float32类型的累计计算误差很容易扩散，并且float32能精确表示的正整数并不是很大，只有23位表示数字
 	fmt.Println(z, -z, 1/z, -1/z, z/z) //0 -0 +Inf -Inf NaN
-	fmt.Println(math.IsNaN(z/z), math.NaN())
+	fmt.Println(math.IsNaN(z/z), math.NaN(), 1/z == 1/z, -1/z == -1/z, z/z == z/z)
 
 	//1.算术运算符:
 	a = 10
 	b = 8
-	fmt.Println("a+b=", a+b)   //加
-	fmt.Println("a-b=", a-b)   //减
-	fmt.Println("a*b=", a*b)   //乘
-	fmt.Println("b/a=", b/a)   //除
-	fmt.Println("b%a=", b%a)   //模 模的符号依赖于被取模的数的符号
-	fmt.Println("b%-a=", b%-a) //模 模的符号依赖于被取模的数的符号
-	fmt.Println("-b%a=", -b%a) //模 模的符号依赖于被取模的数的符号
+	fmt.Println("a+b=", a+b)     //加
+	fmt.Println("a-b=", a-b)     //减
+	fmt.Println("a*b=", a*b)     //乘
+	fmt.Println("b/a=", b/a)     //除
+	fmt.Println("b%a=", b%a)     //模 模的符号依赖于被取模的数的符号
+	fmt.Println("b%-a=", b % -a) //模 模的符号依赖于被取模的数的符号
+	fmt.Println("-b%a=", -b%a)   //模 模的符号依赖于被取模的数的符号
 	fmt.Println("-a=", -a)
 
 	//2.比较操作符:
