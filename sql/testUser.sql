@@ -20,3 +20,4 @@ CREATE PROCEDURE proc_user_add(IN account TEXT, IN pwd TEXT)
 //
 #分隔符还原
 DELIMITER ;
+

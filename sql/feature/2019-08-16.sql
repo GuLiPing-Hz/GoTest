@@ -70,5 +70,79 @@ BEGIN
       and state = 1;
 END;
 
+INSERT INTO `Buyu`.`activities` (`id`, `title`, `endTime`, `sortNo`, `isEnabled`)
+VALUES (13, '找回账号', '2019-10-01 00:00:00', 13, 1);
+INSERT INTO `Buyu`.`activities` (`id`, `title`, `endTime`, `sortNo`, `isEnabled`)
+VALUES (14, '游戏推广', '2019-10-01 00:00:00', 14, 1);
 
+alter table user
+    modify type tinyint default 0 null comment '用户类型：
+0.普通用户
+1.普通推广员(不可登录游戏，可登后台)
+2.普通推广员(可登录游戏，不可登后台)
+3.渔乐机器人，
+4捕鱼机器人，
+5后台推广（待审核,不可登游戏，不可登后台）';
 
+alter table invite_log
+    add status tinyint default 2 null comment '推广成员的奖励是否已经领取，默认已领取。';
+
+# 更新邀请奖励
+update invite_cfg
+set inviterGift=50000
+where id = 1;
+
+-- ----------------------------
+-- Procedure structure for `proc_add` begin
+-- ----------------------------
+DROP PROCEDURE IF EXISTS proc_get_my_promotion;
+CREATE PROCEDURE proc_get_my_promotion(in vUid bigint)
+BEGIN
+    declare cnt int;
+    declare cnt2 int;
+    #查询总共推广了多少用户
+    select count(1) into cnt from invite_log where code = vUid;
+    #查询当前还有多少推广用户已经升到5级，但是还没有领取的推广奖励
+    select count(1) into cnt2 from invite_log where code = vUid and status = 1;
+    select cnt, cnt2;
+END;
+-- ----------------------------
+-- Procedure structure for `proc_get_my_promotion` END
+-- ----------------------------
+# call proc_get_my_promotion(165272);
+
+alter table yt
+    add tgy bigint default 0 null comment '鱼塘推广员。';
+
+-- ----------------------------
+-- Procedure structure for `proc_create_yt` begin
+-- ----------------------------
+DROP PROCEDURE IF EXISTS proc_create_yt;
+CREATE PROCEDURE proc_create_yt(in vUid bigint, in vName text, in vIntro text,
+                                in vReward int, in vTgy bigint, in vTm datetime, in vPool bigint)
+exec:
+BEGIN
+    # 创建一个鱼塘
+    # @return status:
+    #     0 成功
+    #     10123, --您已加入一个鱼塘
+
+    declare vCnt int;
+    select count(1) into vCnt from yt_user where uid = vUid and apply = 0 and ytid > 0;
+    if vCnt > 0 then
+        select 10123 as status;
+        leave exec;
+    end if;
+
+    #删除所有的申请消息
+    delete from yt_user where uid = vUid;
+    #加入到鱼塘中
+    insert into yt_user(uid, ytid, tm, apply) value (vUid, vUid, vTm, 0);
+    #创建一个鱼塘
+    insert into yt(ytid, uid, name, intro, reward, tm, pool, tgy)
+        value (vUid, vUid, vName, vIntro, vReward, vTm, vPool, vTgy);
+    select 0 as status;
+END;
+-- ----------------------------
+-- Procedure structure for `proc_create_yt` END
+-- ----------------------------

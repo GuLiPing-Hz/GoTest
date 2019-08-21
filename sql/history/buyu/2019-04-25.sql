@@ -399,41 +399,7 @@ DELIMITER ;
 -- Procedure structure for `proc_update_yuhuo_by_day` END
 -- ----------------------------
 
--- ----------------------------
--- Procedure structure for `proc_create_yt` begin
--- 创建一个鱼塘
-# @return status:
-#     0 成功
-#     10123, --您已加入一个鱼塘
--- ----------------------------
-DROP PROCEDURE IF EXISTS proc_create_yt;
-DELIMITER //
-CREATE PROCEDURE proc_create_yt(in vUid bigint, in vName text, in vIntro text,
-                                in vReward int, in vTm datetime, in vPool bigint)
-exec:
-BEGIN
-    declare vCnt int;
-    select count(1) into vCnt from yt_user where uid = vUid and apply = 0 and ytid > 0;
-    if vCnt > 0 then
-        select 10123 as status;
-        leave exec;
-    end if;
 
-    #删除所有的申请消息
-    delete from yt_user where uid = vUid;
-    #加入到鱼塘中
-    insert into yt_user(uid, ytid, tm, apply) value (vUid, vUid, vTm, 0);
-    #创建一个鱼塘
-    insert into yt(ytid, uid, name, intro, reward, tm, pool)
-        value (vUid, vUid, vName, vIntro, vReward, vTm, vPool);
-    select 0 as status;
-END
-//
-#分隔符还原
-DELIMITER ;
--- ----------------------------
--- Procedure structure for `proc_create_yt` END
--- ----------------------------
 update yt
 set `limit` = 200,
     ver=ver + 1
