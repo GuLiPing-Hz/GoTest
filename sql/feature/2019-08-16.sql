@@ -157,3 +157,7 @@ select a.ytid,
 from yt_rank_last a
          inner join view_yt_rank_act b on a.ytid = b.ytid
 where a.act > 0;
+
+UPDATE `Buyu`.`yt_create_cfg` t
+SET t.`reward` = 0
+WHERE t.`id` = 1;
