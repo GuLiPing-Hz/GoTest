@@ -513,6 +513,103 @@ DELIMITER ;
 -- ----------------------------
 # select count(1) into vCnt from view_yt_apply where ytid = vYtid and uid = vUid;
 
+-- ----------------------------
+-- Procedure structure for `proc_update_yuhuo_by_day` begin
+-- 签到领取鱼塘奖励
+# @return
+#     status: 返回状态值
+#         10090 签到已经领取
+#         10114 请求参数错误，无法获取到对应的鱼塘奖励数据
+#         10134 鱼塘资金不足，无法签到
+#     reward: 签到奖励
+#     pool:鱼塘当前资金
+-- ----------------------------
+DROP PROCEDURE IF EXISTS proc_yt_checkin;
+DELIMITER //
+CREATE PROCEDURE proc_yt_checkin(in vUid bigint, in vUUID text, in vYtid bigint, in vNow datetime)
+exe:
+BEGIN
+    declare vToday datetime;
+    declare vCnt int;
+    declare vReward int;
+    declare vSystemReward int;
+    declare vPool bigint;
+    declare vYtRankEnable int;
+    declare vYtRank int;
+    declare vActivityReward int;
+
+    set vActivityReward = 0;
+    set vToday = date(vNow);
+
+    select count(1) into vCnt
+    from yt_coin_log
+    where (uuid = vUUID or uid = vUid)
+      and tm >= vToday
+      and type = 0;
+
+    if vCnt > 0 then
+        select 10090 as status;
+        leave exe;
+    end if;
+
+    select reward, pool into vReward,vPool from yt where ytid = vYtid;
+
+    #判断yuid是否非法
+    if vReward is null or vPool is null then
+        select 10114 as status;
+        leave exe;
+    end if;
+
+    select reward into vSystemReward from yt_create_cfg limit 1;
+
+    if vSystemReward is null then
+        set vSystemReward = 1000;
+    end if;
+
+    #判断当前鱼塘资金是否够发签到奖励
+    if vReward - vSystemReward > vPool then
+        select 10134 as status;
+        leave exe;
+    end if;
+
+    select count(1) into vYtRankEnable from activities where id = 12 and isEnabled = 1 and endTime > vNow;
+    if vYtRankEnable > 0 then
+        select ifnull(num, 0) into vYtRank from yt_rank_last where ytid = vYtid;
+        if vYtRank <= 3 then
+            select gift_count into vActivityReward
+            from sub_act_gift
+            where activity_id = 11
+              and sub_id = vYtRank
+              and gift_type = 10;
+        elseif vYtRank <= 10 then
+            select gift_count into vActivityReward
+            from sub_act_gift
+            where activity_id = 11
+              and sub_id = 4
+              and gift_type = 10;
+        end if;
+    end if;
+
+    #记录个人签到金额
+    insert yt_coin_log(tm, uid, uuid, ytid, reward, type, optuid)
+        value (vNow, vUid, vUUID, vYtid, vReward, 0, 0);
+
+    #减少鱼塘库存金币,鱼塘成员累计签到数更新。。。
+    set vPool = vPool - (vReward - vSystemReward);
+    update yt set pool=vPool, ver=ver + 1 where ytid = vYtid;
+
+    #更新鱼塘成员累计签到。
+    update yt_user set checkin=checkin + 1 where uid = vUid;
+
+    #返回签到的金币数量
+    select 0 as status, vReward as reward, vPool as pool, vActivityReward as reward2;
+END
+//
+#分隔符还原
+DELIMITER ;
+-- ----------------------------
+-- Procedure structure for `proc_yt_checkin` END
+-- ----------------------------
 
 -- ----------------------------
 # Procedure structure for `proc_get_yuhuo` begin
