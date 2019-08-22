@@ -1,18 +1,34 @@
 package main
 
 import (
-	"crypto/md5"
 	"fmt"
-	"strconv"
 	"strings"
+	"strconv"
+	"crypto/md5"
+	"encoding/hex"
+	"unicode/utf8"
 )
 
 //学习 字符串常用函数，数组，切片(动态数组),字典
 
-//字符串操作
+/*
+字符串操作
+第i个字节并不一定是字符串的第i个字符，
+因为对于非ASCII字符的UTF8编码会要两个或多个 字节。
+
+go中的rune类型（int32） 对应unicode的码点，
+UTF-32或UCS-4 每个字符都对应一个 int32,32位字节
+
+UTF-8 是对UTF-32内存占用大的优化
+0xxxxxxx 							runes 0-127 (ASCII)
+110xxxxx 10xxxxxx 					128-2047 (values <128 unused)
+1110xxxx 10xxxxxx 10xxxxxx 			2048-65535 (values <2048 unused)
+11110xxx 10xxxxxx 10xxxxxx 10xxxxxx 65536-0x10ffff (other values unused)
+*/
 func testStr() {
 	fmt.Println("\n\n" + strings.Repeat("*", 15) + "字符串" + strings.Repeat("*", 15))
 	var s = "hello world"
+	//反引号表示原生字符串 `
 	var s1 = `hello world` //go语言不能使用单引号表示字符串，单引号只能表示某个字符
 	s2 := `hello
 	world`
@@ -40,10 +56,9 @@ func testStr() {
 	fmt.Println("ToTitle", strings.ToTitle(s)) //作用同ToUpper
 
 	fmt.Println("字符串查找Index", strings.Index(s, "l")) // 4指定起始位置 返回在字符串中的开始位置 找不到返回-1
-	fmt.Println("字符串查找IndexAny", strings.IndexAny(s, "l"))
-	fmt.Println("字符串查找IndexAny2", strings.IndexAny(s, "le")) //any的意思就是找到指定字符串中的任意字符
+	fmt.Println("字符串查找IndexAny", strings.IndexAny(s, "le")) //any的意思就是找到指定字符串中的任意字符
 	fmt.Println("字符串查找LastIndex", strings.LastIndex(s, "l"))
-	fmt.Println("字符串查找IndexRune", strings.IndexRune(s, 'l')) //l字节
+	fmt.Println("字符串查找IndexRune", strings.IndexRune(s, '国')) //l字节
 	fmt.Println("字符串替换", strings.Replace(s, "l", "L", 2))    // 最后一个参数是要替换的次数，-1全部替换
 	fmt.Println("字符串替换", strings.Replace(s, "l", "L", -1))
 	////去除字符串左空格 TrimLeft ，右空格 TrimRight,左右空格Trim
@@ -66,10 +81,26 @@ func testStr() {
 
 	var sign = md5.Sum([]byte("123"))
 	sign2 := fmt.Sprintf("%x", sign)
-	fmt.Println(sign2)
+	fmt.Println(sign2, hex.EncodeToString(sign[:]))
 
 	//字符串转byte []byte(字符串)
 	//byte转字符串 string([]byte)
+
+	//unicode 码点：
+	//'世' '\u4e16' '\U00004e16'
+	fmt.Printf("unicode码点: %c %c %c\n", '世', '\u4e16', '\U00004e16')
+	str := "hello 世界"
+	fmt.Printf("【hello 世界】utf8字节长度len=%d\n"+
+		"utf8字符长度RuneCountInString=%d\n", len(str), utf8.RuneCountInString(str))
+	for i, r := range str { //遍历出来的是utf8实际字符个数
+		fmt.Printf("str[i] %d,%q\t%[2]c\t%[2]d\n", i, str[i])
+		fmt.Printf("r      %d,%q\t%[2]c\t%[2]d\n", i, r)
+	}
+
+	fmt.Println(string(0x4e16))  //码点转换成utf8字符串
+	fmt.Println(string(1234567)) //如果对应码点的字符是无效的，则用'\uFFFD'无效字符作为替换
+
+	//strings strconv bytes unicode
 }
 
 //数组操作
