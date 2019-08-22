@@ -338,15 +338,6 @@ create table yt_rank_last
     num  int comment '排名'
 ) comment '活跃度清0前的排名值';
 
-drop view if exists view_yt_rank_act_last;
-create view view_yt_rank_act_last as
-select a.ytid,
-       nickname,
-       name,
-       a.act,
-       num
-from yt_rank_last a
-         inner join view_yt_rank_act b on a.ytid = b.ytid;
 # ---------------------------------存储过程 -----------------------------------
 # ---------------------------------存储过程 -----------------------------------
 # ---------------------------------存储过程 -----------------------------------

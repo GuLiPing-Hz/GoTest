@@ -146,3 +146,14 @@ END;
 -- ----------------------------
 -- Procedure structure for `proc_create_yt` END
 -- ----------------------------
+
+drop view if exists view_yt_rank_act_last;
+create view view_yt_rank_act_last as
+select a.ytid,
+       nickname,
+       name,
+       a.act,
+       num
+from yt_rank_last a
+         inner join view_yt_rank_act b on a.ytid = b.ytid
+where a.act > 0;
