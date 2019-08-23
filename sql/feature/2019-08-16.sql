@@ -162,5 +162,12 @@ UPDATE `Buyu`.`yt_create_cfg` t
 SET t.`reward` = 0
 WHERE t.`id` = 1;
 
-alter table user alter column week_card_utc set default 0;
-alter table user alter column ID_number set default '';
+alter table user
+    alter column week_card_utc set default 0;
+alter table user
+    alter column ID_number set default '';
+
+alter table invite_log
+    modify status tinyint default 2 null comment '推广成员的奖励是否已经领取，默认已领取。0未完成，1完成待领取，2已领取';
+
+

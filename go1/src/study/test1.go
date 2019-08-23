@@ -91,13 +91,22 @@ func main() {
 	fmt.Printf("charB = %d %[1]c %[1]q %c\n", charB, 20107) //第一个打印的unicode码
 	fmt.Printf("charC = %d %[1]c %[1]q\n", charC)
 
-	//声明常量
+	//声明常量 - 常量精度256bit，只有常量可以是无类型的
 	const ConstA = 1
 	const ( //常量当枚举使用
 		Unknown = 0
 		Female  = 1
 		Male    = 2
 	)
+	{
+		//无类型常量自动转换成默认的类型
+		i := 0      // untyped integer; implicit int(0)
+		r := '\000' // untyped rune; implicit rune('\000')
+		f := 0.0    // untyped floating-point; implicit float64(0.0)
+		c := 0i     // untyped complex; implicit complex128(0i)
+		fmt.Println(i, r, f, c)
+	}
+
 	// iota 特殊常量，可以认为是一个可以被编译器修改的常量
 	// 在没一个const关键字出现是，被重置为0，
 	// 然后再下一个const出现之前，每出现一次iota，其所代表的数字会自动增加1。
@@ -175,13 +184,13 @@ func main() {
 	//1.算术运算符:
 	a = 10
 	b = 8
-	fmt.Println("a+b=", a+b)     //加
-	fmt.Println("a-b=", a-b)     //减
-	fmt.Println("a*b=", a*b)     //乘
-	fmt.Println("b/a=", b/a)     //除
-	fmt.Println("b%a=", b%a)     //模 模的符号依赖于被取模的数的符号
-	fmt.Println("b%-a=", b % -a) //模 模的符号依赖于被取模的数的符号
-	fmt.Println("-b%a=", -b%a)   //模 模的符号依赖于被取模的数的符号
+	fmt.Println("a+b=", a+b)   //加
+	fmt.Println("a-b=", a-b)   //减
+	fmt.Println("a*b=", a*b)   //乘
+	fmt.Println("b/a=", b/a)   //除
+	fmt.Println("b%a=", b%a)   //模 模的符号依赖于被取模的数的符号
+	fmt.Println("b%-a=", b%-a) //模 模的符号依赖于被取模的数的符号
+	fmt.Println("-b%a=", -b%a) //模 模的符号依赖于被取模的数的符号
 	fmt.Println("-a=", -a)
 
 	//2.比较操作符:

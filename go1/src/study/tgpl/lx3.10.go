@@ -6,10 +6,25 @@ import (
 	"strings"
 )
 
+//练习题3.13
+const (
+	KB int64 = 1000
+	MB       = 1000 * KB
+	GB       = 1000 * MB
+	TB       = 1000 * KB
+	PB       = 1000 * TB
+	EB       = 1000 * PB
+	ZB       = 1000 * EB
+	YB       = 1000 * ZB
+)
+
 func main() {
+
 	fmt.Printf("练习题3.10 %s\n", comma("123459"))
 	fmt.Printf("练习题3.11 %s\n", comma3_11("-1234567890.1112223334"))
 	fmt.Printf("练习题3.12 %v\n", comma3_12("1国,2", "1,2国"))
+
+	fmt.Printf("KB=%d,MB=%d,YB=%d,YB/EB=%d\n", KB, MB, PB, YB/EB)//YB已经无法表示，但是可以计算，编译的时候已经计算 256bit
 }
 
 // comma inserts commas in a non-negative decimal integer string.
@@ -19,7 +34,7 @@ func comma(s string) string {
 	for i := 1; i <= n; i++ {
 		buf.WriteByte(s[i-1])
 		if i != n && (n-i)%3 == 0 {
-			buf.WriteByte(',')
+			fmt.Fprintf(buf, ",")
 		}
 	}
 	return buf.String()
