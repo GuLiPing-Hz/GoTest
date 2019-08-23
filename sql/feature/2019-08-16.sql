@@ -161,3 +161,6 @@ where a.act > 0;
 UPDATE `Buyu`.`yt_create_cfg` t
 SET t.`reward` = 0
 WHERE t.`id` = 1;
+
+alter table user alter column week_card_utc set default 0;
+alter table user alter column ID_number set default '';
