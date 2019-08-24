@@ -55,7 +55,7 @@ func testStr() {
 	fmt.Println("Title", strings.Title(s))     // 把每个单词的第一个字母转化为大写，其余小写
 	fmt.Println("ToTitle", strings.ToTitle(s)) //作用同ToUpper
 
-	fmt.Println("字符串查找Index", strings.Index(s, "l")) // 4指定起始位置 返回在字符串中的开始位置 找不到返回-1
+	fmt.Println("字符串查找Index", strings.Index(s, "l"))        // 4指定起始位置 返回在字符串中的开始位置 找不到返回-1
 	fmt.Println("字符串查找IndexAny", strings.IndexAny(s, "le")) //any的意思就是找到指定字符串中的任意字符
 	fmt.Println("字符串查找LastIndex", strings.LastIndex(s, "l"))
 	fmt.Println("字符串查找IndexRune", strings.IndexRune(s, '国')) //l字节
@@ -103,11 +103,21 @@ func testStr() {
 	//strings strconv bytes unicode
 }
 
-//数组操作
+//数组和切片操作
 func testArra() {
-	//数组测试
-	//静态数组
-	animal := []string{"cat", "dog", "fish", "bird"}
+	//数组和切片
+	//在go语言中，传递给函数的数组对象是一个复制后的副本，不像其他语言是一个引用或是指针
+	//当然我们可以直接传递 数组指针 来达到高效传递参数的目的。
+
+	//数组
+	//数组的长度是数组类型的一个组成部分，因此[3]int和[4]int是两种不同的数组类型。
+	var q [3]int = [3]int{1, 2, 3}
+	var r [3]int = [3]int{1, 2}
+	var s [10]int = [10]int{9: 1} //用冒号可以指定位置初始化，其他填充默认零值
+	fmt.Println(r, q, s)          // "0"
+
+	//如果在数组的长度位置出现的是“...”省略号，则表示数组的长度是根据初始 化值的个数来计算
+	animal := [...]string{"cat", "dog", "fish", "bird"}
 	for i, v := range animal {
 		fmt.Println("animal["+strconv.Itoa(i)+"]=", v)
 	}
@@ -115,6 +125,16 @@ func testArra() {
 	//fmt.Println(animal[-1])
 
 	//动态数组，使用切片
+	/**
+	var s []int // len(s) == 0, s == nil
+	s = nil // len(s) == 0, s == nil
+	s = []int(nil) // len(s) == 0, s == nil
+	s = []int{} // len(s) == 0, s != nil
+
+	//数组的两个创建方式。
+	make([]T, len)
+	make([]T, len, cap) // same as make([]T, cap)[:len]
+	 */
 	var slice1 []int //申明切片
 	if slice1 == nil { //默认是nil值
 		fmt.Println("slice1 is nil")
@@ -246,7 +266,7 @@ func testPointer() {
 
 func main() {
 	testStr()
-	//testArra()
+	testArra()
 	//testMap()
 	testPointer()
 }
