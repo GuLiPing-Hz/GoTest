@@ -3,16 +3,32 @@ package main
 import "fmt"
 
 //学习 函数
-//Go语言默认使用
-// 值传递，修改参数不会影响到实参
-// 引用传递，修改参数会影响到实参
+/*Go语言默认使用
+实参通过值的方式传递，因此函数的形参是实参的拷贝。对形参进行修改不会影响实参。但是
+如果实参包括引用类型，如指针，slice(切片)、map、function、channel等类型，实参可能会被函数内修改
+
+@注意：数组传递是传递拷贝复制的形式，如不想拷贝直接传递指针类型
+
+
+以下函数申明等价：
+func f(i, j, k int, s, t string) {  }
+func f(i int, j int, k int, s string, t string) {  }
+
+以下4种方法声明拥有2个int型参数和1个int型返回值的函数：
+func add(x int, y int) int {return x + y}
+func sub(x, y int) (z int) { z = x - y; return} //这里给返回值起别名
+func first(x int, _ int) int { return x }
+func zero(int, int) int { return 0 }
+*/
+//func CGo(int, int) int //没有函数体，表示申明其他语言实现 c++
 
 func myPrintln(str string) {
 	fmt.Println(str)
 }
 
-func add2(a int, b int) int {
-	return a + b
+func add2(a int, b int) (c int) {
+	c = a + b
+	return
 }
 
 //如果两个参数类型一致，可以像这样写成一个
@@ -38,12 +54,14 @@ func addEx(a=0, b=1 int) int {
 }
 */
 
-func average(val ...interface{}) int {
+//可变长参数传递
+func average(val ...int) int {
 	result := 0
-	for i,v := range val {
-		fmt.Println(i,v)
+	for i, v := range val {
+		fmt.Println(i, v)
+		result += v
 	}
-	return result
+	return result / len(val)
 }
 
 //前面test1和test2中都有main函数，一个go程序实例只允许存在一个main函数
@@ -58,7 +76,9 @@ func main() {
 	var c int = sub(&a, &b)
 	fmt.Println(a, b, c)
 
-	fmt.Println("平均值为", average(10, 5, 3, 4, 5, 6))  // 位置参数调用
+	fmt.Println("平均值1为", average(10, 5, 3, 4, 5, 6)) // 位置参数调用
+	arra := []int{10, 5, 4}                          //数组或者切片传递给可变长参数函数调用
+	fmt.Println("平均值2为", average(arra...))           // 位置参数调用
 
 	var f = add            //函数类型的变量
 	fmt.Println(f(10, 11)) //调用

@@ -10,6 +10,9 @@ import (
 学习 go语言类型，多重赋值，if/else/switch/select流程控制，for循环
 全局变量，局部变量
 
+@注意：捕获迭代变量的问题
+需要注意for 循环中申明的循环体变量和局部变量赋值匿名函数的处理
+
 go支持的类型：
 	布尔类型 true/false
 	数字类型
@@ -95,7 +98,7 @@ func main() {
 	xInterface = func(int) {}  //func(int) 类型
 	xInterface = true
 
-	xInterfaceBool, ok := xInterface.(bool)//第二个返回值，判断转换是否成功
+	xInterfaceBool, ok := xInterface.(bool) //第二个返回值，判断转换是否成功
 	fmt.Printf("xInterfaceBool=%v,ok=%t\n", xInterfaceBool, ok)
 
 	fmt.Println("sizeoof xInterface = ", unsafe.Sizeof(xInterface))

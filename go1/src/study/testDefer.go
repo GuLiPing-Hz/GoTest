@@ -28,6 +28,7 @@ func testDefer() {
 func main() {
 	fmt.Println("hello 1")
 
+	//如果在循环体有需要执行defer的时候，建议把这块逻辑独立成一个函数，这样就能确保正确执行
 	for i := 100; i < 105; i++ {
 		defer fmt.Println(i) // 倒叙执行
 	}
