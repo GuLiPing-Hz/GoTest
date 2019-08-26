@@ -7,6 +7,7 @@ import (
 	"unicode"
 	"unicode/utf8"
 	"unsafe"
+	"bufio"
 )
 
 func main() {
@@ -14,6 +15,10 @@ func main() {
 
 	fmt.Printf("^uint(0)=%b,^uint(0)>>63=%b,32 << (^uint(0) >> 63)=%v;;;sizeof(uint)=%d\n",
 		^uint(0), ^uint(0)>>63, 32<<(^uint(0)>>63), unsafe.Sizeof(uint(0))*8)
+
+	bc := &ByteCounter{}
+	bc.Write([]byte("Jack has an apple.\nNow he is eating the apple."))
+	fmt.Printf("bc=%v\n", bc)
 }
 
 //练习题4.3
@@ -202,4 +207,39 @@ func (s *IntSet) Elems() []int {
 //练习题6.5
 func (s *IntSet) ByteLen() int {
 	return 32 << (^uint(0) >> 63)
+}
+
+//练习题7.1
+type ByteCounter struct {
+	words int
+	lines int
+}
+
+func (b *ByteCounter) String() string {
+	return fmt.Sprintf("{words:%d,lines:%d}", b.words, b.lines)
+}
+
+func (b *ByteCounter) Write(p []byte) (int, error) {
+	start := 0
+	for {
+		advance, _, _ := bufio.ScanWords(p[start:], true)
+		if advance == 0 {
+			break
+		}
+
+		start += advance
+		b.words ++
+	}
+
+	start = 0
+	for {
+		advance, _, _ := bufio.ScanLines(p[start:], true)
+		if advance == 0 {
+			break
+		}
+
+		start += advance
+		b.lines ++
+	}
+	return len(p), nil
 }
