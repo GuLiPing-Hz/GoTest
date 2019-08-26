@@ -170,4 +170,186 @@ alter table user
 alter table invite_log
     modify status tinyint default 2 null comment '推广成员的奖励是否已经领取，默认已领取。0未完成，1完成待领取，2已领取';
 
+alter table wares_cfg
+    add `desc` varchar(100) charset utf8mb4 null comment '传入到支付平台的商品描述';
+
+alter table wares_cfg
+    drop column mail_giftid;
+
+delete
+from wares_cfg
+where true;
+INSERT INTO Buyu.wares_cfg (wares_id, wares_type, first_pay, price, discount, coin, first_reward_coin, diamond,
+                            first_reward_diamond, room_ids, countdown, ext_value, info)
+VALUES ('10', 1, 8, 98, 0, 980000, 980000, 0, 0, 0, 0, 588000, '98元金币');
+INSERT INTO Buyu.wares_cfg (wares_id, wares_type, first_pay, price, discount, coin, first_reward_coin, diamond,
+                            first_reward_diamond, room_ids, countdown, ext_value, info)
+VALUES ('101', 2, 65536, 6, 0, 0, 0, 60, 60, 0, 0, 48, '6元钻石');
+INSERT INTO Buyu.wares_cfg (wares_id, wares_type, first_pay, price, discount, coin, first_reward_coin, diamond,
+                            first_reward_diamond, room_ids, countdown, ext_value, info)
+VALUES ('102', 2, 131072, 12, 0, 0, 0, 120, 120, 0, 0, 96, '12元钻石');
+INSERT INTO Buyu.wares_cfg (wares_id, wares_type, first_pay, price, discount, coin, first_reward_coin, diamond,
+                            first_reward_diamond, room_ids, countdown, ext_value, info)
+VALUES ('103', 2, 262144, 30, 0, 0, 0, 300, 300, 0, 0, 240, '30元钻石');
+INSERT INTO Buyu.wares_cfg (wares_id, wares_type, first_pay, price, discount, coin, first_reward_coin, diamond,
+                            first_reward_diamond, room_ids, countdown, ext_value, info)
+VALUES ('104', 2, 524288, 98, 0, 0, 0, 980, 980, 0, 0, 784, '98元钻石');
+INSERT INTO Buyu.wares_cfg (wares_id, wares_type, first_pay, price, discount, coin, first_reward_coin, diamond,
+                            first_reward_diamond, room_ids, countdown, ext_value, info)
+VALUES ('105', 2, 1048576, 198, 0, 0, 0, 1980, 1980, 0, 0, 1584, '198元钻石');
+INSERT INTO Buyu.wares_cfg (wares_id, wares_type, first_pay, price, discount, coin, first_reward_coin, diamond,
+                            first_reward_diamond, room_ids, countdown, ext_value, info)
+VALUES ('106', 2, 2097152, 648, 0, 0, 0, 6480, 6480, 0, 0, 5184, '648元钻石');
+INSERT INTO Buyu.wares_cfg (wares_id, wares_type, first_pay, price, discount, coin, first_reward_coin, diamond,
+                            first_reward_diamond, room_ids, countdown, ext_value, info)
+VALUES ('11', 1, 16, 198, 0, 1980000, 1980000, 0, 0, 0, 0, 1188000, '198元金币');
+INSERT INTO Buyu.wares_cfg (wares_id, wares_type, first_pay, price, discount, coin, first_reward_coin, diamond,
+                            first_reward_diamond, room_ids, countdown, ext_value, info)
+VALUES ('12', 1, 32, 648, 0, 6480000, 6480000, 0, 0, 0, 0, 3888000, '648元金币');
+INSERT INTO Buyu.wares_cfg (wares_id, wares_type, first_pay, price, discount, coin, first_reward_coin, diamond,
+                            first_reward_diamond, room_ids, countdown, ext_value, info)
+VALUES ('200', 1, 0, 50, 0, 900000, 0, 0, 0, 0, 0, 0, '推广员50元金币');
+INSERT INTO Buyu.wares_cfg (wares_id, wares_type, first_pay, price, discount, coin, first_reward_coin, diamond,
+                            first_reward_diamond, room_ids, countdown, ext_value, info)
+VALUES ('201', 1, 0, 100, 0, 1800000, 0, 0, 0, 0, 0, 0, '推广员100元金币');
+INSERT INTO Buyu.wares_cfg (wares_id, wares_type, first_pay, price, discount, coin, first_reward_coin, diamond,
+                            first_reward_diamond, room_ids, countdown, ext_value, info)
+VALUES ('202', 1, 0, 500, 0, 9000000, 0, 0, 0, 0, 0, 0, '推广员500元金币');
+INSERT INTO Buyu.wares_cfg (wares_id, wares_type, first_pay, price, discount, coin, first_reward_coin, diamond,
+                            first_reward_diamond, room_ids, countdown, ext_value, info)
+VALUES ('203', 1, 0, 1000, 0, 18000000, 0, 0, 0, 0, 0, 0, '推广员1000元金币');
+INSERT INTO Buyu.wares_cfg (wares_id, wares_type, first_pay, price, discount, coin, first_reward_coin, diamond,
+                            first_reward_diamond, room_ids, countdown, ext_value, info)
+VALUES ('204', 1, 0, 5000, 0, 90000000, 0, 0, 0, 0, 0, 0, '推广员5000元金币');
+INSERT INTO Buyu.wares_cfg (wares_id, wares_type, first_pay, price, discount, coin, first_reward_coin, diamond,
+                            first_reward_diamond, room_ids, countdown, ext_value, info)
+VALUES ('7', 1, 1, 6, 0, 60000, 60000, 0, 0, 0, 0, 36000, '6元金币');
+INSERT INTO Buyu.wares_cfg (wares_id, wares_type, first_pay, price, discount, coin, first_reward_coin, diamond,
+                            first_reward_diamond, room_ids, countdown, ext_value, info)
+VALUES ('8', 1, 2, 12, 0, 120000, 120000, 0, 0, 0, 0, 72000, '12元金币');
+INSERT INTO Buyu.wares_cfg (wares_id, wares_type, first_pay, price, discount, coin, first_reward_coin, diamond,
+                            first_reward_diamond, room_ids, countdown, ext_value, info)
+VALUES ('9', 1, 4, 30, 0, 300000, 300000, 0, 0, 0, 0, 180000, '30元金币');
+INSERT INTO Buyu.wares_cfg (wares_id, wares_type, first_pay, price, discount, coin, first_reward_coin, diamond,
+                            first_reward_diamond, room_ids, countdown, ext_value, info)
+VALUES ('alms1', 6, 0, 6, 0, 120000, 0, 0, 0, 0, 0, 0, '破产礼包1');
+INSERT INTO Buyu.wares_cfg (wares_id, wares_type, first_pay, price, discount, coin, first_reward_coin, diamond,
+                            first_reward_diamond, room_ids, countdown, ext_value, info)
+VALUES ('alms12', 6, 0, 30, 0, 540000, 0, 0, 0, 0, 0, 0, '破产礼包3');
+INSERT INTO Buyu.wares_cfg (wares_id, wares_type, first_pay, price, discount, coin, first_reward_coin, diamond,
+                            first_reward_diamond, room_ids, countdown, ext_value, info)
+VALUES ('alms120', 6, 0, 120, 0, 2160000, 0, 0, 0, 0, 0, 0, '破产礼包6');
+INSERT INTO Buyu.wares_cfg (wares_id, wares_type, first_pay, price, discount, coin, first_reward_coin, diamond,
+                            first_reward_diamond, room_ids, countdown, ext_value, info)
+VALUES ('alms24', 6, 0, 50, 0, 900000, 0, 0, 0, 0, 0, 0, '破产礼包4');
+INSERT INTO Buyu.wares_cfg (wares_id, wares_type, first_pay, price, discount, coin, first_reward_coin, diamond,
+                            first_reward_diamond, room_ids, countdown, ext_value, info)
+VALUES ('alms6', 6, 0, 10, 0, 180000, 0, 0, 0, 0, 0, 0, '破产礼包2');
+INSERT INTO Buyu.wares_cfg (wares_id, wares_type, first_pay, price, discount, coin, first_reward_coin, diamond,
+                            first_reward_diamond, room_ids, countdown, ext_value, info)
+VALUES ('alms60', 6, 0, 80, 0, 1440000, 0, 0, 0, 0, 0, 0, '破产礼包5');
+INSERT INTO Buyu.wares_cfg (wares_id, wares_type, first_pay, price, discount, coin, first_reward_coin, diamond,
+                            first_reward_diamond, room_ids, countdown, ext_value, info)
+VALUES ('lailai.fish.11', 1, 0, 30, 0, 300000, 0, 0, 0, 0, 0, 0, '苹果30元金币');
+INSERT INTO Buyu.wares_cfg (wares_id, wares_type, first_pay, price, discount, coin, first_reward_coin, diamond,
+                            first_reward_diamond, room_ids, countdown, ext_value, info)
+VALUES ('lailai.fish.22', 1, 0, 50, 0, 500000, 0, 0, 0, 0, 0, 0, '苹果50元金币');
+INSERT INTO Buyu.wares_cfg (wares_id, wares_type, first_pay, price, discount, coin, first_reward_coin, diamond,
+                            first_reward_diamond, room_ids, countdown, ext_value, info)
+VALUES ('lailai.fish.33', 1, 0, 88, 0, 880000, 0, 0, 0, 0, 0, 0, '苹果88元金币');
+INSERT INTO Buyu.wares_cfg (wares_id, wares_type, first_pay, price, discount, coin, first_reward_coin, diamond,
+                            first_reward_diamond, room_ids, countdown, ext_value, info)
+VALUES ('lailai.fish.44', 1, 0, 128, 0, 1280000, 0, 0, 0, 0, 0, 0, '苹果128元金币');
+INSERT INTO Buyu.wares_cfg (wares_id, wares_type, first_pay, price, discount, coin, first_reward_coin, diamond,
+                            first_reward_diamond, room_ids, countdown, ext_value, info)
+VALUES ('lailai.fish.55', 1, 0, 158, 0, 1580000, 0, 0, 0, 0, 0, 0, '苹果158元金币');
+INSERT INTO Buyu.wares_cfg (wares_id, wares_type, first_pay, price, discount, coin, first_reward_coin, diamond,
+                            first_reward_diamond, room_ids, countdown, ext_value, info)
+VALUES ('lailai.fish.66', 1, 0, 198, 0, 1980000, 0, 0, 0, 0, 0, 0, '苹果198元金币');
+INSERT INTO Buyu.wares_cfg (wares_id, wares_type, first_pay, price, discount, coin, first_reward_coin, diamond,
+                            first_reward_diamond, room_ids, countdown, ext_value, info)
+VALUES ('lailai.fish.diamond.1', 2, 0, 30, 0, 0, 0, 30, 0, 0, 0, 0, '苹果30元钻石');
+INSERT INTO Buyu.wares_cfg (wares_id, wares_type, first_pay, price, discount, coin, first_reward_coin, diamond,
+                            first_reward_diamond, room_ids, countdown, ext_value, info)
+VALUES ('lailai.fish.diamond.2', 2, 0, 50, 0, 0, 0, 50, 0, 0, 0, 0, '苹果50元钻石');
+INSERT INTO Buyu.wares_cfg (wares_id, wares_type, first_pay, price, discount, coin, first_reward_coin, diamond,
+                            first_reward_diamond, room_ids, countdown, ext_value, info)
+VALUES ('lailai.fish.diamond.3', 2, 0, 88, 0, 0, 0, 88, 0, 0, 0, 0, '苹果88元钻石');
+INSERT INTO Buyu.wares_cfg (wares_id, wares_type, first_pay, price, discount, coin, first_reward_coin, diamond,
+                            first_reward_diamond, room_ids, countdown, ext_value, info)
+VALUES ('lailai.fish.diamond.4', 2, 0, 128, 0, 0, 0, 128, 0, 0, 0, 0, '苹果128元钻石');
+INSERT INTO Buyu.wares_cfg (wares_id, wares_type, first_pay, price, discount, coin, first_reward_coin, diamond,
+                            first_reward_diamond, room_ids, countdown, ext_value, info)
+VALUES ('lailai.fish.diamond.5', 2, 0, 158, 0, 0, 0, 158, 0, 0, 0, 0, '苹果158元钻石');
+INSERT INTO Buyu.wares_cfg (wares_id, wares_type, first_pay, price, discount, coin, first_reward_coin, diamond,
+                            first_reward_diamond, room_ids, countdown, ext_value, info)
+VALUES ('lailai.fish.diamond.6', 2, 0, 198, 0, 0, 0, 198, 0, 0, 0, 0, '苹果188元钻石');
+INSERT INTO Buyu.wares_cfg (wares_id, wares_type, first_pay, price, discount, coin, first_reward_coin, diamond,
+                            first_reward_diamond, room_ids, countdown, ext_value, info)
+VALUES ('lailai.fish.pkgfort', 8, 536870912, 198, 0, 3600000, 0, 0, 0, 0, 0, 0, '炮倍礼包');
+INSERT INTO Buyu.wares_cfg (wares_id, wares_type, first_pay, price, discount, coin, first_reward_coin, diamond,
+                            first_reward_diamond, room_ids, countdown, ext_value, info)
+VALUES ('lailai.fish.sevenday', 4, 0, 12, 0, 20000, 0, 10, 0, 0, 0, 0, '周卡');
+INSERT INTO Buyu.wares_cfg (wares_id, wares_type, first_pay, price, discount, coin, first_reward_coin, diamond,
+                            first_reward_diamond, room_ids, countdown, ext_value, info)
+VALUES ('lailai.fish.thirtyday', 4, 1073741824, 50, 35, 20000, 0, 0, 0, 0, 0, 0, '月卡');
+INSERT INTO Buyu.wares_cfg (wares_id, wares_type, first_pay, price, discount, coin, first_reward_coin, diamond,
+                            first_reward_diamond, room_ids, countdown, ext_value, info)
+VALUES ('pkg128', 5, 0, 128, 0, 2360000, 0, 880, 0, 8, 0, 0, '128元限购礼包');
+INSERT INTO Buyu.wares_cfg (wares_id, wares_type, first_pay, price, discount, coin, first_reward_coin, diamond,
+                            first_reward_diamond, room_ids, countdown, ext_value, info)
+VALUES ('pkg18', 5, 0, 18, 0, 320000, 0, 200, 0, 1, 600, 0, '18元限购礼包');
+INSERT INTO Buyu.wares_cfg (wares_id, wares_type, first_pay, price, discount, coin, first_reward_coin, diamond,
+                            first_reward_diamond, room_ids, countdown, ext_value, info)
+VALUES ('pkg198', 5, 0, 198, 0, 3600000, 0, 1400, 0, 8, 0, 0, '198元限购礼包');
+INSERT INTO Buyu.wares_cfg (wares_id, wares_type, first_pay, price, discount, coin, first_reward_coin, diamond,
+                            first_reward_diamond, room_ids, countdown, ext_value, info)
+VALUES ('pkg30', 5, 0, 30, 0, 540000, 0, 350, 0, 3, 600, 0, '30元限购礼包');
+INSERT INTO Buyu.wares_cfg (wares_id, wares_type, first_pay, price, discount, coin, first_reward_coin, diamond,
+                            first_reward_diamond, room_ids, countdown, ext_value, info)
+VALUES ('pkg68', 5, 0, 68, 0, 1260000, 0, 800, 0, 2, 600, 0, '68元限购礼包');
+INSERT INTO Buyu.wares_cfg (wares_id, wares_type, first_pay, price, discount, coin, first_reward_coin, diamond,
+                            first_reward_diamond, room_ids, countdown, ext_value, info)
+VALUES ('pkg98', 5, 0, 98, 0, 1800000, 0, 600, 0, 6, 600, 0, '98元限购礼包');
+INSERT INTO Buyu.wares_cfg (wares_id, wares_type, first_pay, price, discount, coin, first_reward_coin, diamond,
+                            first_reward_diamond, room_ids, countdown, ext_value, info)
+VALUES ('pkgnewbie', 7, 268435456, 5, 0, 100000, 0, 50, 0, 0, 0, 0, '新手礼包');
+INSERT INTO Buyu.wares_cfg (wares_id, wares_type, first_pay, price, discount, coin, first_reward_coin, diamond,
+                            first_reward_diamond, room_ids, countdown, ext_value, info)
+VALUES ('tx10', 3, 0, -10, 0, 0, 0, 0, 0, 0, 0, 0, '10元红包兑换');
+INSERT INTO Buyu.wares_cfg (wares_id, wares_type, first_pay, price, discount, coin, first_reward_coin, diamond,
+                            first_reward_diamond, room_ids, countdown, ext_value, info)
+VALUES ('tx100', 3, 0, -100, 0, 0, 0, 0, 0, 0, 0, 0, '100元红包兑换');
+INSERT INTO Buyu.wares_cfg (wares_id, wares_type, first_pay, price, discount, coin, first_reward_coin, diamond,
+                            first_reward_diamond, room_ids, countdown, ext_value, info)
+VALUES ('tx2', 3, 0, -2, 0, 0, 0, 0, 0, 0, 0, 0, '2元红包兑换');
+INSERT INTO Buyu.wares_cfg (wares_id, wares_type, first_pay, price, discount, coin, first_reward_coin, diamond,
+                            first_reward_diamond, room_ids, countdown, ext_value, info)
+VALUES ('tx20', 3, 0, -20, 0, 0, 0, 0, 0, 0, 0, 0, '20元红包兑换');
+INSERT INTO Buyu.wares_cfg (wares_id, wares_type, first_pay, price, discount, coin, first_reward_coin, diamond,
+                            first_reward_diamond, room_ids, countdown, ext_value, info)
+VALUES ('tx5', 3, 0, -5, 0, 0, 0, 0, 0, 0, 0, 0, '5元红包兑换');
+INSERT INTO Buyu.wares_cfg (wares_id, wares_type, first_pay, price, discount, coin, first_reward_coin, diamond,
+                            first_reward_diamond, room_ids, countdown, ext_value, info)
+VALUES ('tx50', 3, 0, -50, 0, 0, 0, 0, 0, 0, 0, 0, '50元红包兑换');
+INSERT INTO Buyu.wares_cfg (wares_id, wares_type, first_pay, price, discount, coin, first_reward_coin, diamond,
+                            first_reward_diamond, room_ids, countdown, ext_value, info)
+VALUES ('vip10', 10, 0, 50, 0, 1100000, 0, 0, 0, 0, 0, 0, 'VIP10特权礼包');
+INSERT INTO Buyu.wares_cfg (wares_id, wares_type, first_pay, price, discount, coin, first_reward_coin, diamond,
+                            first_reward_diamond, room_ids, countdown, ext_value, info)
+VALUES ('vip5', 10, 0, 6, 0, 120000, 0, 0, 0, 0, 0, 0, 'VIP5特权礼包');
+INSERT INTO Buyu.wares_cfg (wares_id, wares_type, first_pay, price, discount, coin, first_reward_coin, diamond,
+                            first_reward_diamond, room_ids, countdown, ext_value, info)
+VALUES ('vip6', 10, 0, 12, 0, 240000, 0, 0, 0, 0, 0, 0, 'VIP6特权礼包');
+INSERT INTO Buyu.wares_cfg (wares_id, wares_type, first_pay, price, discount, coin, first_reward_coin, diamond,
+                            first_reward_diamond, room_ids, countdown, ext_value, info)
+VALUES ('vip7', 10, 0, 30, 0, 600000, 0, 0, 0, 0, 0, 0, 'VIP7特权礼包');
+INSERT INTO Buyu.wares_cfg (wares_id, wares_type, first_pay, price, discount, coin, first_reward_coin, diamond,
+                            first_reward_diamond, room_ids, countdown, ext_value, info)
+VALUES ('vip8', 10, 0, 30, 0, 630000, 0, 0, 0, 0, 0, 0, 'VIP8特权礼包');
+INSERT INTO Buyu.wares_cfg (wares_id, wares_type, first_pay, price, discount, coin, first_reward_coin, diamond,
+                            first_reward_diamond, room_ids, countdown, ext_value, info)
+VALUES ('vip9', 10, 0, 50, 0, 1050000, 0, 0, 0, 0, 0, 0, 'VIP9特权礼包');
+
+
 
