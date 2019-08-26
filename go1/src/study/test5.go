@@ -1,13 +1,14 @@
 package main
 
 import (
-	"fmt"
-	"reflect"
-	"math"
 	"errors"
+	"fmt"
+	"image/color"
+	"math"
+	"reflect"
 )
 
-//学习 go语言接口，实现，异常处理 panic recover
+//学习 go语言接口方法，实现，异常处理 panic recover
 /**
 定义接口
 type interface_name interface {
@@ -32,6 +33,33 @@ func (struct_name_variable struct_name) method_namen() [return_type] {
 	//方法实现
 }
 */
+
+type Point struct {
+	x, y float64
+}
+
+func (p Point) F1(z int) { //类型方法
+	fmt.Printf("F1 x=%v,y=%v,z=%d\n", p.x, p.y, z)
+}
+
+//这里为了演示，正常编写代码，应该保持同样的类型方法，或是都是类型方法或者都是指针类型方法
+func (p *Point) F2() { //指针类型方法
+	fmt.Printf("指针自动翻译 F2 x=%v,y=%v\n", p.x, p.y) //这里的指针 点号 编译器能帮我们自动翻译成指针
+	fmt.Printf("F3 x=%v,y=%v\n", (*p).x, (*p).y)  //这里的指针 点号 编译器能帮我们自动翻译成指针
+}
+
+/*
+只有类型(Point)和指向他们的指针(*Point)，才是可能会出现在接收器声明里的两种接收器。
+此外，为了避免歧义，在声明方法时，如果一个类型名本身是一个指针的话，是不允许其出 现在接收器中的，
+比如下面这个例子：
+type P *int func (P) f() { } // compile error: invalid receiver type
+*/
+
+type ColorPoint struct {
+	Point          //匿名组合
+	Col color.RGBA //有名组合
+}
+
 type Animal interface {
 	getName() string
 
@@ -142,7 +170,7 @@ func testError() {
 		/**
 		对于panic，一般是不得不用的情况下才使用，否则建议不要使用过多的异常机制，
 		小错误还是走小错误的方式，不要乱抛异常
-		 */
+		*/
 	}
 
 	//由于上面的panic 导致我们这里的代码无法继续执行
@@ -169,7 +197,7 @@ func foo() {
     err = doStuff3()
     checkError(err)
 }
- */
+*/
 
 //检查错误的方法2
 type Something struct {
@@ -202,10 +230,29 @@ err := os.XXX
 if err == os.ErrInvalid {
     //handle invalid
 }
- */
+*/
 
 func main() {
 	fmt.Println("main in")
+
+	p := Point{10.0, 20.0}
+	p.F1(1)
+	(&p).F2()
+	p.F2()     //这里编译器会自动帮我们解析成指针调用
+	(&p).F1(2) //反过来也一样，，编译器也能帮我们转换对的类型
+	Point{1, 2}.F1(3)
+	//Point{1, 2}.F2() //但是不能对匿名值 进行转换，这里会有编译错误
+
+	fmt.Println("匿名组合，有名组合 struct")
+	cp := ColorPoint{Point{2, 4}, color.RGBA{255, 0, 0, 255}}
+	cp.F1(4)
+	fmt.Println(cp.Col.RGBA())
+
+	fmt.Println("函数值和函数表达式")
+	f1 := p.F1     //函数值
+	f1(5)          //函数值的调用比较方便，就跟lambda一样简单。可以认为是已经绑定了对象的方法。
+	f2 := Point.F1 //函数表达式
+	f2(p, 6)       //函数表达式的调用需要传入绑定对象
 
 	testInterface()
 	testError()
