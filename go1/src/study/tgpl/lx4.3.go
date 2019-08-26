@@ -8,6 +8,8 @@ import (
 	"unicode/utf8"
 	"unsafe"
 	"bufio"
+	"io"
+	"os"
 )
 
 func main() {
@@ -19,6 +21,10 @@ func main() {
 	bc := &ByteCounter{}
 	bc.Write([]byte("Jack has an apple.\nNow he is eating the apple."))
 	fmt.Printf("bc=%v\n", bc)
+
+	w, n := CountingWriter(os.Stdout)
+	w.Write([]byte("hello 111"))
+	fmt.Printf("\nn=%d\n", *n)
 }
 
 //练习题4.3
@@ -242,4 +248,21 @@ func (b *ByteCounter) Write(p []byte) (int, error) {
 		b.lines ++
 	}
 	return len(p), nil
+}
+
+//练习题7.2
+type CW struct {
+	count int64
+	w     io.Writer
+}
+
+func (cw *CW) Write(p []byte) (int, error) {
+	n, err := cw.w.Write(p)
+	cw.count += int64(n)
+	return n, err
+}
+func CountingWriter(w io.Writer) (io.Writer, *int64) {
+	cw := &CW{}
+	cw.w = w
+	return cw, &cw.count
 }
