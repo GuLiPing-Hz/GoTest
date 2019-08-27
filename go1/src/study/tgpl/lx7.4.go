@@ -189,10 +189,27 @@ const HTMLTemplate = `
 </table>
 `
 
+//练习题7.10
+func IsPalindrome(s sort.Interface) bool {
+	for i, j := 0, s.Len()-1; i < j; i, j = i+1, j-1 {
+		if !(!s.Less(i, j) && !s.Less(j, i)) {
+			return false
+		}
+	}
+	return true
+}
+
 func main() {
 	reader := NewReader{}
 	reader.Read([]byte(Html))
 
+	var s sort.Interface
+	s = sort.StringSlice{"a", "b", "a"}
+	fmt.Printf("IsPalindrome = %t", IsPalindrome(s))
+
 	http.HandleFunc("/tracks", tracksHandler)
-	http.ListenAndServe(":8000", nil)
+	http.ListenAndServe("localhost:8000", nil)
+
+	//http.NewServeMux().Handle()
+	//http.HandlerFunc()
 }
