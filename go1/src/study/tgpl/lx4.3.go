@@ -3,6 +3,9 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"golang.org/x/net/html"
+	"os"
+	"path/filepath"
 	"pkg"
 	"unicode"
 	"unicode/utf8"
@@ -25,6 +28,32 @@ func main() {
 	w, n := CountingWriter(os.Stdout)
 	w.Write([]byte("hello 111"))
 	fmt.Printf("\nn=%d\n", *n)
+
+	if len(os.Args) < 2 {
+		fmt.Printf("need file\n")
+		return
+	}
+
+	fileDir := filepath.Dir(os.Args[0])
+	filePath := fmt.Sprintf("%s%c%s", fileDir, filepath.Separator, os.Args[1])
+	file, err := os.Open(filePath)
+
+	if err != nil {
+		fmt.Printf("err = %s\n", err.Error())
+		return
+	}
+	doc, err := html.Parse(file)
+	if err != nil {
+		fmt.Printf("err=%s\n", err.Error())
+		return
+	}
+
+	nameCounter := make(map[string]int) //练习题5.2
+	links := visit(nil, doc, true, nameCounter)
+	for i := range links {
+		fmt.Printf("visit link=%s\n", links[i])
+	}
+	fmt.Printf("namecounter=%v", nameCounter)
 }
 
 //练习题4.3
@@ -62,6 +91,34 @@ func reverse2(b *[]byte) {
 	for i, j := 0, len(*b)-1; i < j; i, j = i+1, j-1 {
 		(*b)[i], (*b)[j] = (*b)[j], (*b)[i]
 	}
+}
+
+//练习题5.1
+//visit appends to links each link found in n and returns the result.
+func visit(links []string, n *html.Node, first bool, counter map[string]int) []string {
+	if n == nil {
+		return links
+	}
+
+	counter[n.Data] ++
+	if n.Type == html.ElementNode && n.Data == "a" {
+		for _, a := range n.Attr {
+			if a.Key == "href" {
+				links = append(links, a.Val)
+			}
+		}
+	} else if n.Type == html.TextNode {
+		fmt.Printf("text node = %v\n", n)
+	} else {
+		fmt.Printf("other node = %v\n", n)
+	}
+
+	if first {
+		links = visit(links, n.FirstChild, false, counter)
+	} else {
+		links = visit(links, n.NextSibling, false, counter)
+	}
+	return links
 }
 
 //练习题 5.19
