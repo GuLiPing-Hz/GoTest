@@ -1,18 +1,17 @@
 package main
 
 import (
+	"bufio"
 	"bytes"
 	"fmt"
 	"golang.org/x/net/html"
+	"io"
 	"os"
 	"path/filepath"
 	"pkg"
 	"unicode"
 	"unicode/utf8"
 	"unsafe"
-	"bufio"
-	"io"
-	"os"
 )
 
 func main() {
@@ -291,7 +290,7 @@ func (b *ByteCounter) Write(p []byte) (int, error) {
 		}
 
 		start += advance
-		b.words ++
+		b.words++
 	}
 
 	start = 0
@@ -302,7 +301,7 @@ func (b *ByteCounter) Write(p []byte) (int, error) {
 		}
 
 		start += advance
-		b.lines ++
+		b.lines++
 	}
 	return len(p), nil
 }
