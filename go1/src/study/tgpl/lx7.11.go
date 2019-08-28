@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"html/template"
 	"net/http"
 	"strconv"
 )
@@ -16,10 +17,32 @@ type database map[string]RMB
 
 var DB = database{"衬衫": 200, "长裤": 100}
 
+const HTMLTemp = `
+<table>
+{{range .}} 
+<tr><td>{{.Name}}</td><td>{{.Price}}</td></tr>
+{{end}}
+</table>
+`
+
+type Product struct {
+	Name  string
+	Price RMB
+}
+
 func (DB *database) list(w http.ResponseWriter, r *http.Request) {
+	var products []Product
 	for k := range *DB {
-		fmt.Fprintf(w, "%s:%s\n", k, (*DB)[k])
+		products = append(products, Product{k, (*DB)[k]})
+		//fmt.Fprintf(w, "%s:%s\n", k, (*DB)[k])
 	}
+
+	t, err := template.New("商品").Parse(HTMLTemp)
+	if err != nil {
+		fmt.Printf("发生错误 %s", err.Error())
+		return
+	}
+	t.Execute(w, products)
 }
 
 func (DB *database) price(w http.ResponseWriter, r *http.Request) {
