@@ -1,3 +1,4 @@
+
 select sum(money) promotionAwardMonth
 from invite_log i
          left join pay_log l
@@ -7,4 +8,7 @@ where result = 0
   and issandbox = 0
   and channel in (1, 2, 3, 6)
   and i.time <= addtime
-  and i.code = '188895'
+  and i.code = '188895';
+;
+
+
