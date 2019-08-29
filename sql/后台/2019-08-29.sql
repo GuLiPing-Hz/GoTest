@@ -74,14 +74,17 @@ END;
 -- ----------------------------
 -- Procedure structure for `proc_agent_insert_sell` END
 -- ----------------------------
-call proc_agent_insert_sell(now(),1000,188831);
+call proc_agent_insert_sell(now(), 1000, 188831);
 -- ----------------------------
 -- Procedure structure for `proc_agent_reward_per_week` begin
 -- ----------------------------
 # 如果已经存在一个同名存储过程，那么我们移除掉
 DROP PROCEDURE IF EXISTS proc_agent_reward_per_week;
-CREATE PROCEDURE proc_agent_reward_per_week(in vNow datetime, in vUid bigint, in vWay tinyint)
+create procedure proc_agent_reward_per_week(IN vNow datetime, IN vUid bigint, IN vWay tinyint)
 BEGIN
+    #@param way 1表示需要创建一个额外临时表，给其他存储过程调用
+    #           0 表示不用创建额外临时表
+    #计算上次领取返利的时间/注册时间 到 当前时间的充值返利
     declare lastTime1 datetime;
     declare lastMonday datetime;
     declare nextMonday datetime;
@@ -102,26 +105,35 @@ BEGIN
     declare rewardPercent1 int;
     declare rewardPercent2 int;
 
+    set rewardYT = 0;
+    set rewardTG = 0;
+    set rewardSell1 = 0;
+    set rewardSell2 = 0;
+    set rewardSell3 = 0;
+    set rewardSell4 = 0;
     select percent into rewardPercent1 from agent_award_cfg where type = 1;
     select percent into rewardPercent2 from agent_award_cfg where type = 2;
 
     set vNow = date(vNow);
     set todayOfWeek = dayofweek(vNow);
+#     select todayOfWeek;
     set nextMondayOfWeek = (2 + 7 - todayOfWeek);
     if nextMondayOfWeek > 7 then
         set nextMondayOfWeek = nextMondayOfWeek - 7;
     end if;
-    set nextMonday = date_add(vNow, INTERVAL todayOfWeek DAY);
+    set nextMonday = date_add(vNow, INTERVAL nextMondayOfWeek DAY);
     set nnextMonday = date_add(nextMonday, INTERVAL 7 DAY);
     set nnnextMonday = date_add(nextMonday, INTERVAL 14 DAY);
     set nnnnextMonday = date_add(nextMonday, INTERVAL 21 DAY);
-
-    if todayOfWeek = 2 then
+#     select nextMonday;
+    if todayOfWeek = 2 then #如果今天是周一取今天
         set limitTime = vNow;
         set lastMonday = vNow;
-    else
-        set limitTime = nextMonday;
+    else #如果今天不是周一，取最近的上次周一
         set lastMonday = date_add(nextMonday, INTERVAL -7 DAY);
+        set limitTime = lastMonday;
+        -- select limitTime limitTime;
+        -- select lastMonday lastMonday;
     end if;
 
     select ytid into ytUid from yt where tgy = vUid;
@@ -134,46 +146,65 @@ BEGIN
       and type = 1
     order by createTime desc
     limit 1;
-
     if isnull(lastTime1) then
         select reg_tm into lastTime1 from user where uid = vUid;
+#         select reg_tm from user where uid=188895;
         set lastTime1 = date(lastTime1);
     end if;
-
-# 首先找出这段时间充值的玩家
+    # 首先找出这段时间充值的玩家
     drop temporary table if exists tmp_pay_log;
     create temporary table tmp_pay_log
     select uid, sum(money) topup
     from pay_log
     where addtime >= lastTime1
       and addtime < limitTime
+      and result = 0
+      and finish = 1
+      and issandbox = 0
+      and channel in (1, 2, 3, 6)
     group by uid;
-
-#     推广奖励
-    select sum(topup) into rewardTG
+    #     推广奖励
+    select ifnull(sum(topup), 0) into rewardTG
     from tmp_pay_log
     where uid in (
-#         过滤代理推进来的用户
+        #         过滤代理推进来的用户
         select uid
         from invite_log
         where code = vUid);
 
-# 鱼塘奖励
-    select sum(topup) into rewardYT
-    from tmp_pay_log
-    where uid in (
-#         取出鱼塘用户
-        select yt_user.uid, ifnull(invite_log.code, 0)
-        from yt_user
-                 left join invite_log on yt_user.uid = invite_log.uid
-        where ytid = ytUid
-          and invite_log.code = 0);
+    if ytUid is not null then
+        # 鱼塘奖励
+        select sum(topup) into rewardYT
+        from tmp_pay_log
+        where uid in (
+            #         取出鱼塘用户
+            select yt_user.uid, ifnull(invite_log.code, 0)
+            from yt_user
+                     left join invite_log on yt_user.uid = invite_log.uid
+            where ytid = ytUid
+              and invite_log.code = 0);
+    end if;
 
-
-    select ifnull(reward, 0) into rewardSell1 from agent_award_log where canGetTime = nextMonday and status = 1;
-    select ifnull(reward, 0) into rewardSell2 from agent_award_log where canGetTime = nnextMonday and status = 1;
-    select ifnull(reward, 0) into rewardSell3 from agent_award_log where canGetTime = nnnextMonday and status = 1;
-    select ifnull(reward, 0) into rewardSell4 from agent_award_log where canGetTime = nnnnextMonday and status = 1;
+    select ifnull(reward, 0) into rewardSell1
+    from agent_award_log
+    where canGetTime = nextMonday
+      and status = 1
+      and uid = vUid;
+    select ifnull(reward, 0) into rewardSell2
+    from agent_award_log
+    where canGetTime = nnextMonday
+      and status = 1
+      and uid = vUid;
+    select ifnull(reward, 0) into rewardSell3
+    from agent_award_log
+    where canGetTime = nnnextMonday
+      and status = 1
+      and uid = vUid;
+    select ifnull(reward, 0) into rewardSell4
+    from agent_award_log
+    where canGetTime = nnnnextMonday
+      and status = 1
+      and uid = vUid;
 
     if vWay = 1 then
         drop temporary table if exists tmp_pay_log2;
@@ -200,6 +231,7 @@ END;
 -- ----------------------------
 -- Procedure structure for `proc_agent_reward_per_week` END
 -- ----------------------------
+call proc_agent_reward_per_week(now(), 188895, 1);
 
 -- ----------------------------
 -- Procedure structure for `proc_agent_reward_get` begin
@@ -208,8 +240,8 @@ DROP PROCEDURE IF EXISTS proc_agent_reward_get;
 CREATE PROCEDURE proc_agent_reward_get(in vNow datetime, in vUid bigint, in vType tinyint)
 exec:
 BEGIN
-    #     @param vType 1 充值返利
-#                  3 金币返利
+    #     @param vType 1 充值返利 给后台调用
+#                  3 金币返利 给前台代理调用
 
     #代理领取充值返利
     declare vLastMonday datetime;
@@ -254,3 +286,6 @@ END;
 -- ----------------------------
 -- Procedure structure for `proc_agent_reward_get` END
 -- ----------------------------
+call proc_agent_reward_get('2019-09-02', 188895, 1);
+select *
+from tmp_pay_log;
