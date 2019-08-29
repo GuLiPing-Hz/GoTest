@@ -265,7 +265,6 @@ func Parse(s string) (Expr, error) {
 				if i+1 < len(eps) {
 					nextData = &eps[i+1]
 				}
-
 				if nextData == nil || nextData.Type <= top.Type {
 					operation, ok := top.exp.(binary)
 					if !ok {
@@ -273,6 +272,20 @@ func Parse(s string) (Expr, error) {
 					}
 					operation.y = exp
 					exprs[len(exprs)-1].exp = operation
+
+					for {
+						if len(exprs) == 1 {
+							break
+						}
+						nextTop := exprs[len(exprs)-2]
+						if nextExp, ok := nextTop.exp.(binary); ok {
+							nextExp.y = exprs[len(exprs)-1].exp
+							exprs[len(exprs)-2].exp = nextExp
+							exprs = exprs[:len(exprs)-1]
+						} else {
+							break
+						}
+					}
 				} else {
 					exprs = append(exprs, ExprParse{data.Type, data.S, exp})
 				}
