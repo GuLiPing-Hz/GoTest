@@ -226,4 +226,14 @@ func main() {
 	//test5()
 	//fmt.Println("\n" + strings.Repeat("*", 100))
 	//testSelect()
+
+	go func() {
+		for {
+			for _, v := range `-\|/` {
+				fmt.Printf("\r%c", v)
+				time.Sleep(time.Millisecond * 100)
+			}
+		}
+	}()
+	time.Sleep(time.Second * 10)
 }

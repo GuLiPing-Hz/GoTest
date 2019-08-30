@@ -88,6 +88,8 @@ func main() {
 		fmt.Println("a==0")
 	case 1:
 		fmt.Println("a==1")
+	case 2, 3:
+		fmt.Println("a==2,3")
 	default:
 		fmt.Println("!(a==0 || a==1)")
 	}
