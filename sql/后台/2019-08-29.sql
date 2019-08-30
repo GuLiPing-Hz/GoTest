@@ -286,6 +286,4 @@ END;
 -- ----------------------------
 -- Procedure structure for `proc_agent_reward_get` END
 -- ----------------------------
-call proc_agent_reward_get('2019-09-02', 188895, 1);
-select *
-from tmp_pay_log;
+

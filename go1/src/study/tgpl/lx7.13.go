@@ -143,13 +143,13 @@ func isFunction(s string, j int) (string, int) {
 		s2 := s[j+4:]
 		pos1 := strings.Index(s2, "(")
 		if pos1 != -1 && strings.TrimSpace(s2[:pos1]) == "" {
-			return "sqrt", j + 4 + pos1
+			return "sqrt", j + 5 + pos1
 		}
 	} else if len(s)-j > 3 && (s[j:j+3] == "pow" || s[j:j+3] == "sin") {
 		s2 := s[j+3:]
 		pos1 := strings.Index(s2, "(")
 		if pos1 != -1 && strings.TrimSpace(s2[:pos1]) == "" {
-			return s[j : j+3], j + 3 + pos1
+			return s[j : j+3], j + 4 + pos1
 		}
 	}
 
@@ -313,12 +313,26 @@ func Parse(s string) (Expr, error) {
 				exprs[len(exprs)-1] = ExprParse{data.Type, data.S, binary{rune(data.S[0]), top.exp, nil}}
 			}
 		} else if data.Type == BracketR {
+			offset := 1
 			for {
-				top := exprs[len(exprs)-1]
-				if top.Type == Func {
+				if len(exprs) == 1 {
 					break
-				} else if top.Type == BracketL {
-					return nil, io.EOF
+				}
+
+				top := exprs[len(exprs)-offset]
+				if top.Type == Operator1 || top.Type == Operator2 {
+					operation, ok := top.exp.(binary)
+					if !ok {
+						return nil, io.EOF
+					}
+
+					if operation.y == nil { //如果是空的。
+						operation.y = exprs[len(exprs)-offset+1].exp
+
+						exprs[len(exprs)-offset] = ExprParse{top.Type, top.S, operation}
+						exprs = exprs[:len(exprs)-offset+1]
+						continue
+					}
 				}
 
 				top2 := exprs[len(exprs)-2] // ,
@@ -330,14 +344,17 @@ func Parse(s string) (Expr, error) {
 					args = append(args, top3.exp, top.exp)
 					exprs[len(exprs)-4].exp = call{top4.S, args}
 					exprs = exprs[:len(exprs)-4+1]
+					offset++
 				} else if top2.Type == Func {
 					var args []Expr
 					args = append(args, top.exp)
 					exprs[len(exprs)-2].exp = call{top2.S, args}
 					exprs = exprs[:len(exprs)-1]
+					offset++
 				} else if top2.Type == BracketL {
 					exprs[len(exprs)-2].exp = top.exp
 					exprs = exprs[:len(exprs)-1]
+					offset++
 				}
 			}
 		}
@@ -425,15 +442,15 @@ func TestEval(t *testing.T) {
 }
 
 func main() {
-	//Parse("sqrt(A / pi)")
-	//Parse("pow(x, 3) + pow(y, 3)")
+	//exp, err := Parse("sqrt(x / pi)")
+	//exp, err := Parse("pow(x, 3) + pow(y, 3)+sin(1)")
 	//Parse("5 / 9 * (F - 32)")
-	exp, err := Parse("x+3*4")
+	exp, err := Parse("x+3*4-10/2")
 	if err != nil {
 		fmt.Printf("err=%s\n", err.Error())
 		return
 	}
 
-	result := exp.Eval(Env{"x": 10})
+	result := exp.Eval(Env{"x": 10, "y": 2, "pi": math.Pi})
 	fmt.Printf("result=%f\n", result)
 }
