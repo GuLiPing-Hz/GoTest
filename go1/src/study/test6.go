@@ -17,9 +17,15 @@ Go中channel可以是只读、只写、同时可读写的。
 //定义只读的channel
 read_only := make (<-chan int)
 //定义只写的channel
-write_only := make (chan<- int)
+write_only := make (chan<- int) //不带缓冲的信道。
 //可同时读写
-read_write := make (chan int)
+read_write := make (chan int, 10) //带10个缓冲的信道
+
+注意使用信道的时候注意多个goroutine向同一个goroutine发送数据，如果没有足够的缓冲，
+会导致goroutine泄漏的问题
+
+对于使用有无缓冲，缓冲大小的问题：
+无缓存channel更强地保证了每个发送操作与相应的同步接收操作；但 是对于带缓存channel，这些操作是解耦的
 */
 
 func do(start int) {
@@ -76,13 +82,44 @@ func do1() {
 	ch <- 0 //存消息 通知主线程我们goroutine完成了
 }
 
+//理解只读，只写信道，编译期检查
+//对于只写的信道，不能执行close
+//这里并没有反向转换的语法：
+//      就是不能一个将类似chan<-int类型的单向型的 channel转换为 chan int 类型的双向型的channel
+func counter(out chan<- int) { //只写信道
+	for x := 0; x < 100; x++ {
+		out <- x
+	}
+	close(out)
+}
+func squarer(out chan<- int, in <-chan int) {
+	for v := range in {
+		out <- v * v
+	}
+	close(out)
+}
+func printer(in <-chan int) { //只读信道
+	for v := range in {
+		fmt.Println(v)
+	}
+}
+
+func test3_1() {
+	naturals := make(chan int)
+	squares := make(chan int)
+	go counter(naturals)
+	go squarer(squares, naturals)
+	printer(squares)
+}
+
 //测试无缓冲信道
 func test4() {
 	go do1()
 	<-ch //这里可以阻塞主线程,如果我们不等待，do1将不会得到执行，也就不会有输出日志
 }
 
-var ch1 = make(chan int, 2) //2缓冲信道
+//2缓冲信道,就是我们可以写入两个数据，写入第三个的时候会阻塞当前goroutine
+var ch1 = make(chan int, 2)
 var ch1Closed int32 = 0
 var mutex = sync.Mutex{}
 var wg = sync.WaitGroup{}
@@ -90,6 +127,8 @@ var wg = sync.WaitGroup{}
 func produce() { //生产goroutine
 	defer wg.Done()
 
+	//len取到当前信道含有数据个数，cap获取当前信道的缓冲大小
+	fmt.Printf("chan len=%d,cap=%d", len(ch1), cap(ch1))
 	for i := 0; i < 100; i++ {
 		mutex.Lock() //增加临界区的保护
 
@@ -129,6 +168,14 @@ func consume() {
 			break
 		}
 	}
+
+	//for range 信道 其实就是下面写法的简洁替代。
+	//for {
+	//	v, ok := <-ch1
+	//	if !ok {
+	//		break
+	//	}
+	//}
 }
 
 //测试缓冲信道
@@ -154,6 +201,7 @@ func test5() {
 	wg.Wait()
 	fmt.Println("主线程wait 结束")
 }
+
 
 // 测试之前的流程控制select
 // Go的select语句让程序线程在多个channel的操作上等待，
@@ -220,6 +268,7 @@ func main() {
 	////test2()
 	//fmt.Println("\n" + strings.Repeat("*", 100))
 	test3()
+	test3_1()
 	//fmt.Println("\n" + strings.Repeat("*", 100))
 	//test4()
 	//fmt.Println("\n" + strings.Repeat("*", 100))
