@@ -351,5 +351,12 @@ INSERT INTO Buyu.wares_cfg (wares_id, wares_type, first_pay, price, discount, co
                             first_reward_diamond, room_ids, countdown, ext_value, info)
 VALUES ('vip9', 10, 0, 50, 0, 1050000, 0, 0, 0, 0, 0, 0, 'VIP9特权礼包');
 
+alter table coin_log
+    drop column diamond_before;
+alter table coin_log
+    drop column diamond_after;
+alter table coin_log
+    drop column diamond_change;
+
 
 
