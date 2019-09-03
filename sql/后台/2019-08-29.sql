@@ -85,6 +85,12 @@ BEGIN
     #@param way 1表示需要创建一个额外临时表，给其他存储过程调用
     #           0 表示不用创建额外临时表
     #计算上次领取返利的时间/注册时间 到 当前时间的充值返利
+    #
+    # @return
+    #    rewardTG 当前可领用户充值返利，rewardTG2 下周可领用户充值返利，
+    #    rewardSell1 下周可领售卖返利，rewardSell2 下下周可领售卖返利，
+    #    rewardSell3 下下下周可领售卖返利，rewardSell4 下下下下周可领售卖返利
+
     declare lastTime1 datetime;
     declare lastMonday datetime;
     declare nextMonday datetime;
@@ -97,22 +103,20 @@ BEGIN
     declare nextMondayOfWeek int;
     declare ytUid bigint;
     declare rewardTG bigint;
-    declare rewardYT bigint;
+    declare rewardTG2 bigint;
     declare rewardSell1 bigint;
     declare rewardSell2 bigint;
     declare rewardSell3 bigint;
     declare rewardSell4 bigint;
     declare rewardPercent1 int;
-    declare rewardPercent2 int;
 
-    set rewardYT = 0;
     set rewardTG = 0;
+    set rewardTG2 = 0;
     set rewardSell1 = 0;
     set rewardSell2 = 0;
     set rewardSell3 = 0;
     set rewardSell4 = 0;
     select percent into rewardPercent1 from agent_award_cfg where type = 1;
-    select percent into rewardPercent2 from agent_award_cfg where type = 2;
 
     set vNow = date(vNow);
     set todayOfWeek = dayofweek(vNow);
@@ -136,7 +140,7 @@ BEGIN
         -- select lastMonday lastMonday;
     end if;
 
-    select ytid into ytUid from yt where tgy = vUid;
+    select ytid into ytUid from yt where tgy = vUid limit 1;
 
     #推广用户充值返利
     select canGetTime into lastTime1
@@ -151,39 +155,23 @@ BEGIN
 #         select reg_tm from user where uid=188895;
         set lastTime1 = date(lastTime1);
     end if;
-    # 首先找出这段时间充值的玩家
-    drop temporary table if exists tmp_pay_log;
-    create temporary table tmp_pay_log
-    select uid, sum(money) topup
-    from pay_log
-    where addtime >= lastTime1
-      and addtime < limitTime
-      and result = 0
-      and finish = 1
-      and issandbox = 0
-      and channel in (1, 2, 3, 6)
-    group by uid;
-    #     推广奖励
-    select ifnull(sum(topup), 0) into rewardTG
-    from tmp_pay_log
-    where uid in (
-        #         过滤代理推进来的用户
-        select uid
-        from invite_log
-        where code = vUid);
 
-    if ytUid is not null then
-        # 鱼塘奖励
-        select sum(topup) into rewardYT
-        from tmp_pay_log
-        where uid in (
-            #         取出鱼塘用户
-            select yt_user.uid, ifnull(invite_log.code, 0)
-            from yt_user
-                     left join invite_log on yt_user.uid = invite_log.uid
-            where ytid = ytUid
-              and invite_log.code = 0);
-    end if;
+#     推广奖励1 - 可领取
+    select ifnull(sum(money), 0) into rewardTG
+    from pay_log
+    where reid = vUid
+      and result = 0
+      and channel in (1, 2, 3, 6)
+      and addtime >= lastTime1
+      and addtime < limitTime;
+
+#     推广奖励2 - 下周领取
+    select ifnull(sum(money), 0) into rewardTG2
+    from pay_log
+    where reid = vUid
+      and result = 0
+      and channel in (1, 2, 3, 6)
+      and addtime >= limitTime;
 
     select ifnull(reward, 0) into rewardSell1
     from agent_award_log
@@ -209,29 +197,29 @@ BEGIN
     if vWay = 1 then
         drop temporary table if exists tmp_pay_log2;
         create temporary table tmp_pay_log2
-        select rewardTG * rewardPercent1 / 100 as rewardTG,
-               rewardYT * rewardPercent2 / 100 as rewardYT,
+        select floor(rewardTG * rewardPercent1 / 100)  as rewardTG,
+               floor(rewardTG2 * rewardPercent1 / 100) as rewardTG2,
                rewardSell1,
                rewardSell2,
                rewardSell3,
                rewardSell4,
                lastMonday,
-               vUid                            as uid;
+               vUid                                    as uid;
     end if;
 
-    select rewardTG * rewardPercent1 / 100 as rewardTG,
-           rewardYT * rewardPercent2 / 100 as rewardYT,
+    select floor(rewardTG * rewardPercent1 / 100)  as rewardTG,
+           floor(rewardTG2 * rewardPercent1 / 100) as rewardTG2,
            rewardSell1,
            rewardSell2,
            rewardSell3,
            rewardSell4;
 
-    drop temporary table tmp_pay_log;
 END;
 -- ----------------------------
 -- Procedure structure for `proc_agent_reward_per_week` END
 -- ----------------------------
-call proc_agent_reward_per_week(now(), 188895, 1);
+# call proc_agent_reward_per_week(now(), 188895, 1);
+call proc_agent_reward_per_week(now(), 188895, 0);
 
 -- ----------------------------
 -- Procedure structure for `proc_agent_reward_get` begin
@@ -251,7 +239,9 @@ BEGIN
 
     if vType = 1 then
         call proc_agent_reward_per_week(vNow, vUid, 1);
-        select rewardTG, rewardYT, lastMonday into vTG,vYT,vLastMonday from tmp_pay_log2 where uid = vUid;
+        select rewardTG, rewardTG2, lastMonday into vTG,vYT,vLastMonday
+        from tmp_pay_log2
+        where uid = vUid;
 
         if vTG is null then
             select 1 as code, 0 as reward;#请求失败

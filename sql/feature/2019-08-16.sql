@@ -358,5 +358,83 @@ alter table coin_log
 alter table coin_log
     drop column diamond_change;
 
+alter table pay_log
+    add reid bigint default 0 null comment '返利ID，默认0，如果绑定了推荐关系，则是推荐人，如果在鱼塘里面，则是鱼塘推广员';
+
+-- ----------------------------
+-- Procedure structure for `proc_insert_pay` begin
+-- ----------------------------
+DROP PROCEDURE IF EXISTS proc_insert_pay;
+CREATE PROCEDURE proc_insert_pay(in vUid bigint, in vTradeNo text, in vChannel tinyint, in vWaresId text,
+                                 vMoney float, vTm datetime)
+BEGIN
+    declare vReUid bigint;
+    declare vYTid bigint;
+
+#     首先检查是否有推荐人
+    select code into vReUid from invite_log where uid = vUid;
+    if vReUid is null then
+#         其次检查是否加入鱼塘
+        select ytid into vYTid from yt_user where uid = vUid;
+        if vYTid is not null then
+#             如果加入鱼塘了，当前是否有推广员
+            select tgy into vReUid from yt where ytid = vYTid;
+        end if;
+    end if;
+
+    if vReUid is null then
+        set vReUid = 0;
+    end if;
+
+#     select vReUid;
+    insert into pay_log(tradeno, channel, uid, waresid, money, addtime, transtime, reid)
+        value (vTradeNo, vChannel, vUid, vWaresId, vMoney, vTm, vTm, vReUid);
+    select oid as insert_id from pay_log where tradeno = vTradeNo;
+END;
+-- ----------------------------
+-- Procedure structure for `proc_insert_pay` END
+-- ----------------------------
+# call proc_get_my_promotion(165272);
+call proc_insert_pay(188924, '', 1, '', 1, now());
+
+select uname
+from user
+where uname like 'WX\\_%'
+order by uname desc
+limit 1 offset 0;
+select count(1)
+from user
+where uname like 'WX\\_%';
+
+create table user_cfg
+(
+    id   int default 1 null,
+    wxid int default 1 null
+);
+
+create unique index user_cfg_id_uindex
+    on user_cfg (id);
+
+alter table user_cfg
+    add constraint user_cfg_pk
+        primary key (id);
+INSERT INTO `Buyu`.`user_cfg` (`id`, `wxid`)
+VALUES (DEFAULT, DEFAULT);
+
+DROP PROCEDURE IF EXISTS proc_get_wxid;
+-- ----------------------------
+-- Procedure structure for `proc_get_wxid` BEGIN
+-- ----------------------------
+CREATE PROCEDURE proc_get_wxid()
+BEGIN
+    update user_cfg set wxid=wxid + 1;
+    select wxid from user_cfg where id = 1;
+END;
+-- ----------------------------
+-- Procedure structure for `proc_get_wxid` END
+-- ----------------------------
+
+create index pay_log_tradeno_index
+    on pay_log (tradeno);
 
 

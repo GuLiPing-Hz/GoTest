@@ -74,6 +74,28 @@ func test3() {
 	fmt.Println("收到来自信道的消息=", msg, "；是否成功=", ok) // 取消息 '<-', 反向信道表示读取消息
 }
 
+func test3_1() {
+	naturals := make(chan int)
+	squares := make(chan int)
+	go counter(naturals)
+	go squarer(squares, naturals)
+	printer(squares)
+}
+
+func test3_2() {
+	//只写入chan
+	chanOnlyW := make(chan bool)
+	chanOnlyW <- true //如果chan没有缓冲，那么这个写操作需要等待有读操作的执行才会执行
+	fmt.Printf("finish only w")
+}
+
+func test3_3() {
+	//只读取chan
+	chanOnlyR := make(chan bool)
+	<-chanOnlyR //同理，如果chan没有缓冲，那么这个读操作需要等待有写操作的执行才会执行
+	fmt.Printf("finish only r")
+}
+
 var ch chan int = make(chan int) //无缓冲信道
 func do1() {
 	for i := 0; i < 5; i++ {
@@ -102,14 +124,6 @@ func printer(in <-chan int) { //只读信道
 	for v := range in {
 		fmt.Println(v)
 	}
-}
-
-func test3_1() {
-	naturals := make(chan int)
-	squares := make(chan int)
-	go counter(naturals)
-	go squarer(squares, naturals)
-	printer(squares)
 }
 
 //测试无缓冲信道
@@ -202,7 +216,6 @@ func test5() {
 	fmt.Println("主线程wait 结束")
 }
 
-
 // 测试之前的流程控制select
 // Go的select语句让程序线程在多个channel的操作上等待，
 // select语句在goroutine 和channel结合的操作中发挥着关键的作用
@@ -262,27 +275,41 @@ end:
 
 }
 
+func testSelect1() {
+	ch := make(chan int, 1)
+	for i := 0; i < 10; i++ {
+		select { case x := <-ch:
+			fmt.Println(x) // "0" "2" "4" "6" "8"
+		case ch <- i:
+		}
+	}
+}
+
 func main() {
 	//study()
 	//fmt.Println("\n" + strings.Repeat("*", 100))
 	////test2()
 	//fmt.Println("\n" + strings.Repeat("*", 100))
-	test3()
-	test3_1()
+	//test3()
+	//test3_1()
+	//test3_2()
+	//test3_3()
 	//fmt.Println("\n" + strings.Repeat("*", 100))
 	//test4()
 	//fmt.Println("\n" + strings.Repeat("*", 100))
 	//test5()
 	//fmt.Println("\n" + strings.Repeat("*", 100))
 	//testSelect()
+	testSelect1()
 
-	go func() {
-		for {
-			for _, v := range `-\|/` {
-				fmt.Printf("\r%c", v)
-				time.Sleep(time.Millisecond * 100)
-			}
-		}
-	}()
-	time.Sleep(time.Second * 10)
+	//构造一个等待动画
+	//go func() {
+	//	for {
+	//		for _, v := range `-\|/` {
+	//			fmt.Printf("\r%c", v)
+	//			time.Sleep(time.Millisecond * 100)
+	//		}
+	//	}
+	//}()
+	//time.Sleep(time.Second * 10)
 }

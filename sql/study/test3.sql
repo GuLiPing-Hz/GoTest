@@ -26,94 +26,92 @@ DELIMITER //
 # DEFINER指定权限的存储过程
 # CREATE DEFINER =`root`@`localhost` PROCEDURE `proc_adder`(IN a int, IN b int, OUT sum int)
 CREATE PROCEDURE proc_test_opt(IN a INT, INOUT b INT, IN opt INT, OUT sum INT)
-  BEGIN
+BEGIN
     #Routine body goes here...
-    DECLARE c INT; #声明变量c
+    DECLARE c INT;
+    #声明变量c
 
     #由于指定sum为OUT参数，所以这里sum打印出来是NULL
-    SELECT
-      a,
-      b,
-      opt,
-      sum;
+    SELECT a,
+           b,
+           opt,
+           sum;
 
     #IF语句
     IF a IS NULL
     THEN
-      SET a = 0;
+        SET a = 0;
     END IF;
 
     #IF ELSEIF ELSE语句
     IF b IS NULL
     THEN
-      SET b = 0;
+        SET b = 0;
     ELSEIF b = 0
-      THEN
+    THEN
         SET b = 11;
     ELSE
-      SET b = b + 1;
+        SET b = b + 1;
     END IF;
 
-    SELECT
-      a,
-      b,
-      sum;
+    SELECT a,
+           b,
+           sum;
 
     #CASE语句
     CASE opt
-      WHEN 1
-      THEN
-        SET sum = a * b;
-      WHEN 2
-      THEN
-        SET sum = a / b;
-      WHEN 3
-      THEN
-        SET sum = a % b;
-      WHEN 4
-      THEN
-        SET sum = a - b;
-    ELSE
-      SET sum = a + b;
-    END CASE;
+        WHEN 1
+            THEN
+                SET sum = a * b;
+        WHEN 2
+            THEN
+                SET sum = a / b;
+        WHEN 3
+            THEN
+                SET sum = a % b;
+        WHEN 4
+            THEN
+                SET sum = a - b;
+        ELSE
+            SET sum = a + b;
+        END CASE;
 
-    SELECT
-      a,
-      b,
-      sum;
+    SELECT a,
+           b,
+           sum;
 
     SET b = b * 10; #更新变量的值
 
-    SELECT
-      a,
-      b,
-      sum;
+    SELECT a,
+           b,
+           sum;
 
     SET c = 0;
     SELECT c;
     #WHILE 循环
     WHILE c < 3 DO
-      SET c = c + 1;
+    SET c = c + 1;
     END WHILE;
     SELECT c;
 
     #REPEAT 循环
     REPEAT
-      SET c = c + 1;
+        SET c = c + 1;
     UNTIL c > 5 END REPEAT;
     SELECT c;
 
     #LOOP 循环
-    LOOP_1: LOOP
-      IF c > 10
-      THEN
-        LEAVE LOOP_1;
-      ELSE
-        SET c = c + 1;
-      END IF;
-    END LOOP;
+    LOOP_1:
+        LOOP
+            IF c > 10
+            THEN
+                LEAVE LOOP_1;
+            ELSE
+                SET c = c + 1;
+            END IF;
+        END LOOP;
     SELECT c;
-  END
+END
 //
 #分隔符还原
 DELIMITER ;
@@ -126,9 +124,8 @@ SET @a_in = 1, @b_in = 0;
 SET @sum_out = 0;
 #调用存储过程
 CALL proc_test_opt(@a_in, @b_in, 5, @sum_out);
-SELECT
-  @b_in,
-  @sum_out;
+SELECT @b_in,
+       @sum_out;
 
 #移除存储过程
 #DROP PROCEDURE [过程1[,过程2…]]
@@ -147,23 +144,22 @@ DELIMITER //
 # DEFINER指定权限的存储过程
 # CREATE DEFINER =`root`@`localhost` PROCEDURE `proc_adder`(IN a int, IN b int, OUT sum int)
 CREATE PROCEDURE proc_test_tmp_table()
-  BEGIN
+BEGIN
     #Routine body goes here...
-    DECLARE sumTotal INT; #声明变量sumTotal
+    DECLARE sumTotal INT;
+    #声明变量sumTotal
 
     #创建临时表，进行查询操作
     DROP TEMPORARY TABLE IF EXISTS tmp_t_;
     CREATE TEMPORARY TABLE tmp_t_
-        select
-          uuid,
-          name,
-          sum(score) as sum
-        from databasetest.tabtest1
-        group by uuid, name;
+    select uuid,
+           name,
+           sum(score) as sum
+    from databasetest.tabtest1
+    group by uuid, name;
 
     #ifnull判断，如果为空，填入后面一个值
-    select ifnull(sum(score), 0) as s
-    into sumTotal -- 只接受一行数据
+    select ifnull(sum(score), 0) as s into sumTotal -- 只接受一行数据
     from databasetest.tabtest1;
     #查询到的结果
     select *
@@ -173,7 +169,7 @@ CREATE PROCEDURE proc_test_tmp_table()
 
     -- 删除临时表
     DROP TEMPORARY TABLE IF EXISTS tmp_t_;
-  END
+END
 //
 #分隔符还原
 DELIMITER ;
@@ -182,6 +178,21 @@ DELIMITER ;
 -- ----------------------------
 call proc_test_tmp_table();
 
+#存储过程模板
+-- ----------------------------
+-- Procedure structure for `proc_insert_pay` BEGIN
+-- ----------------------------
+DROP PROCEDURE IF EXISTS proc_insert_pay;
+CREATE PROCEDURE proc_insert_pay(in vUid bigint, vTm datetime)
+BEGIN
+
+END;
+-- ----------------------------
+-- Procedure structure for `proc_insert_pay` END
+-- ----------------------------
+
+
+# call proc_get_my_promotion(165272);
 # MySQL存储过程的基本函数
 # 字符串类
 # CHARSET(str) //返回字串字符集

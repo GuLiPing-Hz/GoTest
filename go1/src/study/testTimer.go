@@ -33,7 +33,7 @@ func testTimer() {
 		fmt.Println("NewTicker 2")
 		curTime := <-tick.C
 		fmt.Println("curTime=", curTime, cnt)
-		cnt ++
+		cnt++
 
 		if cnt == 5 {
 			tick.Stop()
@@ -42,7 +42,7 @@ func testTimer() {
 	}
 
 	fmt.Println("tick=", tick)
-	tick.Stop()
+	tick.Stop() //如果没有stop，将发生goroutine泄露
 	fmt.Println("tick=", tick)
 	tick = nil
 	//end:

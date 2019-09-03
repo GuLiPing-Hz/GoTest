@@ -95,3 +95,4 @@ insert into online_count(p_cnt,tp,tms,addtime) value (0,2,1,'2019-06-04 21:32:25
 create index alms_log_tm_index
 	on alms_log (tm desc);
 
+update user set wx_unionid = '' where true;
