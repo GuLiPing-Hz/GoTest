@@ -3,6 +3,7 @@ create table agent_award_log
 (
     uid        bigint(16)                           not null comment '用户id',
     reward     bigint(16) default 0 comment '返利',
+    rewardSG   bigint(16) default 0 comment '返利-上供',
     createTime timestamp  default CURRENT_TIMESTAMP comment '创建时间',
     canGetTime timestamp  default CURRENT_TIMESTAMP not null comment '可领取时间',
     updateTime timestamp  default CURRENT_TIMESTAMP comment '领取时间',
@@ -18,16 +19,13 @@ create table agent_award_log
 
 create table agent_award_cfg
 (
-    type    tinyint null comment '1 推广用户充值，2鱼塘重置，3出售金币',
-    percent int     null comment '%，百分数'
+    utype    tinyint       not null comment '用户类型，参见user表，type字段说明',
+    type     tinyint       not null comment '1 推广用户充值，2鱼塘充值，3出售金币',
+    percent  int default 0 not null comment '%，百分数',
+    percent2 int default 0 not null comment '%，百分数 接受的上供比例',
+    constraint agent_award_cfg_pk
+        primary key (utype, type)
 );
-
-create unique index agent_award_cfg_type_uindex
-    on agent_award_cfg (type);
-
-alter table agent_award_cfg
-    add constraint agent_award_cfg_pk
-        primary key (type);
 
 -- ----------------------------
 -- Procedure structure for `proc_agent_insert_sell` begin
@@ -43,8 +41,10 @@ BEGIN
     declare rewardPercent int;
     declare todayOfWeek int;
     declare rewardPerWeek bigint;
+    declare userType tinyint;
 
-    select percent into rewardPercent from agent_award_cfg where type = 3;
+    select type into userType from user where uid = vUid;
+    select ifnull(percent, 0) into rewardPercent from agent_award_cfg where type = 3 and utype = userType;
 
     set vNow = date(vNow);
     set todayOfWeek = (2 + 7 - (select dayofweek(vNow)));
@@ -87,9 +87,19 @@ BEGIN
     #计算上次领取返利的时间/注册时间 到 当前时间的充值返利
     #
     # @return
-    #    rewardTG 当前可领用户充值返利，rewardTG2 下周可领用户充值返利，
-    #    rewardSell1 下周可领售卖返利，rewardSell2 下下周可领售卖返利，
-    #    rewardSell3 下下下周可领售卖返利，rewardSell4 下下下下周可领售卖返利
+
+    declare rewardTG bigint; #当前可领用户充值返利
+    declare rewardTGSG bigint; #当前可领用户充值返利 - 上供
+    declare rewardTG2 bigint; #下周可领用户充值返利
+    declare rewardTGSG2 bigint; #下周可领用户充值返利 - 上供
+    declare rewardYT bigint; #当前可领鱼塘充值返利
+    declare rewardYTSG bigint; #当前可领鱼塘充值返利 - 上供
+    declare rewardYT2 bigint; #下周可领鱼塘充值返利
+    declare rewardYTSG2 bigint; #下周可领鱼塘充值返利 - 上供
+    declare rewardSell1 bigint; #下周可领售卖返利
+    declare rewardSell2 bigint; #下下周可领售卖返利
+    declare rewardSell3 bigint; #下下下周可领售卖返利
+    declare rewardSell4 bigint; #下下下下周可领售卖返利
 
     declare lastTime1 datetime;
     declare lastMonday datetime;
@@ -102,21 +112,35 @@ BEGIN
     declare todayOfWeek int;
     declare nextMondayOfWeek int;
     declare ytUid bigint;
-    declare rewardTG bigint;
-    declare rewardTG2 bigint;
-    declare rewardSell1 bigint;
-    declare rewardSell2 bigint;
-    declare rewardSell3 bigint;
-    declare rewardSell4 bigint;
+
     declare rewardPercent1 int;
+    declare rewardPercentSG1 int;
+    declare rewardPercent2 int;
+    declare rewardPercentSG2 int;
+    declare userType tinyint;
+
+    select type into userType from user where uid = vUid;
 
     set rewardTG = 0;
+    set rewardTGSG = 0;
     set rewardTG2 = 0;
+    set rewardTGSG2 = 0;
+    set rewardYT = 0;
+    set rewardYTSG = 0;
+    set rewardYT2 = 0;
+    set rewardYTSG2 = 0;
     set rewardSell1 = 0;
     set rewardSell2 = 0;
     set rewardSell3 = 0;
     set rewardSell4 = 0;
-    select percent into rewardPercent1 from agent_award_cfg where type = 1;
+    select percent, percent2 into rewardPercent1,rewardPercentSG1
+    from agent_award_cfg
+    where type = 1
+      and utype = userType;
+    select percent, percent2 into rewardPercent2,rewardPercentSG2
+    from agent_award_cfg
+    where type = 2
+      and utype = userType;
 
     set vNow = date(vNow);
     set todayOfWeek = dayofweek(vNow);
@@ -152,26 +176,89 @@ BEGIN
     limit 1;
     if isnull(lastTime1) then
         select reg_tm into lastTime1 from user where uid = vUid;
-#         select reg_tm from user where uid=188895;
         set lastTime1 = date(lastTime1);
     end if;
 
-#     推广奖励1 - 可领取
+#     推广奖励 - 可领取 自己的部分
     select ifnull(sum(money), 0) into rewardTG
     from pay_log
     where reid = vUid
       and result = 0
+      and retype = 1
       and channel in (1, 2, 3, 6)
       and addtime >= lastTime1
       and addtime < limitTime;
 
-#     推广奖励2 - 下周领取
+#     推广奖励 - 下周领取
     select ifnull(sum(money), 0) into rewardTG2
     from pay_log
     where reid = vUid
       and result = 0
+      and retype = 1
       and channel in (1, 2, 3, 6)
       and addtime >= limitTime;
+
+
+    if rewardPercentSG1 > 0 then
+#推广奖励 - 可领取 上供部分
+        select ifnull(sum(money), 0) into rewardTGSG
+        from pay_log
+        where result = 0
+          and retype = 1
+          and channel in (1, 2, 3, 6)
+          and addtime >= lastTime1
+          and addtime < limitTime
+          and reid in (select uid from agent_user_info where bindUid = vUid);
+
+#推广奖励 - 下周领取 上供部分
+        select ifnull(sum(money), 0) into rewardTGSG2
+        from pay_log
+        where result = 0
+          and retype = 1
+          and channel in (1, 2, 3, 6)
+          and addtime >= limitTime
+          and reid in (select uid from agent_user_info where bindUid = vUid);
+    end if;
+
+#鱼塘推广奖励 -可领取
+    select ifnull(sum(money), 0) into rewardYT
+    from pay_log
+    where reid = vUid
+      and result = 0
+      and retype = 2
+      and channel in (1, 2, 3, 6)
+      and addtime >= lastTime1
+      and addtime < limitTime;
+
+#鱼塘推广奖励 -下周领取
+    select ifnull(sum(money), 0) into rewardYT2
+    from pay_log
+    where reid = vUid
+      and result = 0
+      and retype = 2
+      and channel in (1, 2, 3, 6)
+      and addtime >= limitTime;
+
+    if rewardPercentSG2 > 0 then
+#鱼塘推广奖励 - 可领取 上供部分
+        select ifnull(sum(money), 0) into rewardYTSG
+        from pay_log
+        where result = 0
+          and retype = 2
+          and channel in (1, 2, 3, 6)
+          and addtime >= lastTime1
+          and addtime < limitTime
+          and reid in (select uid from agent_user_info where bindUid = vUid);
+
+#鱼塘推广奖励 - 下周领取 上供部分
+        select ifnull(sum(money), 0) into rewardYTSG2
+        from pay_log
+        where result = 0
+          and retype = 2
+          and channel in (1, 2, 3, 6)
+          and addtime >= limitTime
+          and reid in (select uid from agent_user_info where bindUid = vUid);
+    end if;
 
     select ifnull(reward, 0) into rewardSell1
     from agent_award_log
@@ -197,18 +284,26 @@ BEGIN
     if vWay = 1 then
         drop temporary table if exists tmp_pay_log2;
         create temporary table tmp_pay_log2
-        select floor(rewardTG * rewardPercent1 / 100)  as rewardTG,
-               floor(rewardTG2 * rewardPercent1 / 100) as rewardTG2,
+        select floor(rewardTG * rewardPercent1 / 100)     as rewardTG,
+               floor(rewardTGSG * rewardPercentSG1 / 100) as rewardTGSG,
+               floor(rewardYT * rewardPercent2 / 100)     as rewardYT,
+               floor(rewardYTSG * rewardPercentSG2 / 100) as rewardYTSG,
                rewardSell1,
                rewardSell2,
                rewardSell3,
                rewardSell4,
                lastMonday,
-               vUid                                    as uid;
+               vUid                                       as uid;
     end if;
 
-    select floor(rewardTG * rewardPercent1 / 100)  as rewardTG,
-           floor(rewardTG2 * rewardPercent1 / 100) as rewardTG2,
+    select floor(rewardTG * rewardPercent1 / 100)      as rewardTG,
+           floor(rewardTG2 * rewardPercent1 / 100)     as rewardTG2,
+           floor(rewardTGSG * rewardPercentSG1 / 100)  as rewardTGSG,
+           floor(rewardTGSG2 * rewardPercentSG1 / 100) as rewardTGSG2,
+           floor(rewardYT * rewardPercent2 / 100)      as rewardYT,
+           floor(rewardYT2 * rewardPercent2 / 100)     as rewardYT2,
+           floor(rewardYTSG * rewardPercentSG2 / 100)  as rewardYTSG,
+           floor(rewardYTSG2 * rewardPercentSG2 / 100) as rewardYTSG2,
            rewardSell1,
            rewardSell2,
            rewardSell3,
@@ -221,6 +316,12 @@ END;
 # call proc_agent_reward_per_week(now(), 188895, 1);
 call proc_agent_reward_per_week(now(), 188895, 0);
 
+select ifnull(sum(money), 0)
+from pay_log
+where result = 0
+  and retype = 1
+  and channel in (1, 2, 3, 6)
+  and reid in (select uid from agent_user_info where bindUid = 188875);
 -- ----------------------------
 -- Procedure structure for `proc_agent_reward_get` begin
 -- ----------------------------
@@ -235,11 +336,13 @@ BEGIN
     declare vLastMonday datetime;
     declare vTG bigint;
     declare vYT bigint;
+    declare vTGSG bigint;
+    declare vYTSG bigint;
     declare vSell bigint;
 
     if vType = 1 then
         call proc_agent_reward_per_week(vNow, vUid, 1);
-        select rewardTG, rewardTG2, lastMonday into vTG,vYT,vLastMonday
+        select rewardTG, rewardTGSG, rewardYT, rewardYTSG, lastMonday into vTG,vTGSG,vYT,vYTSG,vLastMonday
         from tmp_pay_log2
         where uid = vUid;
 
@@ -248,12 +351,14 @@ BEGIN
             leave exec;
         end if;
 
-        insert agent_award_log(uid, reward, createTime, canGetTime, updateTime, type, status)
-            value (vUid, vTG, vNow, vLastMonday, vNow, 1, 2);
-        insert agent_award_log(uid, reward, createTime, canGetTime, updateTime, type, status)
-            value (vUid, vYT, vNow, vLastMonday, vNow, 2, 2);
+        insert agent_award_log(uid, reward, rewardSG, createTime,
+                               canGetTime, updateTime, type, status)
+            value (vUid, vTG, vTGSG, vNow, vLastMonday, vNow, 1, 2);
+        insert agent_award_log(uid, reward, rewardSG, createTime,
+                               canGetTime, updateTime, type, status)
+            value (vUid, vYT, vYTSG, vNow, vLastMonday, vNow, 2, 2);
 
-        select 0 as code, vTG + vYT as reward;
+        select 0 as code, vTG + vYT + vTGSG + vYTSG as reward;
     elseif vType = 3 then
         select sum(reward) into vSell
         from agent_award_log

@@ -78,11 +78,14 @@ VALUES (14, '游戏推广', '2019-10-01 00:00:00', 14, 1);
 alter table user
     modify type tinyint default 0 null comment '用户类型：
 0.普通用户
-1.金推广员推广员(不可登录游戏，可登后台)
+1.金推推广员(不可登录游戏，可登后台)
 2.普通推广员(可登录游戏，不可登后台)
 3.渔乐机器人，
-4捕鱼机器人，
-5后台推广（待审核,不可登游戏，不可登后台）';
+4.捕鱼机器人，
+5.后台推广（待审核,不可登游戏，不可登后台）
+6.银推推广员(不可登录游戏，可登后台)
+7~10.推广员预留(不可登录游戏，可登后台)
+';
 
 alter table invite_log
     add status tinyint default 2 null comment '推广成员的奖励是否已经领取，默认已领取。';
@@ -361,6 +364,10 @@ alter table coin_log
 alter table pay_log
     add reid bigint default 0 null comment '返利ID，默认0，如果绑定了推荐关系，则是推荐人，如果在鱼塘里面，则是鱼塘推广员';
 
+alter table pay_log
+    add retype tinyint default 0 null comment '默认0,0无类型，1推广用户充值，2鱼塘充值,3出售金币';
+
+
 -- ----------------------------
 -- Procedure structure for `proc_insert_pay` begin
 -- ----------------------------
@@ -369,6 +376,7 @@ CREATE PROCEDURE proc_insert_pay(in vUid bigint, in vTradeNo text, in vChannel t
                                  vMoney float, vTm datetime)
 BEGIN
     declare vReUid bigint;
+    declare vReType tinyint;
     declare vYTid bigint;
 
 #     首先检查是否有推荐人
@@ -379,23 +387,30 @@ BEGIN
         if vYTid is not null then
 #             如果加入鱼塘了，当前是否有推广员
             select tgy into vReUid from yt where ytid = vYTid;
+            if vReUid is not null then
+                set vReType = 2;
+            end if;
         end if;
+    else
+        set vReType = 1;
     end if;
 
     if vReUid is null then
         set vReUid = 0;
+        set vReType = 0;
     end if;
 
-#     select vReUid;
-    insert into pay_log(tradeno, channel, uid, waresid, money, addtime, transtime, reid)
-        value (vTradeNo, vChannel, vUid, vWaresId, vMoney, vTm, vTm, vReUid);
+    #     select vReUid;
+    insert into pay_log(tradeno, channel, uid, waresid, money, addtime, transtime, reid, retype)
+        value (vTradeNo, vChannel, vUid, vWaresId, vMoney, vTm, vTm, vReUid, vReType);
     select oid as insert_id from pay_log where tradeno = vTradeNo;
 END;
 -- ----------------------------
 -- Procedure structure for `proc_insert_pay` END
 -- ----------------------------
+
 # call proc_get_my_promotion(165272);
-call proc_insert_pay(188924, '', 1, '', 1, now());
+call proc_insert_pay(188939, '', 1, '', 1, now());
 
 select uname
 from user
@@ -419,7 +434,7 @@ alter table user_cfg
     add constraint user_cfg_pk
         primary key (id);
 INSERT INTO `Buyu`.`user_cfg` (`id`, `wxid`)
-VALUES (DEFAULT, DEFAULT);
+VALUES (DEFAULT, 100000);
 
 DROP PROCEDURE IF EXISTS proc_get_wxid;
 -- ----------------------------

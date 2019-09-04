@@ -96,3 +96,4 @@ create index alms_log_tm_index
 	on alms_log (tm desc);
 
 update user set wx_unionid = '' where true;
+update user set phone = '' where true;
