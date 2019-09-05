@@ -31,7 +31,7 @@ func background() {
 		case amount := <-chanDeposit:
 			balance += amount
 		case amount := <-chanWithdraw:
-			if balance > amount {
+			if balance >= amount {
 				balance -= amount
 				chanWithdraw2 <- true
 			} else {

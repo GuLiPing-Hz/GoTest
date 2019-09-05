@@ -184,8 +184,9 @@ call proc_test_tmp_table();
 -- ----------------------------
 DROP PROCEDURE IF EXISTS proc_insert_pay;
 CREATE PROCEDURE proc_insert_pay(in vUid bigint, vTm datetime)
+exec:
 BEGIN
-
+    leave exec;
 END;
 -- ----------------------------
 -- Procedure structure for `proc_insert_pay` END

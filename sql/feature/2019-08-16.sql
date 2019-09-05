@@ -367,6 +367,8 @@ alter table pay_log
 alter table pay_log
     add retype tinyint default 0 null comment '默认0,0无类型，1推广用户充值，2鱼塘充值,3出售金币';
 
+alter table pay_log
+    add reid2 bigint default 0 null comment '返利金推ID，默认0';
 
 -- ----------------------------
 -- Procedure structure for `proc_insert_pay` begin
@@ -376,6 +378,7 @@ CREATE PROCEDURE proc_insert_pay(in vUid bigint, in vTradeNo text, in vChannel t
                                  vMoney float, vTm datetime)
 BEGIN
     declare vReUid bigint;
+    declare vReUid2 bigint;
     declare vReType tinyint;
     declare vYTid bigint;
 
@@ -398,11 +401,14 @@ BEGIN
     if vReUid is null then
         set vReUid = 0;
         set vReType = 0;
+        set vReUid2 = 0;
+    else
+        select bindUid into vReUid2 from agent_user_info where uid = vReUid;
     end if;
 
     #     select vReUid;
-    insert into pay_log(tradeno, channel, uid, waresid, money, addtime, transtime, reid, retype)
-        value (vTradeNo, vChannel, vUid, vWaresId, vMoney, vTm, vTm, vReUid, vReType);
+    insert into pay_log(tradeno, channel, uid, waresid, money, addtime, transtime, reid, retype, reid2)
+        value (vTradeNo, vChannel, vUid, vWaresId, vMoney, vTm, vTm, vReUid, vReType, vReUid2);
     select oid as insert_id from pay_log where tradeno = vTradeNo;
 END;
 -- ----------------------------
@@ -453,3 +459,4 @@ create index pay_log_tradeno_index
     on pay_log (tradeno);
 
 
+drop table add_coin_log;
