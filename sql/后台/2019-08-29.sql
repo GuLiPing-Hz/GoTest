@@ -210,7 +210,7 @@ BEGIN
     select canGetTime into lastTime1
     from agent_award_log
     where uid = vUid
-      and status = 2
+      and status & 1 = 1
       and type = 1
     order by createTime desc
     limit 1;
@@ -424,6 +424,7 @@ call proc_agent_reward_per_weekex(now(), 188967);
 call proc_agent_reward_per_weekex(now(), 188978);
 call proc_agent_reward_per_weekex(now(), 188969);
 
+call proc_agent_reward_per_weekex(now(), 188967);
 -- ----------------------------
 -- Procedure structure for `proc_agent_reward_get` begin
 -- ----------------------------
@@ -452,9 +453,9 @@ BEGIN
         end if;
 
         insert agent_award_log(uid, reward, rewardSG, createTime, canGetTime, updateTime, type, status)
-            value (vUid, vTG, vTGSG, vNow, vLastMonday, vNow, 1, 2);
+            value (vUid, vTG, vTGSG, vNow, vLastMonday, vNow, 1, 1);
         insert agent_award_log(uid, reward, rewardSG, createTime, canGetTime, updateTime, type, status)
-            value (vUid, vYT, vYTSG, vNow, vLastMonday, vNow, 2, 2);
+            value (vUid, vYT, vYTSG, vNow, vLastMonday, vNow, 2, 1);
 
         select 0 as code, vTG + vYT + vTGSG + vYTSG as reward;
     elseif vType = 3 then
@@ -469,7 +470,7 @@ BEGIN
         update agent_award_log
         set status = status | 1
         where uid = vUid
-          and status = 1
+          and status & 1 = 0
           and type = 3
           and canGetTime <= vNow;
 #查看是否有其他返利
@@ -502,6 +503,11 @@ END;
 update agent_award_log
 set status = 0
 where true;
+delete
+from agent_award_log
+where type in (1, 2);
 call proc_agent_reward_get(now(), 188967);
 call proc_agent_reward_get(now(), 188978);
 call proc_agent_reward_get(now(), 188969);
+
+call proc_agent_reward_get(now(), 188967, 1);
