@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"pkg"
+	"strings"
 	"unicode"
 	"unicode/utf8"
 	"unsafe"
@@ -90,6 +91,31 @@ func reverse2(b *[]byte) {
 	for i, j := 0, len(*b)-1; i < j; i, j = i+1, j-1 {
 		(*b)[i], (*b)[j] = (*b)[j], (*b)[i]
 	}
+}
+
+//练习题4.8
+func charcount(s string) {
+	var number, letter, other int //字母，数字，其他
+	for _, r := range s {
+		if unicode.IsNumber(r) {
+			number++
+		} else if unicode.IsLetter(r) {
+			letter++
+		} else {
+			other++
+		}
+	}
+}
+
+//练习题4.9
+func wordfreq(s string) {
+	counter := make(map[string]int)
+	ss := strings.Split(s, " ")
+	for i := range ss {
+		counter[ss[i]] ++
+	}
+
+	fmt.Printf("wordfreq %v\n", counter)
 }
 
 //练习题5.1

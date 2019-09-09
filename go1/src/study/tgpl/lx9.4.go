@@ -5,6 +5,7 @@ import "fmt"
 func main() {
 	ch1 := make(chan int32)
 	ch2 := make(chan int32)
+	//估算了下，8G内存能跑2百万个goroutine~3百万个goroutine
 	for i := 0; i < 1000000000; i++ {
 		fmt.Printf("创建第 %d 个goroutine\n", i)
 

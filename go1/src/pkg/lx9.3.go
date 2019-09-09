@@ -2,8 +2,10 @@
 package pkg
 
 import (
-	"sync"
 	"fmt"
+	"pkg/B"
+	"pkg/internal/A"
+	"sync"
 )
 
 type Func func(key string) (interface{}, error)
@@ -25,6 +27,10 @@ type Memo struct {
 }
 
 func New(f Func) *Memo {
+	fmt.Printf("A=%d\n", A.A)
+	//fmt.Printf("a=%d\n", A.a) //小写没有导出，无法访问。
+	fmt.Printf("B=%d\n", B.B)
+	//fmt.Printf("b=%d\n", B.b) //小写没有导出，无法访问。
 	return &Memo{f: f, cache: make(map[string]*entry)}
 }
 
