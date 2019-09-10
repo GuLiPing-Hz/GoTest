@@ -10,4 +10,7 @@ where result = 0
   and i.code = '188895';
 
 
+explain select * from user where ID_valid='' and sex=1 limit 1;
+
+
 

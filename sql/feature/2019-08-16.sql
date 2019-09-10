@@ -460,3 +460,13 @@ create index pay_log_tradeno_index
 
 
 drop table add_coin_log;
+
+
+# SQL性能优化
+
+select count(1) from user_props_log;
+explain select ifnull(sum(variation), 0)
+  from user_props_log
+  where sendType in(62,65)
+    and type = 2
+    and time < '2019-09-10 20:00:00';

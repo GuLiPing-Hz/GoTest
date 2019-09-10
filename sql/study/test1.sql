@@ -25,9 +25,12 @@ set global sql_mode = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITU
 #添加远程访问权限
 #https://www.jianshu.com/p/92fdef0dab32
 
+#非常重要的优化命令
 #查看mysql运行状态
 show status;
+#在数据库服务器高峰期，可用此命令查看当前比较费时的sql语句，+explain优化之
 show full processlist;
+
 
 #重启mysql服务器
 #/etc/init.d/mysqld restart
