@@ -10,7 +10,13 @@ where result = 0
   and i.code = '188895';
 
 
-explain select * from user where ID_valid='' and sex=1 limit 1;
+create index yt_coin_log_uid_index
+    on yt_coin_log (uid);
+create index yt_coin_log_optuid_index
+    on yt_coin_log (optuid);
+create index yt_yuhuo_uid_index
+    on yt_yuhuo (uid);
+
 
 
 
