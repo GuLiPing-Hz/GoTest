@@ -386,7 +386,7 @@ BEGIN
     select code into vReUid from invite_log where uid = vUid;
     if vReUid is null then
 #         其次检查是否加入鱼塘
-        select ytid into vYTid from yt_user where uid = vUid;
+        select ytid into vYTid from yt_user where uid = vUid and apply = 0;
         if vYTid is not null then
 #             如果加入鱼塘了，当前是否有推广员
             select tgy into vReUid from yt where ytid = vYTid;
@@ -464,13 +464,15 @@ drop table add_coin_log;
 
 # SQL性能优化
 create index agent_award_log_uid_index
-	on agent_award_log (uid);
+    on agent_award_log (uid);
 create index agent_award_cfg_uid_index
-	on agent_award_cfg (uid);
+    on agent_award_cfg (uid);
 
 create index yt_user_ytid_index
-	on yt_user (ytid);
+    on yt_user (ytid);
 create index yt_tgy_index
-	on yt (tgy);
+    on yt (tgy);
 create index yt_ytid_index
-	on yt (ytid);
+    on yt (ytid);
+
+
