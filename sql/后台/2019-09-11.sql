@@ -6,6 +6,7 @@ create table z_huizong_qudao_hour
     hbq_hbc   bigint default 0 null comment '距离上一次统计时间段的红包场红包，默认一小时',
     hbq_lzc   bigint default 0 null comment '距离上一次统计时间段的龙珠场场红包，默认一小时',
     hbq_lzdb  bigint default 0 null comment '距离上一次统计时间段的龙珠夺宝红包，默认一小时',
+    hbq_other bigint default 0 null comment '距离上一次统计时间段的集福红包，默认一小时',
     in_cnt    int    default 0 null comment '距离上一次统计时间段的登录次数，默认一小时',
     new_cnt   int    default 0 null comment '距离上一次统计时间段的注册人数，默认一小时',
     check_cnt int    default 0 null comment '距离上一次统计时间段的签到次数，默认一小时',
@@ -42,16 +43,38 @@ BEGIN
         set vTmBegin = '2017-01-01';
     end if;
 
-    select sum(s) into vMoney
-    from (select uid, sum(money) as s
-          from pay_log
-          where addtime >= vTmBegin
-            and addtime < vTmEnd
-            and result = 0
-            and channel in (1, 2, 3, 6)
-          group by uid) a
-             inner join user on a.uid = user.uid
-        and flavors = vFlavor;
+    #     select sum(s) into vMoney
+#     from (select uid, sum(money) as s
+#           from pay_log
+#           where addtime >= vTmBegin
+#             and addtime < vTmEnd
+#             and result = 0
+#             and channel in (1, 2, 3, 6)
+#           group by uid) a
+#              inner join user on a.uid = user.uid
+#     where flavors = vFlavor;
+
+#     select sum(s) into vHB
+#     from (select uid, sum(money) as s
+#           from pay_log
+#           where addtime >= vTmBegin
+#             and addtime < vTmEnd
+#             and result = 0
+#             and channel in (4, 5, 8)
+#           group by uid) a
+#              inner join user on a.uid = user.uid
+#     where flavors = vFlavor;
+
+    explain select sum(s) into vHbqHBC
+            from (select uid, sum(variation) as s
+                  from user_value_props_log
+                  where time >= vTmBegin
+                    and time < vTmEnd
+                    and type = 40
+                    and sendType = 2
+                  group by uid) a
+                     inner join user on a.uid = user.uid
+            where flavors = vFlavor;
 END;
 -- ----------------------------
 -- Procedure structure for `proc_huizong_by_flavor` END
