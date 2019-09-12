@@ -524,9 +524,8 @@ DELIMITER ;
 #     reward: 签到奖励
 #     pool:鱼塘当前资金
 -- ----------------------------
-DROP PROCEDURE IF EXISTS proc_yt_checkin;
-DELIMITER //
-CREATE PROCEDURE proc_yt_checkin(in vUid bigint, in vUUID text, in vYtid bigint, in vNow datetime)
+drop procedure if exists proc_yt_checkin;
+create procedure proc_yt_checkin(IN vUid bigint, IN vUUID text, IN vYtid bigint, IN vNow datetime)
 exe:
 BEGIN
     declare vToday datetime;
@@ -574,7 +573,7 @@ BEGIN
 
     select count(1) into vYtRankEnable from activities where id = 12 and isEnabled = 1 and endTime > vNow;
     if vYtRankEnable > 0 then
-        select ifnull(num, 0) into vYtRank from yt_rank_last where ytid = vYtid;
+        select ifnull(num, 0) into vYtRank from yt_rank_last where ytid = vYtid and act > 0;
         if vYtRank <= 3 then
             select gift_count into vActivityReward
             from sub_act_gift
@@ -603,13 +602,7 @@ BEGIN
 
     #返回签到的金币数量
     select 0 as status, vReward as reward, vPool as pool, vActivityReward as reward2;
-END
-//
-#分隔符还原
-DELIMITER ;
--- ----------------------------
--- Procedure structure for `proc_yt_checkin` END
--- ----------------------------
+END;
 
 -- ----------------------------
 # Procedure structure for `proc_get_yuhuo` begin
