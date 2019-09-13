@@ -245,7 +245,7 @@ BEGIN
                                 group by uid) a
                                    inner join user on a.uid = user.uid
                           where flavors = vFlavor), 0),
-               ifnull((#红包
+               ifnull((#红包金额 单位元
                           select sum(s)
                           from (select uid, sum(money) as s
                                 from pay_log
