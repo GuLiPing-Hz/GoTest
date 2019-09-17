@@ -30,6 +30,7 @@ set global sql_mode = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITU
 show status;
 #在数据库服务器高峰期，可用此命令查看当前比较费时的sql语句，+explain优化之
 show full processlist;
+# 如果某个查询一直在执行可以直接通过命令 kill 指定ID : kill 192610;
 
 
 #重启mysql服务器
