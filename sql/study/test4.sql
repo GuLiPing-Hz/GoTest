@@ -32,16 +32,16 @@ show events;
 DROP EVENT IF EXISTS event_test;
 DELIMITER //
 CREATE EVENT event_test
-  ON SCHEDULE
-    EVERY 2 second
-      STARTS TIMESTAMP '2018-11-28 17:06:00'
-  ON COMPLETION PRESERVE
-  COMMENT '每日测试任务'
-DO
-  BEGIN
-    insert into databasetest.event_test_table values ();
-    #call proc(); #调用某个存储过程
-  END
+    ON SCHEDULE
+        EVERY 2 second
+            STARTS TIMESTAMP '2018-11-28 17:06:00'
+    ON COMPLETION PRESERVE
+    COMMENT '每日测试任务'
+    DO
+    BEGIN
+        insert into databasetest.event_test_table values ();
+        #call proc(); #调用某个存储过程
+    END
 //
 DELIMITER ;
 -- ----------------------------
@@ -51,13 +51,26 @@ DELIMITER ;
 
 #关闭事件任务 :
 ALTER EVENT event_test
-ON COMPLETION PRESERVE
-DISABLE;
+    ON COMPLETION PRESERVE
+    DISABLE;
 
 #开启事件任务 :
 ALTER EVENT event_test
-ON COMPLETION PRESERVE
-ENABLE;
+    ON COMPLETION PRESERVE
+    ENABLE;
 
+-- 事件模板
+DROP EVENT IF EXISTS event_test;
+CREATE EVENT event_test
+    ON SCHEDULE
+        EVERY 2 second
+            STARTS TIMESTAMP '2018-11-28 17:06:00'
+    ON COMPLETION PRESERVE
+    COMMENT '每日测试任务'
+    DO
+    BEGIN
+        insert into databasetest.event_test_table values ();
+        #call proc(); #调用某个存储过程
+    END;
 
 
