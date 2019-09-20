@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"unsafe"
 	"reflect"
+	"unsafe"
 )
 
 /**
@@ -21,7 +21,7 @@ map 1个机器字
 func 1个机器字
 chan 1个机器字
 interface 2个机器字(type,value)
- */
+*/
 type X struct {
 	//64位机器
 	a bool    //1字节
@@ -55,6 +55,39 @@ func lx13_1(x, y interface{}) bool {
 		return false
 	}
 	return v1.Int() == v2.Int()
+}
+
+func lx13_2_inner(v reflect.Value, dict map[uintptr]bool) bool {
+	if v.CanAddr() {
+		//uptr := uintptr(unsafe.Pointer(&v))
+		uptr := v.UnsafeAddr()
+		_, ok := dict[uptr]
+		if ok {
+			return true
+		}
+		dict[uptr] = true
+	}
+
+	fmt.Println("kind=", v.Kind())
+	if v.Kind() == reflect.Struct {
+		for i := 0; i < v.NumField(); i++ {
+			fieldV := v.Field(i)
+			if lx13_2_inner(fieldV, dict) {
+				return true
+			}
+		}
+		return false
+	} else if v.Kind() == reflect.Ptr || v.Kind() == reflect.Interface {
+		return lx13_2_inner(v.Elem(), dict)
+	} else {
+		return false
+	}
+}
+
+func lx13_2(x interface{}) bool {
+	v := reflect.ValueOf(x)
+	dict := make(map[uintptr]bool)
+	return lx13_2_inner(v, dict)
 }
 
 //数据相同的两个结构，X2占用的内存更小。
@@ -91,4 +124,13 @@ func main() {
 
 	fmt.Println("练习题13.1", reflect.DeepEqual(int16(5), int32(5)),
 		lx13_1(int16(5), int32(5)))
+
+	type Circle2 struct {
+		val  int
+		next *Circle2
+	}
+
+	circle := &Circle2{val: 10}
+	circle.next = circle
+	fmt.Println("练习题13.2 是否有环？", lx13_2(circle), lx13_2(*circle), lx13_2(a))
 }
