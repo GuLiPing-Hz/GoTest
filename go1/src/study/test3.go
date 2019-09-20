@@ -47,6 +47,12 @@ func sub(a, b *int) (int) {
 	return *a - *b
 }
 
+//指定函数返回值的别名
+func multi(a, b int) (product int) {
+	product = a * b //这个用法可以在使用defer关键字的地方好用，defer后面再学习。
+	return
+}
+
 /**
 go 语言不支持函数的默认参数
 func addEx(a=0, b=1 int) int {
@@ -75,6 +81,9 @@ func main() {
 
 	var c int = sub(&a, &b)
 	fmt.Println(a, b, c)
+
+	var pro = multi(4, 6)
+	fmt.Printf("multi 4*6 = %d\n", pro)
 
 	fmt.Println("平均值1为", average(10, 5, 3, 4, 5, 6)) // 位置参数调用
 	arra := []int{10, 5, 4}                          //数组或者切片传递给可变长参数函数调用

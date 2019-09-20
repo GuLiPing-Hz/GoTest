@@ -124,14 +124,14 @@ func testArra() {
 	//go 不支持负索引
 	//fmt.Println(animal[-1])
 
-	//动态数组，使用切片
+	//动态数组-slice 跟数组相比，数组是可以当map的key的而slice不可以。
 	/**
 	var s []int // len(s) == 0, s == nil
 	s = nil // len(s) == 0, s == nil
 	s = []int(nil) // len(s) == 0, s == nil
 	s = []int{} // len(s) == 0, s != nil
 
-	//数组的两个创建方式。
+	//切片的两个创建方式。
 	make([]T, len)
 	make([]T, len, cap) // same as make([]T, cap)[:len]
 	 */
@@ -143,6 +143,24 @@ func testArra() {
 	slice2 := append(slice1, 1, 2)                                    //可同时添加多个元素
 	fmt.Println("append之后 slice1=", slice1, len(slice1), cap(slice1), slice1 == nil)
 	fmt.Println("slice2=", slice2, len(slice2), cap(slice2))
+
+	//定义slice，
+	fmt.Println("slice实验，修改前")
+	var bytes [] byte
+	bytes = append(bytes, 1, 2, 3, 4, 5, 6, 7, 8)
+	for _, b := range bytes {
+		fmt.Print(b, " ")
+	}
+	fmt.Println()
+	pos := 2
+	bytes1 := bytes[pos : pos+2] //获取其中的部分切片
+	bytes1[0] = 30               //修改其中的内容
+	bytes1[1] = 40
+	fmt.Println("slice实验，修改后")
+	for _, b := range bytes {
+		fmt.Print(b, " ")
+	}
+	fmt.Println()
 
 	//使用make创建一个切片
 	slice3 := make([]int, 1, 5) //类型，大小(默认插入0，1个就插入1个0)，容量

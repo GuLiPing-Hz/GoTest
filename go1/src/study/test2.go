@@ -84,11 +84,12 @@ func main() {
 
 	fmt.Println("switch")
 	switch a {
-	case 0: //go中的case不需要写break，从上到下
+	case 0: //go中的case不需要写break，从上到下,,
 		fmt.Println("a==0")
+		fallthrough //如果需要把两个case窜起来，可以加关键字fallthrogh
 	case 1:
 		fmt.Println("a==1")
-	case 2, 3:
+	case 2, 3: //当然我们还可以把两个case写在同一行。。。
 		fmt.Println("a==2,3")
 	default:
 		fmt.Println("!(a==0 || a==1)")
@@ -201,12 +202,9 @@ func main() {
 		break //同样具有continue goto语句，用法同c
 	}
 	fmt.Println(strings.Repeat("*", 50))
-	//定义数组
+	//定义常量数组
 	var numbers = [6]int{1, 2, 3, 4, 5, 6}
 	for i, x := range numbers {
-		//fmt.Println("numbers["+strconv.Itoa(i)+"]=",x)
-		//fmt.Println("numbers[%d]=%d",i,x)//这个是不行的
-		//fmt.Printf("numbers[%d]=%d;", i, x)
 		fmt.Println(fmt.Sprintf("numbers[%d]=%d;", i, x))
 	}
 

@@ -84,6 +84,8 @@ func main() {
 	fmt.Println(`Hello 
 世界2`)
 
+	//fmt包提供了很多打印函数,具体可以查看源代码。
+
 	//查看变量地址
 	//查看变量类型
 	var vGlp int = 1
@@ -208,7 +210,7 @@ func main() {
 
 	fmt.Println("a =", a)
 	a++
-	//a11 := a ++ //语法错误
+	//a11 := a ++ //语法错误 a++在go里面不是一个表达式。
 	fmt.Println("a ++=", a)
 	a--
 	//a12 := a -- //语法错误
@@ -242,9 +244,9 @@ func main() {
 	fmt.Printf("b>>2 =%d(二进制%04[1]b)\n", b>>2)                                //按位右移
 
 	// 5.逻辑运算符: 短路行为；助记： && 对应逻辑乘法， || 对应逻辑加法，乘法比加法优先 级要高
-	a1 := true // 这里必须大写
+	a1 := true
 	b1 := false
-	fmt.Println(a1 && a1)
+	fmt.Println(a1 && b1)
 	fmt.Println(a1 || b1)
 	fmt.Println(! a1)
 
@@ -284,15 +286,14 @@ func main() {
 	//更多其他基础测试
 	//println对小数打印有问题
 	fmt.Println(3.14)
-	fmt.Println(3.14)
 
 	var a3 int64 = 100
 	var b3 int = 10
-	//fmt.Println(a3 + b3)//编译不过
+	//fmt.Println(a3 + b3)//编译不过，go要求运算符两边的类型必须一致
 	fmt.Println(a3 + int64(b3)) //必须转成相同类型的数据才能操作
 
 	var s1 string
-	fmt.Println(s1 == "") //没有 s1 == nil
+	fmt.Println(s1 == "") //true
 
 	a4, a5, a6, a7 := 0, 0, 0, 0
 	fmt.Println("a4&a5&a6&a7 = ", a4&a5&a6&a7)
@@ -307,23 +308,6 @@ func main() {
 	for _, user := range users {
 		fmt.Println("name=", user.name, "score=", user.score)
 	}
-
-	fmt.Println("切片实验，修改前")
-	var bytes [] byte
-	bytes = append(bytes, 1, 2, 3, 4, 5, 6, 7, 8)
-	for _, b := range bytes {
-		fmt.Print(b, " ")
-	}
-	fmt.Println()
-	pos := 2
-	bytes1 := bytes[pos : pos+2] //获取其中的部分切片
-	bytes1[0] = 30               //修改其中的内容
-	bytes1[1] = 40
-	fmt.Println("切片实验，修改后")
-	for _, b := range bytes {
-		fmt.Print(b, " ")
-	}
-	fmt.Println()
 
 	//没有三目运算符
 }
