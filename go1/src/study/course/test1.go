@@ -4,7 +4,7 @@
 这样；你会经常看到i之类的短名字，而不是冗长的theLoopIndex命名。
 通常来说，如果一个 名字的作用域比较大，生命周期也比较长，那么用长的名字将会更有意义
 */
-package main
+package course
 
 import (
 	"fmt"
