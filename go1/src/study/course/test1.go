@@ -24,7 +24,8 @@ import (
 
 Go的安装：https://studygolang.com/dl
 
-window用户可以使用msi安装，并且必须在环境变量中指定GOPATH,我把GoPath放在C盘，跟GoRoot位置一致
+window用户可以使用msi安装，并且必须在环境变量中指定GOPATH,
+我把GoPath放在C盘，跟GoRoot位置一致
 
 注释语法类似c //单行，多行就像我现在写的提示文字
 

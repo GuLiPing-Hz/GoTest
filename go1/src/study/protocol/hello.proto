@@ -11,6 +11,9 @@ protoc -o PbLobbyData.pb PbLobbyData.proto
 编译go文件
 protoc --go_out=./src/PbLobbyData PbLobbyData.proto
 
+编译生成gRPC文件
+protoc --go_out=plugins=grpc:. PbLobbyData.proto
+
 编译出来的go文件，务必把json中的 omitempty 去掉，否则查看数据的时候为0就不序列成字符串了。。
 */
 
