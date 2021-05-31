@@ -2,7 +2,9 @@ package course
 
 import (
 	"fmt"
+	"math/rand"
 	"strconv"
+	"strings"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -25,13 +27,13 @@ read_write := make (chan int, 10) //带10个缓冲的信道
 会导致goroutine泄漏的问题
 
 对于使用有无缓冲，缓冲大小的问题：
-无缓存channel更强地保证了每个发送操作与相应的同步接收操作；但 是对于带缓存channel，这些操作是解耦的
+无缓存channel更强地保证了每个发送操作与相应的同步接收操作；但是对于带缓存channel，这些操作是解耦的,或者说是异步操作
 */
 
 func do(start int) {
 	var end = start + 5
 	for i := start; i < end; i++ {
-		fmt.Printf("%d ", i)
+		fmt.Printf("do i=%d;", i)
 	}
 }
 
@@ -63,9 +65,9 @@ func test3() {
 	//定义一个信道，chan关键字表示信道，里面存储string，也可以存其他类型
 	messages := make(chan string) //似乎全局信道不能这么写
 	go func(message string) {
-		time.Sleep(time.Second * 3)
+		time.Sleep(time.Second)
 		//close(messages)
-		messages <- message // 存消息 使用 '<-', 指向信道表示存储消息
+		messages <- message // 存消息 使用 '<-', 指向信道表示存储消息或者说是写入消息
 	}("hello chan message")
 
 	fmt.Println("等待信道消息...")
@@ -75,6 +77,8 @@ func test3() {
 }
 
 func test3_1() {
+	// 数字-》naturlas-》squares-》输出
+	//通过信道可以制造信息流水线。
 	naturals := make(chan int)
 	squares := make(chan int)
 	go counter(naturals)
@@ -85,6 +89,8 @@ func test3_1() {
 func test3_2() {
 	//只写入chan
 	chanOnlyW := make(chan bool)
+
+	//fatal error: all goroutines are asleep - deadlock!
 	chanOnlyW <- true //如果chan没有缓冲，那么这个写操作需要等待有读操作的执行才会执行
 	fmt.Printf("finish only w")
 }
@@ -101,11 +107,11 @@ func do1() {
 	for i := 0; i < 5; i++ {
 		fmt.Printf("%d ", i)
 	}
-	ch <- 0 //存消息 通知主线程我们goroutine完成了
+	ch <- 0 //写入消息 即通知主线程我们goroutine完成了
 }
 
 //理解只读，只写信道，编译期检查
-//对于只写的信道，不能执行close
+//对于只读的信道，不能执行close
 //这里并没有反向转换的语法：
 //      就是不能一个将类似chan<-int类型的单向型的 channel转换为 chan int 类型的双向型的channel
 func counter(out chan<- int) { //只写信道
@@ -121,7 +127,7 @@ func squarer(out chan<- int, in <-chan int) {
 	close(out)
 }
 func printer(in <-chan int) { //只读信道
-	for v := range in {
+	for v := range in {       //for能正确处理 in关闭的时候
 		fmt.Println(v)
 	}
 }
@@ -228,9 +234,10 @@ func testSelect() {
 	var chanSelect3 = make(chan int32)
 	var chanCnt int32 = 0
 
+	rand.NewSource(time.Now().UnixNano()) //随机种子时间
 	go func() { //匿名函数
 		for i := 0; i < 5; i++ {
-			time.Sleep(2 * time.Second)
+			time.Sleep(time.Millisecond * time.Duration(rand.Int31n(1000)))
 			chanSelect1 <- "str_" + strconv.Itoa(i)
 		}
 
@@ -240,7 +247,7 @@ func testSelect() {
 
 	go func() {
 		for i := 0; i < 10; i++ {
-			time.Sleep(time.Second)
+			time.Sleep(time.Millisecond * time.Duration(rand.Int31n(1000)))
 			chanSelect2 <- i * 2
 		}
 
@@ -252,20 +259,14 @@ func testSelect() {
 	for { //select搭配for循环，可以起到一直运行的效果
 		select { //如果只是select语句，那么其中一个case可以执行就执行下去了
 		case v1 := <-chanSelect1:
-			{
-				fmt.Println("v1=", v1)
-			}
+			fmt.Println("v1=", v1)
 		case v2 := <-chanSelect2:
-			{
-				fmt.Println("v2=", v2)
-			}
+			fmt.Println("v2=", v2)
 		case v3 := <-chanSelect3:
-			{
-				fmt.Println("v3=", v3)
-				if v3 == 2 {
-					//break//只能跳出select
-					goto end
-				}
+			fmt.Println("v3=", v3)
+			if v3 == 2 {
+				//break//只能跳出select
+				goto end
 			}
 		}
 	}
@@ -277,36 +278,56 @@ end:
 
 func testSelect1() {
 	ch := make(chan int, 1)
-	for i := 0; i < 10; i++ {
-		select { case x := <-ch:
+	for i := 0; i < 10; i++ { //细品一下下面的代码
+		select {
+		case x := <-ch:
 			fmt.Println(x) // "0" "2" "4" "6" "8"
 		case ch <- i:
 		}
 	}
 }
 
-func main() {
-	//study()
+func testBreakFor() {
+	chStop := make(chan bool)
+	go func() {
+		time.Sleep(time.Second * 3)
+		chStop <- true
+	}()
+
+	fmt.Println("testBreakFor 1")
+loop:
+	for {
+		select {
+		case <-chStop:
+			break loop
+		}
+	}
+	fmt.Println("testBreakFor 2")
+}
+
+func Course6() {
+	//下面的测试内容都是一个函数一个测试，不能一起运行。。
+	fmt.Println("\n" + strings.Repeat("*", 100))
+	//test2()
 	//fmt.Println("\n" + strings.Repeat("*", 100))
-	////test2()
+	test3()
+	test3_1()
+	//test3_2() //无休止等待。
+	//test3_3() //无休止等待。
 	//fmt.Println("\n" + strings.Repeat("*", 100))
-	//test3()
-	//test3_1()
-	//test3_2()
-	//test3_3()
+	test4()
 	//fmt.Println("\n" + strings.Repeat("*", 100))
-	//test4()
+	test5()
 	//fmt.Println("\n" + strings.Repeat("*", 100))
-	//test5()
-	//fmt.Println("\n" + strings.Repeat("*", 100))
-	//testSelect()
+	testSelect()
 	testSelect1()
+	testBreakFor()
 
 	//构造一个等待动画
 	//go func() {
 	//	for {
 	//		for _, v := range `-\|/` {
-	//			fmt.Printf("\r%c", v)
+	//			fmt.Printf("\r%c", v) //\r没效果。。
 	//			time.Sleep(time.Millisecond * 100)
 	//		}
 	//	}

@@ -49,14 +49,16 @@ func joke(arg int) { //arg是形参
 
 //joke()//这里无法调用
 
-func main() {
+func Course2() {
 	joke(1)
 
 	//查看大小长度
 	fmt.Println(a, b, c, len(c))
 	// 字符串类型在 go 里是个结构, 包含指向底层数组的指针和长度,
 	// 这两部分每部分都是 8 个字节，所以字符串类型大小为 16 个字节。
-	fmt.Println(unsafe.Sizeof(a), unsafe.Sizeof(b), unsafe.Sizeof(c))
+	d := uint8(1)
+	fmt.Printf("sizeof=%d(%T),%d(%T),%d(%T),%d(%T)\n",
+		unsafe.Sizeof(a), a, unsafe.Sizeof(b), b, unsafe.Sizeof(c), c, unsafe.Sizeof(d), d)
 
 	//多重赋值机制跟lua一样,变量可以下面这样交换值
 	x := 1
@@ -213,5 +215,18 @@ func main() {
 		for j := 0; j < 5; j++ {
 			fmt.Println("for for", i, j)
 		}
+	}
+
+	type V struct {
+		v int
+	}
+	var testCopy = make([]V, 0)
+	c1, c2, c3 := V{0}, V{1}, V{2}
+	testCopy = append(testCopy, c1, c2, c3)
+	for _, v := range testCopy {
+		v.v++ //这里的v只是相当于函数的形参，是一份拷贝,如果是指针就可以改变原值
+	}
+	for _, v := range testCopy {
+		fmt.Printf("new v=%v\n", v.v) //打印结果还是0,1.2
 	}
 }

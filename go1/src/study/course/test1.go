@@ -31,11 +31,18 @@ window用户可以使用msi安装，并且必须在环境变量中指定GOPATH,
 
 */
 
+//import挑选好的编辑器 GoLand即可自动管理包引入
 //import "fmt"最常用的一种形式
 //import "./test"导入同一目录下test包中的内容
 //import f "fmt"导入fmt，并给他启别名ｆ
 //import . "fmt"，将fmt启用别名"."，这样就可以直接使用其内容，而不用再添加ｆｍｔ，如fmt.Println可以直接写成Println
 //import  _ "fmt" 表示不使用该包，而是只是使用该包的init函数，并不显示的使用该包的其他内容。注意：这种形式的import，当import时就执行了fmt包中的init函数，而不能够使用该包的其他函数。
+
+/**
+文件的加载规则
+import "fmt"  ->  fmt.go文件  1加载const变量，2加载var变量，3执行init()函数 ———— 无参数，无返回值，用于文件的初始化操作
+然后1加载本文件的const变量，2加载var变量，3执行init()
+*/
 
 /**
 %d 十进制整数
@@ -47,6 +54,7 @@ window用户可以使用msi安装，并且必须在环境变量中指定GOPATH,
 %q 带双引号的字符串"abc"或带单引号的字符'c'
 %v 变量的自然形式（natural format）
 %T 变量的类型
+%p 指针地址
 %% 字面上的百分号标志（无操作数）
 
 请注意fmt的两个使用技巧。
@@ -56,8 +64,13 @@ window用户可以使用msi安装，并且必须在环境变量中指定GOPATH,
 	小技巧控制输出的缩进。 %*s 中的 * 会在字符串之前填充一 些空格。
 	fmt.Printf("%*s",2,"") 每次输出会先填充 2 数量的空格，再输出""
 
-    %+v 对结构体打印时可以打印结构体域名字
+	%v  只输出所有的值（natural format）
+	%+v 先输出字段类型，再输出该字段的值
+	%#v 先输出结构体名字值，再输出结构体（字段类型+字段的值）
+	如果一个结构体定义了 String()string 函数 %v和%+v都会使用该函数打印信息，%#v则还是原来的打印方式。
 */
+
+const TheConst = true
 
 //包一级变量声明 var 变量名字 类型 = 表达式
 var (
@@ -65,6 +78,10 @@ var (
 	OutA = 1 //首字母大写可以让外部包访问该变量，函数等
 	inA  = 2 //首字母小写表示只能在本包内的文件访问。
 )
+
+func init() {
+	fmt.Println("文件初始化完成! test1.go")
+}
 
 /**
 一个类型声明语句创建了一个新的类型名称，和现有类型具有相同的底层结构。
@@ -74,12 +91,12 @@ var (
 */
 //定义新类型 关键字type 类型名字 底层类型
 type newInt int //底层类型虽然一样，但是go是严格的类型语言，不同类型加减的时候需要强制转换。
-func (imp newInt) String() string { //类型都会定义默认的String方法用于某个类型的输入格式
-	return fmt.Sprintf("newInt:%d", int(imp))
+func (the newInt) String() string { //类型都会定义默认的String方法用于某个类型的输入格式
+	return fmt.Sprintf("newInt:%d", int(the))
 }
 
 //包一级函数声明
-func main() {
+func Course1() {
 	//最简单的打印-注释(单行)
 	fmt.Println("Hello 世界") //两个语句写同一行时才需要分号
 	fmt.Println(`Hello 
@@ -91,6 +108,7 @@ func main() {
 	//查看变量类型
 	var vGlp int = 1
 	fmt.Printf("vGlp address = %p, type = %s\n", &vGlp, reflect.TypeOf(vGlp))
+	fmt.Printf("vGlp address = %p, type = %T\n", &vGlp, vGlp)
 
 	charA := 'a'
 	charB := '事'
@@ -116,12 +134,12 @@ func main() {
 	}
 
 	// iota 特殊常量，可以认为是一个可以被编译器修改的常量
-	// 在没一个const关键字出现是，被重置为0，
-	// 然后再下一个const出现之前，每出现一次iota，其所代表的数字会自动增加1。
+	// 在每一个const关键字里面，都会被重置为0，
+	// 然后在下一个const出现之前，每出现一次iota，其所代表的数字会自动增加1。
 	const (
-		cA = iota
-		cB = iota
-		cC = iota
+		cA = iota //0
+		cB = iota //1
+		cC = iota //2
 	)
 	fmt.Print("cA,cB,cC=")
 	fmt.Println(cA, cB, cC)
@@ -192,13 +210,13 @@ func main() {
 	//1.算术运算符:
 	a = 10
 	b = 8
-	fmt.Println("a+b=", a+b)     //加
-	fmt.Println("a-b=", a-b)     //减
-	fmt.Println("a*b=", a*b)     //乘
-	fmt.Println("b/a=", b/a)     //除
-	fmt.Println("b%a=", b%a)     //模 模的符号依赖于被取模的数的符号
-	fmt.Println("b%-a=", b % -a) //模 模的符号依赖于被取模的数的符号
-	fmt.Println("-b%a=", -b%a)   //模 模的符号依赖于被取模的数的符号
+	fmt.Println("a+b=", a+b)   //加
+	fmt.Println("a-b=", a-b)   //减
+	fmt.Println("a*b=", a*b)   //乘
+	fmt.Println("b/a=", b/a)   //除
+	fmt.Println("b%a=", b%a)   //模 模的符号依赖于被取模的数的符号
+	fmt.Println("b%-a=", b%-a) //模 模的符号依赖于被取模的数的符号
+	fmt.Println("-b%a=", -b%a) //模 模的符号依赖于被取模的数的符号
 	fmt.Println("-a=", -a)
 
 	//2.比较操作符:
@@ -249,7 +267,7 @@ func main() {
 	b1 := false
 	fmt.Println(a1 && b1)
 	fmt.Println(a1 || b1)
-	fmt.Println(! a1)
+	fmt.Println(!a1)
 
 	//6.其他运算符: &取地址，*取内容 类似c++
 	var aPointer *bool = &a1
@@ -285,8 +303,7 @@ func main() {
 	fmt.Println(dir, base, ext, strings.TrimSuffix(base, ext))
 
 	//更多其他基础测试
-	//println对小数打印有问题
-	fmt.Println(3.14)
+	fmt.Println(3.14) //查看小数
 
 	var a3 int64 = 100
 	var b3 int = 10
@@ -309,6 +326,28 @@ func main() {
 	for _, user := range users {
 		fmt.Println("name=", user.name, "score=", user.score)
 	}
-
 	//没有三目运算符
+
+	testFmt1 := TestFmt1{11}
+	testFmt2 := TestFmt2{11}
+	//如果定义了 String()string 函数 %v和%+v都会使用该函数打印信息，%#v则还是原来的打印方式。
+	fmt.Printf("testFmt1: %v,%+v,%#v,%v,%#v\n", testFmt1, testFmt1, testFmt1, a, a)
+	fmt.Printf("testFmt2: %v,%+v,%#v,%v,%#v", testFmt2, testFmt2, testFmt2, a, a)
 }
+
+type TestFmt1 struct {
+	a int
+}
+
+type TestFmt2 struct {
+	a int
+}
+
+func (that TestFmt2) String() string {
+	return "testfmt"
+}
+
+//go mod 的启用参见auth项目中的
+//打开Goland 的终端窗口，定位到go1目录
+//运行 go mod init go1
+//mod就已经初始化完毕了。具体mod的使用参考auth项目。

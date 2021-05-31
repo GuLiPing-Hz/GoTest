@@ -2,9 +2,9 @@ package main
 
 import (
 	"flag"
-	"strconv"
 	"fmt"
-	"pkg"
+	"go1/src/pkglearn"
+	"strconv"
 )
 
 func main() {
@@ -21,9 +21,9 @@ func main() {
 
 	switch changeType {
 	case "kg":
-		fmt.Printf("kg:%v\n", pkg.Kg2Jin(pkg.Kg(param)))
+		fmt.Printf("kg:%v\n", pkglearn.Kg2Jin(pkglearn.Kg(param)))
 	case "jin":
-		fmt.Printf("jin:%v\n", pkg.Jin2Kg(pkg.Jin(param)))
+		fmt.Printf("jin:%v\n", pkglearn.Jin2Kg(pkglearn.Jin(param)))
 	default:
 		fmt.Printf("unknow type")
 	}

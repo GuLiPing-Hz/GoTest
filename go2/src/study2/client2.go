@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/gorilla/websocket"
 	"log"
-	"net/url"
 	"time"
 )
 
@@ -110,14 +109,16 @@ You can change the message and send multiple times.
 */
 
 func main() {
-	u := url.URL{Scheme: "ws", Host: "127.0.0.1:20004", Path: "/ws"}
+	//u := url.URL{Scheme: "ws", Host: "127.0.0.1:20004", Path: "/ws"}
 	url := "wss://www.fanyu123.cn/wstest"
-	log.Printf("connecting to %s||%s", url, u.String())
+	log.Printf("connecting to %s", url) //u.String()
 
 	c, _, err := websocket.DefaultDialer.Dial(url, nil)
 	if err != nil {
 		log.Fatal("dial:", err)
 	}
+
+	//c.Close()
 	defer c.Close()
 
 	ticker := time.NewTicker(time.Second)
@@ -133,13 +134,17 @@ func main() {
 				return
 			}
 			log.Printf("recv: %s", message)
+
+			//done <- true
+			//return
 		}
 	}()
 
+loop:
 	for {
 		select {
 		case <-done:
-			break
+			break loop
 		case t := <-ticker.C:
 			fmt.Printf("write s=%s\n", t.String())
 			err := c.WriteMessage(websocket.TextMessage, []byte(t.String()))
@@ -149,4 +154,6 @@ func main() {
 			}
 		}
 	}
+
+	fmt.Printf("finish")
 }

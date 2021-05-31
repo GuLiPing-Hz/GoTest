@@ -1,11 +1,11 @@
 package course
 
 import (
-	"fmt"
-	"strings"
-	"strconv"
 	"crypto/md5"
 	"encoding/hex"
+	"fmt"
+	"strconv"
+	"strings"
 	"unicode/utf8"
 )
 
@@ -40,10 +40,11 @@ func testStr() {
 	s3 := s[:] //字符串拷贝出来的地址 python一样，go不一样
 	fmt.Println(s3, " ", &s, " ", &s3, " ", s == s3, " ", &s == &s3)
 	fmt.Println(s[1:])  //索引起点都是0
+	fmt.Println(s[1:1]) //=》空字符串
 	fmt.Println(s[1:4]) // 前闭后开区间
 	//fmt.Println(s[3:2]) // 前大后小会报错
 	//fmt.Println(s[-5:-2]) // 也不支持负数
-	fmt.Println("一个英文长度为1，utf8中文是3，长度=", len(s), len("中"), len("中文")) // 查看字符串长度
+	fmt.Println("一个英文长度为1，utf8中文是3,个别utf8是4。长度=", len(s), len("中"), len("中文"), len("𝌆")) // 查看字符串长度
 
 	fmt.Println("字符串复制", strings.Repeat("*", 30))
 
@@ -134,8 +135,8 @@ func testArra() {
 	//切片的两个创建方式。
 	make([]T, len)
 	make([]T, len, cap) // same as make([]T, cap)[:len]
-	 */
-	var slice1 []int //申明切片
+	*/
+	var slice1 []int   //申明切片
 	if slice1 == nil { //默认是nil值
 		fmt.Println("slice1 is nil")
 	}
@@ -146,7 +147,7 @@ func testArra() {
 
 	//定义slice，
 	fmt.Println("slice实验，修改前")
-	var bytes [] byte
+	var bytes []byte
 	bytes = append(bytes, 1, 2, 3, 4, 5, 6, 7, 8)
 	for _, b := range bytes {
 		fmt.Print(b, " ")
@@ -163,13 +164,28 @@ func testArra() {
 	fmt.Println()
 
 	//使用make创建一个切片
-	slice3 := make([]int, 1, 5) //类型，大小(默认插入0，1个就插入1个0)，容量
+	slice3 := make([]int, 1, 3) //类型，大小(默认插入0，1个就插入1个0)，容量
 	//
 	fmt.Println("make创建切片 slice3=", slice3, len(slice3), cap(slice3))
-	copy(slice3, slice2) //拷贝slice2到slice3中，如果目标长度小于源，则剪裁
+	copy(slice3, slice2) //拷贝slice2到slice3中，如果目标长度小于源，则剪裁min(len(dst),len(src))
 	fmt.Println("copy后的切片 slice3=", slice3, len(slice3), cap(slice3))
-	slice3 = append(slice3, 10)
-	fmt.Println("copy后的切片 slice3=", slice3, len(slice3), cap(slice3))
+	slice3 = append(slice3, 10, 11, 12, 13, 14, 15)
+	fmt.Println("append后的切片 slice3=", slice3, len(slice3), cap(slice3))
+	//指定位置copy
+	slice4 := []int{101, 102, 103, 104}
+	copy(slice3[3:], slice4[1:3])
+	fmt.Println("指定位置copy后的切片 slice3=", slice3, len(slice3), cap(slice3))
+	slice5 := append(slice3[3:3], 1000)
+	fmt.Println("指定位置copy后的切片 slice3=", slice3, len(slice3), cap(slice3))
+	fmt.Println("指定位置copy后的切片 slice5=", slice5, len(slice5), cap(slice5))
+
+	//注意！！！！
+	slice6 := slice4[:]                //这里无法实现python的深拷贝
+	slice6[0] = 106                    //这样做会修改slice4中的值
+	slice7 := make([]int, len(slice4)) //正确的深拷贝示范。。！！
+	copy(slice7, slice4)
+	slice7[0] = 107
+	fmt.Printf("slice4=%v,slice6=%v,slice7=%v\n", slice4, slice6, slice7)
 
 	//多维数组
 	//number := [2][2]int{{1, 2}, {2, 3}}
@@ -181,7 +197,9 @@ func testArra() {
 			fmt.Println("number2=", j, v2)
 		}
 	}
-	var arras [][]int
+
+	var arras [][]int //数组长度不能使用变量定义
+
 	var nums = 3
 	for i := 0; i < nums; i++ {
 		var temp []int
@@ -236,7 +254,8 @@ func testMap() {
 		fmt.Println("map1 is nil")
 	}
 	//map1["A"] = 90//对nil赋值，崩溃
-	fmt.Println("map1=", map1)
+	_, ok := map1["A"] //但是可以对ni值查询。
+	fmt.Printf("map1=%v,ok=%t", map1, ok)
 	map1 = make(map[string]int) //创建map，实例化
 	map1["A"] = 90              //添加元素
 	fmt.Println("插入字典 map1=", map1)
@@ -257,20 +276,30 @@ func testMap() {
 	delete(map1, "A")
 	fmt.Println("删除A map1=", map1)
 
+	map1["A"] = 66
+	map1["AA"] = 67
+	map1["AAA"] = 68
+	map1["AAAA"] = 69
 	//遍历字典
+	for k, v := range map1 {
+		fmt.Println("map1[", k, "]=", v)
+		delete(map1, k) //@注意 go map边遍历，边移除是安全的。！！！
+	}
+
 	for k, v := range map1 {
 		fmt.Println("map1[", k, "]=", v)
 	}
 }
 
 type Student struct {
-	id   int32  `json:"id"`
-	name string `json:"name"`
+	id    int32  `json:"id"`
+	name  string `json:"name"`
+	score int    `json:"score"`
 }
 
 func testPointer1() *Student {
 	student := Student{
-		101, "Jack",
+		101, "Jack", 0,
 	}
 
 	//在c++中，这是个局部变量，返回局部变量，该指针就会变成野指针，打印的信息会乱码
@@ -282,9 +311,35 @@ func testPointer() {
 	fmt.Printf("student=%v\n", *testPointer1())
 }
 
-func main() {
+func testMapStruct() {
+	dict := make(map[int32]Student)
+	dict[1] = Student{1, "Jack", 59}
+	dict[2] = Student{2, "Tom", 90}
+
+	if v, ok := dict[1]; ok {
+		//dict[1].score++ //这里语法错误，无法改变结构中的数据
+		v.score++ //这里也是错误的用法，，v只是个深拷贝临时变量，不影响原值
+	}
+
+	fmt.Printf("修改临时深拷贝变量 name:%s,score:%d\n", dict[1].name, dict[1].score)
+
+	//正确的方法是修改成指针map
+	dict2 := make(map[int32]*Student)
+	dict2[1] = &Student{1, "Jack", 59}
+	if v, ok := dict2[1]; ok {
+		dict2[1].score++
+		v.score += 2
+	}
+	fmt.Printf("修改指针变量 name:%s,score:%d\n", dict[1].name, dict2[1].score)
+	//@实际打印62，说明上面对原值修改和对临时指针变量的修改都生效了
+}
+
+func Course4() {
 	testStr()
 	testArra()
-	//testMap()
+	testMap()
 	testPointer()
+
+	//@注意临时深拷贝的修改不改变原值
+	testMapStruct()
 }

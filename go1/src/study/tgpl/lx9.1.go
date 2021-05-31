@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"pkg"
+	"go1/src/pkglearn"
 	"sync"
 )
 
@@ -12,40 +12,40 @@ func testChanSync() {
 	wg.Add(1)
 	go func() {
 		fmt.Println("存100")
-		pkg.Deposit(100)
-		fmt.Println("存100,剩余", pkg.Balance())
+		pkglearn.Deposit(100)
+		fmt.Println("存100,剩余", pkglearn.Balance())
 		wg.Done()
 	}()
 
 	wg.Add(1)
 	go func() {
 		fmt.Println("取100")
-		ok := pkg.Withdraw(100)
-		fmt.Println("取100", ok, ",剩余", pkg.Balance())
+		ok := pkglearn.Withdraw(100)
+		fmt.Println("取100", ok, ",剩余", pkglearn.Balance())
 		wg.Done()
 	}()
 
 	wg.Add(1)
 	go func() {
 		fmt.Println("取300")
-		ok := pkg.Withdraw(300)
-		fmt.Println("取300", ok, "剩余", pkg.Balance())
+		ok := pkglearn.Withdraw(300)
+		fmt.Println("取300", ok, "剩余", pkglearn.Balance())
 		wg.Done()
 	}()
 
 	wg.Add(1)
 	go func() {
 		fmt.Println("存120")
-		pkg.Deposit(120)
-		fmt.Println("存120,剩余", pkg.Balance())
+		pkglearn.Deposit(120)
+		fmt.Println("存120,剩余", pkglearn.Balance())
 		wg.Done()
 	}()
 
 	wg.Add(1)
 	go func() {
 		fmt.Println("存180")
-		pkg.Deposit(180)
-		fmt.Println("存180,剩余", pkg.Balance())
+		pkglearn.Deposit(180)
+		fmt.Println("存180,剩余", pkglearn.Balance())
 		wg.Done()
 	}()
 
@@ -59,40 +59,40 @@ func testChanSync2() {
 	wg.Add(1)
 	go func() {
 		fmt.Println("存100")
-		pkg.Deposit2(100)
-		fmt.Println("存100,剩余", pkg.Balance2())
+		pkglearn.Deposit2(100)
+		fmt.Println("存100,剩余", pkglearn.Balance2())
 		wg.Done()
 	}()
 
 	wg.Add(1)
 	go func() {
 		fmt.Println("取100")
-		ok := pkg.Withdraw2(100)
-		fmt.Println("取100", ok, ",剩余", pkg.Balance2())
+		ok := pkglearn.Withdraw2(100)
+		fmt.Println("取100", ok, ",剩余", pkglearn.Balance2())
 		wg.Done()
 	}()
 
 	wg.Add(1)
 	go func() {
 		fmt.Println("取300")
-		ok := pkg.Withdraw2(300)
-		fmt.Println("取300", ok, "剩余", pkg.Balance2())
+		ok := pkglearn.Withdraw2(300)
+		fmt.Println("取300", ok, "剩余", pkglearn.Balance2())
 		wg.Done()
 	}()
 
 	wg.Add(1)
 	go func() {
 		fmt.Println("存120")
-		pkg.Deposit2(120)
-		fmt.Println("存120,剩余", pkg.Balance2())
+		pkglearn.Deposit2(120)
+		fmt.Println("存120,剩余", pkglearn.Balance2())
 		wg.Done()
 	}()
 
 	wg.Add(1)
 	go func() {
 		fmt.Println("存180")
-		pkg.Deposit2(180)
-		fmt.Println("存180,剩余", pkg.Balance2())
+		pkglearn.Deposit2(180)
+		fmt.Println("存180,剩余", pkglearn.Balance2())
 		wg.Done()
 	}()
 
@@ -116,40 +116,40 @@ func testChanSync3() {
 	wg.Add(1)
 	go func() {
 		fmt.Println("存100")
-		pkg.Deposit3(100)
-		fmt.Println("存100,剩余", pkg.Balance3())
+		pkglearn.Deposit3(100)
+		fmt.Println("存100,剩余", pkglearn.Balance3())
 		wg.Done()
 	}()
 
 	wg.Add(1)
 	go func() {
 		fmt.Println("取100")
-		ok := pkg.Withdraw3(100)
-		fmt.Println("取100", ok, ",剩余", pkg.Balance3())
+		ok := pkglearn.Withdraw3(100)
+		fmt.Println("取100", ok, ",剩余", pkglearn.Balance3())
 		wg.Done()
 	}()
 
 	wg.Add(1)
 	go func() {
 		fmt.Println("取300")
-		ok := pkg.Withdraw3(300)
-		fmt.Println("取300", ok, "剩余", pkg.Balance3())
+		ok := pkglearn.Withdraw3(300)
+		fmt.Println("取300", ok, "剩余", pkglearn.Balance3())
 		wg.Done()
 	}()
 
 	wg.Add(1)
 	go func() {
 		fmt.Println("存120")
-		pkg.Deposit3(120)
-		fmt.Println("存120,剩余", pkg.Balance3())
+		pkglearn.Deposit3(120)
+		fmt.Println("存120,剩余", pkglearn.Balance3())
 		wg.Done()
 	}()
 
 	wg.Add(1)
 	go func() {
 		fmt.Println("存180")
-		pkg.Deposit3(180)
-		fmt.Println("存180,剩余", pkg.Balance3())
+		pkglearn.Deposit3(180)
+		fmt.Println("存180,剩余", pkglearn.Balance3())
 		wg.Done()
 	}()
 

@@ -1,21 +1,24 @@
 package main
 
 import (
-	"fmt"
-	"net/http"
-	"strings"
-	"database/sql"
-	_ "github.com/go-sql-driver/mysql"
-	"log"
-	"io/ioutil"
-	"net/url"
-	"encoding/json"
-	"study/tool"
 	"crypto/sha1"
+	"encoding/json"
+	"fmt"
+	_ "github.com/go-sql-driver/mysql"
+	"go1/src/mybase"
+	"html/template"
+	"io"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"net/url"
+	"os"
 	"sort"
+	"strings"
 )
 
-var DbMgr = tool.DBMgr{}
+var DbMgr = mybase.DBMgrBase{}
+
 //注意：在使用如下命令的时候，由于没有在window环境变量中添加GOPATH，导致一直下载失败，必须添加GOPATH环境变量才能安装
 //go get -u github.com/go-sql-driver/mysql
 
@@ -52,6 +55,14 @@ func printRequest(r *http.Request) {
 	if len(arraA) > 0 {
 		fmt.Println("r.Form['a'][0]=", arraA[0])
 	}
+}
+
+func indexHandler(w http.ResponseWriter, r *http.Request) {
+	t, err := template.ParseFiles("D:/work/Github/GoTest/go1/index.html")
+	if err != nil {
+		mybase.E(err.Error())
+	}
+	t.Execute(w, "http://127.0.0.1:9090/upload")
 }
 
 func sayhelloName(w http.ResponseWriter, r *http.Request) {
@@ -145,7 +156,7 @@ func httpCreate(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm() //解析参数，默认是不会解析的
 	printRequest(r)
 
-	var sign = r.Header.Get("sign")
+	var reqSign = r.Header.Get("sign")
 
 	var plain = ""
 	var dicKeys []string
@@ -162,23 +173,56 @@ func httpCreate(w http.ResponseWriter, r *http.Request) {
 	plain = key + plain[:len(plain)-1]
 	fmt.Println(plain)
 	//获取16进制的签名数据
-	calcSign := fmt.Sprintf("%X", sha1.Sum([]byte(plain)))
+	sign := fmt.Sprintf("%X", sha1.Sum([]byte(plain)))
 
-	fmt.Println(sign, calcSign)
+	fmt.Println(reqSign, sign)
 	fmt.Fprintf(w, "ok")
 }
 
+func uploadHandler(w http.ResponseWriter, r *http.Request) {
+	file, fileHandler, err := r.FormFile("file")
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	defer file.Close()
+
+	savePath := "D:/work/Github/GoTest/go1/list/" + fileHandler.Filename
+	saveFile, err := os.Create(savePath)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	defer saveFile.Close()
+
+	n, err := io.Copy(saveFile, file)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	if n != fileHandler.Size {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	fmt.Fprintf(w, "文件上传成功 %s", fileHandler.Filename)
+}
+
 func testServer() {
-	http.HandleFunc("/", sayhelloName)     //设置访问的路径
+	http.HandleFunc("/", indexHandler)     //设置访问的路径
+	http.HandleFunc("/say", sayhelloName)  //设置访问的路径
 	http.HandleFunc("/more", sayMore)      //设置访问的路径
 	http.HandleFunc("/more/", sayMore1)    //设置访问的路径
 	http.HandleFunc("/register", register) //设置访问的路径
 	http.HandleFunc("/testJson", httpTestJson)
 	http.HandleFunc("/api/orders/create", httpCreate)
 	http.HandleFunc("/api/orders/list", httpCreate)
+	http.HandleFunc("/upload", uploadHandler) //单个上传头像或者图片。
 
-	server := &http.Server{Addr: ":9090", Handler: nil} //设置监听的端口
-	err := server.ListenAndServe()
+	//引导用户访问目录【D:/work/Github/GoTest/go1/list】
+	http.Handle("/list/", http.FileServer(http.Dir("D:/work/Github/GoTest/go1")))
+
+	err := http.ListenAndServe(":9090", nil)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}
@@ -221,15 +265,15 @@ func testClient() {
 	}
 }
 
-func main() {
-	var (
-		dbhostsip  = "192.168.0.18:3306" //IP地址
-		dbusername = "glp4703"           //用户名
-		dbpassword = `glp3329`           //密码
-		dbname     = "databasetest"      //数据库名
-	)
+var (
+	dbhostsip  = "192.168.0.18:3306" //IP地址
+	dbusername = "glp4703"           //用户名
+	dbpassword = `glp3329`           //密码
+	dbname     = "databasetest"      //数据库名
+)
 
-	pwd := dbpassword //string(sha2.Write)
+func main() {
+	//pwd := dbpassword //string(sha2.Write)
 	//fmt.Println("pwd=", pwd)
 
 	//可以通过mysql的命令进入数据库，查询当前的用户信息
@@ -237,13 +281,13 @@ func main() {
 	//host指定了访问来源，
 	//db, err := sql.Open("mysql", dbusername + ":"+
 	//	pwd+ "@tcp("+ dbhostsip+ ")/"+ dbname+ "?charset=utf8mb4")
-	var err error
-	DbMgr.DbInst, err = sql.Open("mysql", dbusername + ":"+
-		pwd+ "@tcp("+ dbhostsip+ ")/"+ dbname+ "?charset=utf8mb4")
-	if err != nil {
-		fmt.Printf("SQL Open Err=%s\n", err)
-	}
-	defer DbMgr.DbInst.Close()
+	//var err error
+	//DbMgr.DbInst, err = sql.Open("mysql", dbusername+":"+
+	//	pwd+"@tcp("+dbhostsip+")/"+dbname+"?charset=utf8mb4")
+	//if err != nil {
+	//	fmt.Printf("SQL Open Err=%s\n", err)
+	//}
+	//defer DbMgr.DbInst.Close()
 
 	//go
 	testServer()

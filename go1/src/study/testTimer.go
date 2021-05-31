@@ -59,6 +59,9 @@ func testTime() {
 
 func main() {
 	fmt.Println("Unix time 单位秒", time.Now().Unix())
+	fmt.Printf("t.location=%+v\n", *time.Now().Location())
+	location, _ := time.LoadLocation("Asia/Shanghai")
+	fmt.Printf("t.location=%+v\n", *location)
 
 	testTime()
 	testTimer()

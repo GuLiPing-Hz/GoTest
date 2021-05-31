@@ -9,13 +9,13 @@ import (
 	"encoding/base64"
 	"encoding/pem"
 	"fmt"
+	"go1/src/mybase"
 	"golang.org/x/crypto/pkcs12"
 	"io/ioutil"
 	"net/url"
 	"sort"
 	"strings"
 	"time"
-	"util"
 )
 
 //私钥签名
@@ -164,7 +164,7 @@ func ylCheckSign(rootCer, middleCer *x509.Certificate, resData url.Values) error
 
 	//1.从返回报文中获取公钥信息转换成公钥对象
 	//String strCert = resData.get(SDKConstants.param_signPubKeyCert);
-	util.I("验签公钥证书：[" + signPubKeyCert + "]")
+	mybase.I("验签公钥证书：[" + signPubKeyCert + "]")
 
 	//X509Certificate x509Cert = CertUtil.genCertificateByStr(strCert);
 	//if(x509Cert == null) {
@@ -241,8 +241,8 @@ func ylCheckSign(rootCer, middleCer *x509.Certificate, resData url.Values) error
 	}
 	err = rsa.VerifyPKCS1v15(pub, crypto.SHA256, hashed[:], inSign)
 	if err != nil {
-		util.I("签名原文：[%s] encoding=%s", signature, resData.Get("encoding"))
-		util.I("待验签返回报文串：[" + string(hashed[:]) + "]");
+		mybase.I("签名原文：[%s] encoding=%s", signature, resData.Get("encoding"))
+		mybase.I("待验签返回报文串：[" + string(hashed[:]) + "]")
 		return fmt.Errorf("返回数据验签失败 err=%s", err.Error())
 	}
 	return nil

@@ -56,8 +56,8 @@ type P *int func (P) f() { } // compile error: invalid receiver type
 */
 
 type ColorPoint struct {
-	Point          //匿名组合
-	Col color.RGBA //有名组合
+	Point            //匿名组合
+	Col   color.RGBA //有名组合
 }
 
 type Animal interface {
@@ -224,6 +224,7 @@ var (
 	ErrExist      = errors.New("file already exists")
 	ErrNotExist   = errors.New("file does not exist")
 )
+
 /*
 伪代码，处理不同的错误方式
 err := os.XXX
@@ -232,13 +233,13 @@ if err == os.ErrInvalid {
 }
 */
 
-func main() {
+func Course5() {
 	fmt.Println("main in")
 
 	p := Point{10.0, 20.0}
 	p.F1(1)
 	(&p).F2()
-	p.F2()     //这里编译器会自动帮我们解析成指针调用
+	p.F2()     //这里编译器会自动帮我们解析成指针调用 这个跟上面的是等价的，只不过编译器帮我们处理了下
 	(&p).F1(2) //反过来也一样，，编译器也能帮我们转换对的类型
 	Point{1, 2}.F1(3)
 	//Point{1, 2}.F2() //但是不能对匿名值 进行转换，这里会有编译错误

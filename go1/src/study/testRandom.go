@@ -1,10 +1,10 @@
 package main
 
 import (
-	"math/rand"
 	"fmt"
-	"time"
+	"math/rand"
 	"strconv"
+	"time"
 )
 
 func GetRandSeed() int64 {

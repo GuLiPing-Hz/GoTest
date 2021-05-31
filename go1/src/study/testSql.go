@@ -4,10 +4,9 @@ import (
 	"database/sql"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql" //go get github.com/go-sql-driver/mysql
-	"study/tool"
-	"strings"
 	"github.com/mitchellh/mapstructure"
 	"reflect"
+	"strings"
 )
 
 //mysql -u root -p 打开服务器上的MySQL
@@ -119,7 +118,7 @@ func testReflect(data interface{}) {
 			}
 
 			var args []reflect.Value
-			args = append(args, dataVal2)//参数传入自己
+			args = append(args, dataVal2) //参数传入自己
 
 			fmt.Println("dataType2 查看结构体函数", dataType2.NumMethod(), dataVal2.NumMethod())
 			for i := 0; i < dataType2.NumMethod(); i++ {
@@ -211,9 +210,9 @@ func testDbRoutines(dbMgr *sql.DB) {
 func main() {
 	var (
 		dbhostsip  = "127.0.0.1:3306" //IP地址
-		dbusername = "glp4703"           //用户名
-		dbpassword = `glp3329`           //密码
-		dbname     = "databasetest"      //数据库名
+		dbusername = "glp4703"        //用户名
+		dbpassword = `glp3329`        //密码
+		dbname     = "databasetest"   //数据库名
 	)
 
 	pwd := dbpassword //string(sha2.Write)
@@ -225,8 +224,8 @@ func main() {
 	//db, err := sql.Open("mysql", dbusername + ":"+
 	//	pwd+ "@tcp("+ dbhostsip+ ")/"+ dbname+ "?charset=utf8mb4")
 	var err error
-	dbMgr, err := sql.Open("mysql", dbusername + ":"+
-		pwd+ "@tcp("+ dbhostsip+ ")/"+ dbname+ "?charset=utf8mb4")
+	dbMgr, err := sql.Open("mysql", dbusername+":"+
+		pwd+"@tcp("+dbhostsip+")/"+dbname+"?charset=utf8mb4")
 	if err != nil {
 		fmt.Printf("SQL Open Err=%s\n", err)
 	}

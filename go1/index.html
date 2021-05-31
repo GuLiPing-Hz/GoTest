@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.bootcss.com/jquery/1.12.0/jquery.js"></script>
+    <style>
+        #drop_area {
+            position: relative;
+            width: 300px;
+            height: 150px;
+            border: 1px dashed #ddd;
+            border-radius: 5px;
+            margin-bottom: 5px;
+        }
+
+        #drop_area .text {
+            position: absolute;
+            width: 100%;
+            top: 60px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        #img_area {
+            width: 300px;
+        }
+
+        #img_area img {
+            width: 300px;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+<div id="drop_area">
+    <div class="text"><span>+</span><span>将文件拖到此处，即可上传</span></div>
+</div>
+<div id="img_area"></div>
+</body>
+
+<script>
+    var dp = document.getElementById('drop_area');
+    dp.addEventListener('dragenter', function (e) {
+        e.stopPropagation();
+        //阻止浏览器默认打开文件的操作
+        e.preventDefault();
+        dp.style.background = "#00ff00"
+    });
+
+    dp.addEventListener('dragleave', function (e) {
+        e.stopPropagation();
+        //阻止浏览器默认打开文件的操作
+        e.preventDefault();
+        dp.style.background = "#ffffff"
+    });
+
+    dp.addEventListener('dragover', function (e) {
+        e.stopPropagation();
+        //阻止浏览器默认打开文件的操作
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'copy';
+        dp.style.background = "#00ff00"
+    });
+
+    //单图上传
+    dp.addEventListener("drop", function (e) {
+        e.stopPropagation();
+        //阻止浏览器默认打开文件的操作
+        e.preventDefault();
+        dp.style.background = "#ffffff"
+
+        var files = e.dataTransfer.files;
+        console.log("files=" + JSON.stringify(files));
+
+        var file = files[0];
+        console.log("file=" + file.name);
+        var formData = new FormData();
+        formData.append("file", file);
+        $.ajax({
+            type: 'post',
+            url: {{.}},
+            data: formData,
+            contentType: false, //必须  禁止jQuery设置Content-Type请求头
+            processData: false, //必须  禁止jQuery处理发送的数据
+            // dataType: "json",
+            complete: function (res, a) {
+                // complete res=[object Object],{"readyState":4,"responseText":"文件上传成功 item_fuzi.png","status":200,"statusText":"OK"},a=success
+                // complete res=[object Object],{"readyState":0,"responseText":"","status":0,"statusText":"error"},a=error
+                console.log("complete res=" + res + "," + JSON.stringify(res) + ",a=" + a);
+            },
+            success: function (res, a, b) {
+                // success res=文件上传成功 item_fuzi.png,a=success,b=[object Object],{"readyState":4,"responseText":"文件上传成功 item_fuzi.png","status":200,"statusText":"OK"}
+                console.log("success res=" + res + ",a=" + a + ",b=" + b + "," + JSON.stringify(b));
+            },
+            error: function (res, a) {
+                // error res=[object Object],{"readyState":0,"responseText":"","status":0,"statusText":"error"},a=error
+                console.log("error res=" + res + "," + JSON.stringify(res) + ",a=" + a);
+            }
+        });
+    });
+
+    //多图上传
+    // dp.addEventListener("drop", function(e) {
+    //     e.stopPropagation();
+    //     //阻止浏览器默认打开文件的操作
+    //     e.preventDefault();
+    //     var files = e.dataTransfer.files;
+    //     var formData = new FormData();
+    //     for(var i =0; i<files.length; i++){
+    //         formData.append("file"+i, files[i]);
+    //     }
+    //     $.ajax({
+    //         type: 'post',
+    //         url: 'http://127.0.0.1:8081/ssm_project/sysUser/uploadSysHeadImg.do',
+    //         data: formData,
+    //         contentType: false, //必须  禁止jQuery设置Content-Type请求头
+    //         processData: false, //必须  禁止jQuery处理发送的数据
+    //         dataType: "json",
+    //         success: function(res){
+    //             if(res.success == 1){
+    //                 res.realPathList.forEach(function(item){
+    //                     $('#img_area').append('<img src="'+item+'">');
+    //                 });
+    //             }
+    //         },
+    //     });
+    // });
+</script>
+</html>

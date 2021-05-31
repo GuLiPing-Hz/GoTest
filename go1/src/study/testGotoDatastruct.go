@@ -1,12 +1,12 @@
 package main
 
 import (
-	"fmt"
-	"sync"
 	"container/list"
+	"encoding/json"
+	"fmt"
 	"reflect"
 	"strings"
-	"encoding/json"
+	"sync"
 )
 
 func test() {
@@ -117,10 +117,14 @@ func testSet() {
 }
 
 type roomStatus struct {
-	RoomId   string               //对于需要Json解析/反解析的数据，我们必须使用大写，否则json.Marshal无法获取数据
-	RealCnt  int `json:"realCnt"` //指定json序列化的名字
-	RobotCnt int
+	RoomId   string //对于需要Json解析/反解析的数据，我们必须使用大写，否则json.Marshal无法获取数据
+	RealCnt  int    `json:"realCnt"` //指定json序列化的名字
+	RobotCnt int    `json:"-"` //表示不用被json序列化。
 	TotalCnt int
+}
+
+type jsonList struct {
+	UidList []int `json:"uid_list"`
 }
 
 func testJson() {
@@ -175,6 +179,14 @@ func testJson() {
 			fmt.Println(k1, v1)
 		}
 	}
+
+	uidList := jsonList{}
+	json.Unmarshal([]byte(`{"uid_list":[1,2,3]}`), &uidList)
+	temp1 := uidList.UidList
+	temp2 := &uidList.UidList
+	fmt.Println(temp1, *temp2)
+	json.Unmarshal([]byte(`{"uid_list":[1,2,3,4,5,6]}`), &uidList)
+	fmt.Println(temp1, *temp2)
 }
 
 var testMx = sync.Mutex{}
@@ -251,7 +263,7 @@ func testSyncMap() {
 
 func main() {
 	//test()
-	////测试go包数据结构List 频繁插入删除较优
+	////测试go包数据结构List 频繁插入删除较优 还有heap(堆)和ring(环)
 	//testList()
 	////测试自定义数据结构Set
 	//testSet()

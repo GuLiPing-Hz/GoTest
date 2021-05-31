@@ -7,7 +7,9 @@ import "fmt"
 实参通过值的方式传递，因此函数的形参是实参的拷贝。对形参进行修改不会影响实参。但是
 如果实参包括引用类型，如指针，slice(切片)、map、function、channel等类型，实参可能会被函数内修改
 
+
 @注意：数组传递是传递拷贝复制的形式，如不想拷贝直接传递指针类型
+@注意：切片传递还有注意点：https://www.jianshu.com/p/e2665380527f
 
 
 以下函数申明等价：
@@ -32,7 +34,7 @@ func add2(a int, b int) (c int) {
 }
 
 //如果两个参数类型一致，可以像这样写成一个
-func add(a, b int) (int) {
+func add(a, b int) int {
 	return a + b
 }
 
@@ -42,7 +44,7 @@ func swap(a, b int) (int, int, int) {
 }
 
 //上面都是值传递
-func sub(a, b *int) (int) {
+func sub(a, b *int) int {
 	*a += 100
 	return *a - *b
 }
@@ -70,8 +72,22 @@ func average(val ...int) int {
 	return result / len(val)
 }
 
+func testArraParam(v []int) {
+	fmt.Printf("before testArraParam=%v,%p\n", v, &v)
+	v[1] = 7               //修改数据
+	v = append(v, 4, 5, 6) //添加数据
+	fmt.Printf("after testArraParam=%v,%p\n", v, &v)
+}
+
+func testArraParam2(v *[]int) {
+	fmt.Printf("before testArraParam2=%v,%p\n", *v, v)
+	(*v)[1] = 7              //修改数据
+	*v = append(*v, 4, 5, 6) //添加数据
+	fmt.Printf("after testArraParam2=%v,%p\n", *v, v)
+}
+
 //前面test1和test2中都有main函数，一个go程序实例只允许存在一个main函数
-func main() {
+func Course3() {
 	myPrintln("myPrintln")
 	fmt.Println("1+2=", add(1, 2))
 	a, b := 3, 4
@@ -108,4 +124,14 @@ func main() {
 	var c1 Circle
 	c1.radius = 10
 	fmt.Println("area = ", getArea(c1))
+
+	arra1 := make([]int, 0) //创建一个切片
+	fmt.Printf("append arra=%v,%p\n", arra1, &arra1)
+	arra1 = append(arra1, 1, 2, 3) //增加元素
+	fmt.Printf("before arra=%v,%p\n", arra1, &arra1)
+	testArraParam(arra1)
+	fmt.Printf("after arra=%v,%p\n", arra1, &arra1)
+
+	testArraParam2(&arra1)
+	fmt.Printf("after testArraParam2 arra=%v,%p\n", arra1, &arra1)
 }
